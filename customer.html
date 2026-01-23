@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+    
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
+    
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:14px;}
+    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
+    
+    .filter-row{display:flex;gap:15px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+    .filter-select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:8px;padding:8px 15px;color:#6f2b67;font-size:13px;outline:none;cursor:pointer;}
+    
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
+    .table-search{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:20px;padding:8px 15px;width:100%;max-width:300px;outline:none;color:#6f2b67;font-size:13px;}
+    .table-search::placeholder{color:rgba(111,43,103,0.5);}
+    
+    .table-wrapper{overflow-x:auto;margin-bottom:20px;}
+    .customers-table{width:100%;border-collapse:collapse;min-width:900px;}
+    .customers-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
+    .customers-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .customers-table tr:hover{background:rgba(111,43,103,0.05);}
+    
+    .status-badge{padding:6px 12px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;min-width:70px;text-align:center;}
+    .status-active{background:rgba(40,167,69,0.2);color:#28a745;}
+    .status-block{background:rgba(220,53,69,0.2);color:#dc3545;}
+    
+    .toggle-switch{position:relative;width:50px;height:24px;background:#dc3545;border-radius:15px;cursor:pointer;transition:0.3s;}
+    .toggle-switch.active{background:#28a745;}
+    .toggle-slider{position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;}
+    .toggle-switch.active .toggle-slider{left:28px;}
+    
+    .icon-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:18px;transition:0.3s;}
+    .icon-btn:hover{color:#5a2252;transform:scale(1.15);}
+    
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
+    
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+    
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+    .modal.show{display:flex;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:30px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
+    .close-modal{position:absolute;top:12px;right:15px;background:transparent;border:none;font-size:24px;color:#6f2b67;cursor:pointer;}
+    .modal-header{display:flex;align-items:center;gap:15px;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid rgba(111,43,103,0.2);}
+    .back-btn{background:#6f2b67;border:none;width:40px;height:40px;border-radius:50%;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .modal-title{font-size:22px;font-weight:700;color:#6f2b67;}
+    .details-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px;}
+    .info-card{background:rgba(111,43,103,0.05);border:1px solid rgba(111,43,103,0.2);border-radius:12px;padding:20px;}
+    .card-title{font-size:16px;font-weight:700;color:#6f2b67;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid rgba(111,43,103,0.2);}
+    .info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(111,43,103,0.1);}
+    .info-label{font-size:13px;color:rgba(0,0,0,0.6);font-weight:600;}
+    .info-value{font-size:13px;color:#333;font-weight:500;}
+    .order-search{width:100%;background:rgba(111,43,103,0.1);border:1px solid rgba(111,43,103,0.3);border-radius:10px;padding:10px 15px;margin-bottom:15px;outline:none;font-size:13px;}
+    .orders-table-small{width:100%;border-collapse:collapse;}
+    .orders-table-small th{background:rgba(111,43,103,0.1);padding:10px 8px;text-align:left;font-size:11px;font-weight:700;color:#6f2b67;}
+    .orders-table-small td{padding:10px 8px;font-size:12px;border-bottom:1px solid rgba(111,43,103,0.1);}
+    .order-status{padding:4px 10px;border-radius:10px;font-size:10px;font-weight:600;}
+    .order-delivered{background:rgba(40,167,69,0.2);color:#28a745;}
+    
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;}
+      .search-box{max-width:100%;}
+      .customers-table{min-width:750px;}
+      .details-grid{grid-template-columns:1fr;}
+      .table-search{max-width:100%;}
+    }
+    
+    @media(max-width:480px){
+      .main-content{padding:10px;}
+      .user-info div:first-child{display:none;}
+      .customers-table{min-width:650px;}
+      .customers-table th,.customers-table td{padding:8px 5px;font-size:11px;}
+      .toggle-switch{width:45px;height:22px;}
+      .toggle-slider{width:18px;height:18px;}
+      .toggle-switch.active .toggle-slider{left:25px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    
+    <a href="/admin/dashboard" class="menu-item">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="#">Category</a>
+      <a href="#">Sub-Category</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="#">Category Offers</a>
+      <a href="#">Sub-Category Offers</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="#" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="#">App Settings</a>
+      <a href="#">User Settings</a>
+    </div>
+    
+    <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <div class="user-info">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <div class="page-header">
+      <h1 class="page-title">Customers</h1>
+    </div>
+    
+    <div class="filter-row">
+      <select class="filter-select" id="statusFilter" onchange="filterCustomers()">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="block">Blocked</option>
+      </select>
+      <select class="filter-select">
+        <option>Show 7 entries</option>
+        <option>Show 15 entries</option>
+        <option>Show 25 entries</option>
+      </select>
+    </div>
+    
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Customer List</div>
+        <input type="text" class="table-search" id="tableSearch" placeholder="Search customers..." oninput="searchCustomers()">
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="customers-table">
+          <thead>
+            <tr>
+              <th>S.NO</th>
+              <th>CUSTOMER</th>
+              <th>EMAIL</th>
+              <th>PHONE NUMBER</th>
+              <th>REGISTERED</th>
+              <th>STATUS</th>
+              <th>BLOCK/UNBLOCK</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+  <% if (users.length === 0) { %>
+    <tr>
+      <td colspan="8" style="text-align:center;padding:20px;">
+        No users found
+      </td>
+    </tr>
+  <% } else { %>
+    <% users.forEach((user, index) => { %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><strong><%= user.name || 'User' %></strong></td>
+        <td><%= user.email %></td>
+        <td><%= user.phone || '-' %></td>
+        <td><%= user.createdAt.toDateString() %></td>
+        <td>
+          <span class="status-badge <%= user.isBlocked ? 'status-block' : 'status-active' %>">
+            <%= user.isBlocked ? 'Blocked' : 'Active' %>
+          </span>
+        </td>
+        <td>
+          <form action="/admin/toggle-block/<%= user._id %>" method="POST">
+            <div class="toggle-switch <%= user.isBlocked ? '' : 'active' %>"
+                 onclick="this.closest('form').submit()">
+              <div class="toggle-slider"></div>
+            </div>
+          </form>
+        </td>
+        <td>
+          <a href="/admin/users/<%= user._id %>" class="icon-btn">
+            <i class="fas fa-eye"></i>
+          </a>
+        </td>
+      </tr>
+    <% }) %>
+  <% } %>
+          </tbody>
+
+          
+        </table>
+      </div>
+      
+      <div class="pagination">
+        <span style="font-size:13px;margin-right:10px;">1-10 of 46</span>
+        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">...</button>
+        <button class="page-btn">5</button>
+        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="customerModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      <div class="modal-header">
+        <button class="back-btn" onclick="closeModal()"><i class="fas fa-arrow-left"></i></button>
+        <h2 class="modal-title" id="modalCustomerName">Customer Details</h2>
+      </div>
+      
+      <div class="details-grid">
+        <div class="info-card">
+          <h3 class="card-title">Customer Information</h3>
+          <div id="customerInfo"></div>
+        </div>
+        
+        <div class="info-card">
+          <h3 class="card-title">Shipping Address</h3>
+          <div id="shippingAddress"></div>
+        </div>
+        
+        <div class="info-card" style="grid-column:1/-1;">
+          <h3 class="card-title">Orders</h3>
+          <input type="text" class="order-search" placeholder="Search orders...">
+          <div style="overflow-x:auto;">
+            <table class="orders-table-small">
+              <thead>
+                <tr>
+                  <th>ORDER ID</th>
+                  <th>DATE</th>
+                  <th>ITEMS</th>
+                  <th>STATUS</th>
+                  <th>AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+
+
+
+function toggleStatus(id){
+  const customer=customers.find(c=>c.id===id);
+  customer.status=customer.status==='active'?'block':'active';
+  filterCustomers();
+}
+
+function viewCustomer(id){
+  const c=customers.find(cust=>cust.id===id);
+  document.getElementById('modalCustomerName').textContent=c.name;
+  document.getElementById('customerInfo').innerHTML=`
+    <div class="info-row"><span class="info-label">First Name:</span><span class="info-value">${c.firstName}</span></div>
+    <div class="info-row"><span class="info-label">Last Name:</span><span class="info-value">${c.lastName}</span></div>
+    <div class="info-row"><span class="info-label">Email ID:</span><span class="info-value">${c.email}</span></div>
+    <div class="info-row"><span class="info-label">Phone No:</span><span class="info-value">${c.phone}</span></div>
+    <div class="info-row"><span class="info-label">Registered:</span><span class="info-value">${c.date}</span></div>
+  `;
+  document.getElementById('shippingAddress').innerHTML=`
+    <div class="info-row"><span class="info-label">Full Name:</span><span class="info-value">${c.firstName} ${c.lastName}</span></div>
+    <div class="info-row"><span class="info-label">Address Line1:</span><span class="info-value">${c.address1}</span></div>
+    <div class="info-row"><span class="info-label">Address Line2:</span><span class="info-value">${c.address2||'-'}</span></div>
+    <div class="info-row"><span class="info-label">City:</span><span class="info-value">${c.city}</span></div>
+    <div class="info-row"><span class="info-label">State:</span><span class="info-value">${c.state}</span></div>
+    <div class="info-row"><span class="info-label">Country:</span><span class="info-value">${c.country}</span></div>
+    <div class="info-row"><span class="info-label">Zip:</span><span class="info-value">${c.zip}</span></div>
+    <div class="info-row"><span class="info-label">Phone No:</span><span class="info-value">${c.phone}</span></div>
+  `;
+  document.getElementById('ordersTable').innerHTML=c.orders.length>0?c.orders.map(o=>`
+    <tr>
+      <td>${o.id}</td>
+      <td>${o.date}</td>
+      <td>${o.items}</td>
+      <td><span class="order-status order-delivered">${o.status}</span></td>
+      <td>${o.amount}</td>
+    </tr>
+  `).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:rgba(139,92,246,0.5);">No orders found</td></tr>';
+  document.getElementById('customerModal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('customerModal').classList.remove('show');
+}
+
+
+
+
+function toggleMenu(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+renderCustomers();
+  </script>
+</body>
+</html>

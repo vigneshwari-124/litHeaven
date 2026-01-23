@@ -1,0 +1,21 @@
+
+# Node modules
+node_modules/
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Compiled binaries
+*.exe
+*.out
+
+# Mac system file
+.DS_Store
+
+# Build folders (if applicable)
+dist/
+build/

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Blocked - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      background:linear-gradient(135deg,#f5f3ff 0%,#e9d5ff 100%);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Segoe UI',sans-serif;
+      padding:40px 20px;
+    }
+    .blocked-container{
+      background:#fff;
+      border:2px solid #8e4a86;
+      border-radius:20px;
+      padding:40px 30px;
+      max-width:500px;
+      width:100%;
+      text-align:center;
+      box-shadow:0 15px 40px rgba(142,74,134,0.3);
+      animation:slideUp 0.6s ease-out;
+    }
+    @keyframes slideUp{
+      from{opacity:0;transform:translateY(30px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+    .blocked-icon{
+      width:100px;
+      height:100px;
+      background:linear-gradient(135deg,#6f2b67,#8e4a86);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 25px;
+      box-shadow:0 10px 30px rgba(111,43,103,0.4);
+      animation:pulse 2s infinite;
+      position:relative;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1);}
+      50%{transform:scale(1.05);}
+    }
+    .blocked-icon i{font-size:50px;color:#fff;}
+    .blocked-icon::after{
+      content:'';
+      position:absolute;
+      width:120px;
+      height:120px;
+      border:3px solid rgba(111,43,103,0.3);
+      border-radius:50%;
+      animation:ripple 2s infinite;
+    }
+    @keyframes ripple{
+      0%{transform:scale(1);opacity:1;}
+      100%{transform:scale(1.3);opacity:0;}
+    }
+    .logo-section{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      margin-bottom:25px;
+    }
+    .logo-circle-small{
+      width:50px;
+      height:50px;
+      border-radius:50%;
+      border:2px solid #6f2b67;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .book-logo-small{
+      width:28px;
+      filter:brightness(0) saturate(100%) invert(21%) sepia(47%) saturate(1789%) hue-rotate(285deg) brightness(85%) contrast(92%);
+    }
+    .logo-text-main{
+      font-size:24px;
+      font-weight:900;
+      color:#6f2b67;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    .blocked-title{
+      font-size:28px;
+      font-weight:800;
+      color:#6f2b67;
+      margin-bottom:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+    .blocked-subtitle{
+      font-size:16px;
+      font-weight:600;
+      color:#333;
+      margin-bottom:20px;
+    }
+    .blocked-message{
+      font-size:14px;
+      color:rgba(0,0,0,0.7);
+      line-height:1.8;
+      margin-bottom:25px;
+      padding:18px;
+      background:rgba(111,43,103,0.05);
+      border-left:4px solid #6f2b67;
+      border-radius:8px;
+      text-align:left;
+    }
+    .blocked-message p{margin-bottom:12px;}
+    .blocked-message strong{color:#6f2b67;font-weight:700;}
+    .btn-login{
+      background:linear-gradient(135deg,#6f2b67,#8e4a86);
+      color:#fff;
+      border:none;
+      padding:12px 35px;
+      border-radius:50px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s;
+      box-shadow:0 6px 20px rgba(111,43,103,0.3);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      text-decoration:none;
+      display:inline-block;
+    }
+    .btn-login:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 25px rgba(111,43,103,0.4);
+      background:linear-gradient(135deg,#5a2252,#6f2b67);
+    }
+    .btn-login i{margin-right:8px;}
+    .footer-note{
+      margin-top:25px;
+      font-size:12px;
+      color:rgba(0,0,0,0.5);
+    }
+    @media(max-width:768px){
+      .blocked-container{padding:35px 25px;}
+      .blocked-icon{width:90px;height:90px;}
+      .blocked-icon i{font-size:45px;}
+      .blocked-title{font-size:24px;}
+      .blocked-subtitle{font-size:15px;}
+      .blocked-message{font-size:13px;padding:15px;}
+    }
+    @media(max-width:480px){
+      .blocked-container{padding:30px 20px;}
+      .blocked-icon{width:80px;height:80px;}
+      .blocked-icon i{font-size:40px;}
+      .blocked-title{font-size:22px;}
+      .blocked-subtitle{font-size:14px;}
+      .logo-text-main{font-size:20px;}
+      .blocked-message{font-size:13px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="blocked-container">
+    <div class="logo-section">
+      <div class="logo-circle-small">
+        <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo-small" alt="LitHeaven">
+      </div>
+      <div class="logo-text-main">LitHeaven</div>
+    </div>
+
+    <div class="blocked-icon">
+      <i class="fas fa-ban"></i>
+    </div>
+
+    <h1 class="blocked-title">Account Blocked</h1>
+    <p class="blocked-subtitle">Your account has been suspended</p>
+
+
+    <button class="btn-login" onclick="handleLogin()">
+      <i class="fas fa-arrow-left"></i>
+      Back to Login
+    </button>
+
+    <div class="footer-note">
+      If you believe this is a mistake, please contact our support team.
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(){
+      window.location.href='/login';
+    }
+  </script>
+</body>
+</html>

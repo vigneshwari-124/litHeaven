@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#d4af37;font-family:'Segoe UI',sans-serif}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#000;border-right:1px solid #d4af37;padding:20px 0;overflow-y:auto;z-index:1000}
+    .sidebar::-webkit-scrollbar{width:5px}.sidebar::-webkit-scrollbar-thumb{background:#d4af37;border-radius:5px}
+    .logo-circle{position:relative;width:70px;height:70px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;margin:0 auto 15px}
+    .book-logo{width:40px;filter:brightness(1.2) sepia(1) hue-rotate(20deg) saturate(5)}
+    .logo-text{position:absolute;bottom:5px;font-size:8px;font-weight:800;color:#d4af37;text-transform:uppercase}
+    .menu-item{padding:12px 20px;color:#d4af37;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer}
+    .menu-item:hover,.menu-item.active{background:rgba(212,175,55,0.1);border-left-color:#d4af37;color:#ffd700}
+    .menu-item i{width:20px;font-size:16px}.menu-left{display:flex;align-items:center;gap:12px}
+    .submenu{max-height:0;overflow:hidden;transition:0.3s}.submenu.show{max-height:200px}
+    .submenu a{padding:10px 20px 10px 52px;color:#d4af37;text-decoration:none;display:block;font-size:13px;transition:0.3s}
+    .submenu a:hover{background:rgba(212,175,55,0.05);color:#ffd700}
+    .logout-btn{margin:20px;background:#d4af37;color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px)}
+    .main-content{margin-left:250px;padding:20px}
+    .top-bar{background:#000;border:1px solid #d4af37;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center}
+    .search-box{flex:1;max-width:500px;background:rgba(212,175,55,0.1);border:1px solid #d4af37;border-radius:25px;padding:8px 20px;display:flex;gap:10px}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#d4af37}
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #d4af37;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .breadcrumb{color:#d4af37;font-size:13px;margin-bottom:15px}.page-title{font-size:24px;font-weight:700;margin-bottom:20px}
+    .add-btn{background:#d4af37;color:#000;border:none;padding:10px 25px;border-radius:25px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(212,175,55,0.4)}
+    .filter-bar{display:flex;gap:10px;margin-bottom:15px;align-items:center;font-size:13px}
+    .filter-bar select{background:transparent;border:1px solid #d4af37;color:#d4af37;padding:6px 12px;border-radius:6px}
+    .table-container{background:#000;border:1px solid #d4af37;border-radius:12px;padding:20px;overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th{background:rgba(212,175,55,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#ffd700;border-bottom:2px solid #d4af37}
+    td{padding:12px;font-size:13px;border-bottom:1px solid rgba(212,175,55,0.2);color:rgba(212,175,55,0.8)}
+    tr:hover{background:rgba(212,175,55,0.05)}
+    .status-published{background:rgba(46,204,113,0.2);color:#2ecc71;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600}
+    .status-unpublished{background:rgba(220,53,69,0.2);color:#dc3545;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600}
+    .action-btn{background:transparent;border:none;cursor:pointer;margin:0 6px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;transition:0.3s}
+    .action-btn i{font-size:16px}
+    .action-btn.edit{color:#007bff;border:1px solid #007bff}.action-btn.edit:hover{background:#007bff;color:#fff}
+    .action-btn.delete{color:#dc3545;border:1px solid #dc3545}.action-btn.delete:hover{background:#dc3545;color:#fff}
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px}
+    .page-btn{width:32px;height:32px;border:1px solid #d4af37;background:transparent;color:#d4af37;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s}
+    .page-btn.active{background:#d4af37;color:#000}
+    .page-btn:hover:not(.active){background:rgba(212,175,55,0.1)}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:2000;align-items:center;justify-content:center;padding:20px}
+    .modal.show{display:flex}
+    .modal-content{background:linear-gradient(145deg,#1a1a1a,#0d0d0d);border:2px solid #d4af37;border-radius:12px;width:90%;max-width:360px;padding:18px;position:relative;box-shadow:0 20px 60px rgba(212,175,55,0.3);margin:auto}
+    .modal-title{font-size:16px;font-weight:700;color:#d4af37;margin-bottom:12px;text-align:center;text-shadow:0 0 10px rgba(212,175,55,0.3)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+    .form-group{margin-bottom:8px}
+    .form-group label{display:block;color:#d4af37;font-size:11px;margin-bottom:4px;font-weight:600}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:5px 10px;border:1px solid #d4af37;border-radius:6px;font-size:12px;background:rgba(212,175,55,0.05);color:#d4af37;outline:none;transition:0.3s}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#ffd700;background:rgba(212,175,55,0.1);box-shadow:0 0 15px rgba(212,175,55,0.2)}
+    .form-group textarea{min-height:50px;resize:vertical}
+    .save-btn{background:linear-gradient(135deg,#d4af37,#ffd700);color:#000;border:none;padding:7px;border-radius:20px;font-weight:700;cursor:pointer;width:100%;margin-top:8px;text-transform:uppercase;font-size:12px;box-shadow:0 8px 25px rgba(212,175,55,0.4);transition:0.3s;letter-spacing:1px}
+    .save-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(212,175,55,0.6)}
+    .close-modal{position:absolute;top:8px;right:10px;background:transparent;border:none;font-size:22px;color:#d4af37;cursor:pointer;z-index:20;width:35px;height:35px;transition:0.3s}
+    .close-modal:hover{color:#ffd700;transform:rotate(90deg)}
+    .radio-group{display:flex;gap:15px;align-items:center}
+    .radio-group label{margin:0;font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+    .checkbox-group{display:flex;gap:15px;align-items:center}
+    .checkbox-group label{margin:0;font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+    .thumb-upload{width:100%;height:80px;border:2px dashed #d4af37;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(212,175,55,0.05)}
+    .thumb-upload i{font-size:24px;color:#d4af37}.thumb-upload div{font-size:10px;color:#d4af37;margin-top:5px}
+    .img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:5px}
+    .img-box{width:100%;height:55px;border:2px dashed #d4af37;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(212,175,55,0.05)}
+    .img-box i{font-size:18px;color:#d4af37}
+    .img-preview{width:100%;height:100%;object-fit:cover;border-radius:4px}
+    .profile-modal .modal-content{max-width:380px;text-align:center;background:linear-gradient(145deg,#1a1a1a,#0d0d0d);border:2px solid #d4af37;box-shadow:0 20px 60px rgba(212,175,55,0.3)}
+    .profile-avatar{width:110px;height:110px;border-radius:50%;background:rgba(212,175,55,0.1);margin:0 auto 15px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #d4af37;box-shadow:0 0 20px rgba(212,175,55,0.3)}
+    .profile-avatar i{font-size:45px;color:#d4af37}
+    .camera-icon{position:absolute;bottom:3px;right:3px;width:32px;height:32px;background:linear-gradient(135deg,#d4af37,#ffd700);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #1a1a1a;box-shadow:0 4px 15px rgba(212,175,55,0.5)}
+    .camera-icon i{font-size:14px;color:#000}
+    .profile-input{display:none}
+    .profile-name{font-size:18px;font-weight:700;color:#d4af37;margin-bottom:4px}
+    .profile-email{font-size:13px;color:rgba(212,175,55,0.7);margin-bottom:15px}
+    .delete-modal .modal-content{max-width:380px;text-align:center;padding:25px}
+    .delete-icon{width:80px;height:80px;border-radius:50%;background:rgba(220,53,69,0.2);margin:0 auto 20px;display:flex;align-items:center;justify-content:center}
+    .delete-icon i{font-size:40px;color:#dc3545}
+    .delete-title{font-size:20px;font-weight:700;color:#d4af37;margin-bottom:10px}
+    .delete-message{font-size:13px;color:rgba(212,175,55,0.7);margin-bottom:20px}
+    .delete-actions{display:flex;gap:10px;justify-content:center}
+    .cancel-btn{background:transparent;border:2px solid #d4af37;color:#d4af37;padding:10px 30px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px}
+    .confirm-delete-btn{background:#dc3545;border:none;color:#fff;padding:10px 30px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px}
+    @media(max-width:768px){.main-content{margin-left:0}.sidebar{display:none}}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo-circle"><img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo"><div class="logo-text">LitHeaven Admin</div></div>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div></a>
+    <div class="menu-item" onclick="toggleMenu('catMenu')"><div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div><i class="fas fa-chevron-down"></i></div>
+    <div class="submenu" id="catMenu"><a href="#">Category</a><a href="#">Sub-Category</a></div>
+    <a href="#" class="menu-item active"><div class="menu-left"><i class="fas fa-box"></i> Products</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div></a>
+    <div class="menu-item" onclick="toggleMenu('offerMenu')"><div class="menu-left"><i class="fas fa-tags"></i> Offers</div><i class="fas fa-chevron-down"></i></div>
+    <div class="submenu" id="offerMenu"><a href="#">Category Offers</a><a href="#">Sub-Category Offers</a></div>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-star"></i> Ratings</div></a>
+    <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
+    <div class="menu-item" onclick="toggleMenu('settMenu')"><div class="menu-left"><i class="fas fa-cog"></i> Settings</div><i class="fas fa-chevron-down"></i></div>
+    <div class="submenu" id="settMenu"><a href="#">App Settings</a><a href="#">User Settings</a><a href="#">Wallet</a></div>
+    <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search anything..."></div>
+      <div class="user-info" onclick="openProfile()">
+        <div><div style="font-weight:600;font-size:14px">App Admin</div><div style="font-size:11px;opacity:0.7">support@litheaven.com</div></div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <div class="breadcrumb">Dashboard/Products</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h1 class="page-title">Products</h1>
+      <button class="add-btn" onclick="openAdd()"><i class="fas fa-plus"></i> ADD PRODUCT</button>
+    </div>
+    
+    <div class="filter-bar">
+      <span>Show</span><select><option>7</option><option>25</option><option>50</option></select><span>entries</span>
+      <span style="margin-left:auto">Filter By:</span><select><option>All Status</option><option>Published</option><option>Unpublished</option></select>
+    </div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox"></th><th>BOOK NAME</th><th>STOCK</th><th>SOLD</th><th>BOOK CATEGORY</th><th>BOOK AUTHOR</th><th>DATE & TIME</th><th>PRICE</th><th>STATUS</th><th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td><td>A Burning</td><td>282</td><td>20</td><td>Fiction</td><td>Robert</td><td>28 Mar 2025 at 2:00pm</td><td>500.00</td>
+            <td><span class="status-published">Published</span></td>
+            <td><button class="action-btn edit" onclick="editRow(this)"><i class="fas fa-edit"></i></button><button class="action-btn delete" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td><td>White Night</td><td>55</td><td>0</td><td>Non-Fiction</td><td>Pyotor</td><td>28 Mar 2025 at 2:00pm</td><td>105.00</td>
+            <td><span class="status-unpublished">Unpublished</span></td>
+            <td><button class="action-btn edit" onclick="editRow(this)"><i class="fas fa-edit"></i></button><button class="action-btn delete" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td><td>Rich Dad</td><td>40</td><td>0</td><td>Fiction</td><td>Robert</td><td>16 Mar 2025 at 2:50pm</td><td>500.00</td>
+            <td><span class="status-unpublished">Unpublished</span></td>
+            <td><button class="action-btn edit" onclick="editRow(this)"><i class="fas fa-edit"></i></button><button class="action-btn delete" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button></td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="pagination">
+        <span style="font-size:13px;margin-right:10px">1-10 of 46</span>
+        <button class="page-btn" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn" onclick="goToPage(1)">1</button>
+        <button class="page-btn" onclick="goToPage(2)">2</button>
+        <button class="page-btn" onclick="goToPage(3)">3</button>
+        <button class="page-btn">...</button>
+        <button class="page-btn" onclick="goToPage(5)">5</button>
+        <button class="page-btn" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="formModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeForm()">×</button>
+      <h2 class="modal-title" id="formTitle">Add Products</h2>
+      <div class="form-group"><label>Product Title</label><input type="text" placeholder="Product Title"></div>
+      <div class="form-group"><label>Product Description</label><textarea placeholder="Product Description"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label><select><option>Fiction</option><option>Non-Fiction</option></select></div>
+        <div class="form-group"><label>Parent Category</label><select><option>Fiction</option><option>Non-Fiction</option></select></div>
+      </div>
+      <div class="form-group"><label>Add/Action</label><select><option>Action</option></select></div>
+      <div class="form-group"><label>Visible</label>
+        <div class="radio-group"><label><input type="radio" name="visible" checked> Publish</label><label><input type="radio" name="visible"> Hidden</label></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date"></div>
+        <div class="form-group"><label>Time</label><input type="time"></div>
+      </div>
+      <button class="add-btn" style="width:100%;margin-top:8px;padding:7px 20px;font-size:12px" onclick="openVariantFromAdd()"><i class="fas fa-plus"></i> ADD VARIANT</button>
+      <button class="save-btn" onclick="closeForm()">ADD PRODUCT</button>
+    </div>
+  </div>
+
+  <div class="modal" id="variantModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeVariant()">×</button>
+      <h2 class="modal-title">ADD VARIATION</h2>
+      <div class="form-group"><label>Language</label><select><option>Telugu</option><option>English</option></select></div>
+      <div class="form-row">
+        <div class="form-group"><label>Thumbnail</label>
+          <div class="thumb-upload" onclick="document.getElementById('thumbInput').click()"><i class="fas fa-image"></i><div>Add Thumbnail</div></div>
+          <input type="file" id="thumbInput" style="display:none" accept="image/*" onchange="previewThumb(this)">
+        </div>
+        <div class="form-group"><label>All Product Images</label>
+          <div class="img-grid">
+            <div class="img-box" onclick="document.getElementById('img1').click()"><i class="fas fa-plus"></i></div>
+            <div class="img-box" onclick="document.getElementById('img2').click()"><i class="fas fa-plus"></i></div>
+            <div class="img-box" onclick="document.getElementById('img3').click()"><i class="fas fa-plus"></i></div>
+            <div class="img-box" onclick="document.getElementById('img4').click()"><i class="fas fa-plus"></i></div>
+          </div>
+          <input type="file" id="img1" style="display:none" accept="image/*" onchange="previewImg(this,0)">
+          <input type="file" id="img2" style="display:none" accept="image/*" onchange="previewImg(this,1)">
+          <input type="file" id="img3" style="display:none" accept="image/*" onchange="previewImg(this,2)">
+          <input type="file" id="img4" style="display:none" accept="image/*" onchange="previewImg(this,3)">
+        </div>
+      </div>
+      <div class="form-group"><label>Cover Type</label>
+        <div class="checkbox-group"><label><input type="checkbox" name="cover1"> Paper Back</label><label><input type="checkbox" name="cover2"> Hard Cover</label></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Stock</label><input type="number" placeholder="Stock"></div>
+        <div class="form-group"><label>Old Price</label><input type="number" placeholder="Old Price"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>New Price</label><input type="number" placeholder="New Price"></div>
+        <div class="form-group"><label>Status</label><select><option>Published</option><option>Unpublished</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date"></div>
+        <div class="form-group"><label>Time</label><input type="time"></div>
+      </div>
+      <button class="save-btn" onclick="closeVariant()">Save</button>
+    </div>
+  </div>
+
+  <div class="modal profile-modal" id="profileModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeProfile()">×</button>
+      <div class="profile-avatar"><i class="fas fa-user"></i>
+        <div class="camera-icon" onclick="document.getElementById('profInput').click()"><i class="fas fa-camera"></i></div>
+      </div>
+      <input type="file" id="profInput" class="profile-input" accept="image/*">
+      <div class="profile-name">App Admin</div>
+      <div class="profile-email">support@litheaven.com</div>
+      <button class="save-btn" onclick="closeProfile()">UPDATE PROFILE</button>
+    </div>
+  </div>
+
+  <div class="modal delete-modal" id="deleteModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeDelete()">×</button>
+      <div class="delete-icon"><i class="fas fa-trash-alt"></i></div>
+      <div class="delete-title">Delete Product?</div>
+      <div class="delete-message">Are you sure you want to delete this product? This action cannot be undone.</div>
+      <div class="delete-actions">
+        <button class="cancel-btn" onclick="closeDelete()">Cancel</button>
+        <button class="confirm-delete-btn" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+let cp=1,tp=5,dt=null;
+function toggleMenu(id){document.getElementById(id).classList.toggle('show')}
+function openAdd(){document.getElementById('formModal').classList.add('show');document.getElementById('formTitle').textContent='Add Products'}
+function closeForm(){document.getElementById('formModal').classList.remove('show')}
+function editRow(b){document.getElementById('formModal').classList.add('show');document.getElementById('formTitle').textContent='Edit Products'}
+function openVariantFromAdd(){document.getElementById('variantModal').classList.add('show')}
+function closeVariant(){document.getElementById('variantModal').classList.remove('show')}
+function openProfile(){document.getElementById('profileModal').classList.add('show')}
+function closeProfile(){document.getElementById('profileModal').classList.remove('show')}
+function deleteRow(b){dt=b.closest('tr');document.getElementById('deleteModal').classList.add('show')}
+function closeDelete(){document.getElementById('deleteModal').classList.remove('show');dt=null}
+function confirmDelete(){if(dt){dt.remove();closeDelete()}}
+function updatePag(){document.querySelectorAll('.pagination .page-btn').forEach(b=>{b.textContent==cp?b.classList.add('active'):b.classList.remove('active')})}
+function goToPage(p){cp=p;updatePag()}
+function nextPage(){if(cp<tp){cp++;updatePag()}}
+function prevPage(){if(cp>1){cp--;updatePag()}}
+function previewThumb(i){if(i.files&&i.files[0]){let r=new FileReader();r.onload=e=>{let p=i.previousElementSibling;p.innerHTML=`<img src="${e.target.result}" class="img-preview">`};r.readAsDataURL(i.files[0])}}
+function previewImg(i,idx){if(i.files&&i.files[0]){let r=new FileReader();r.onload=e=>{document.querySelectorAll('.img-box')[idx].innerHTML=`<img src="${e.target.result}" class="img-preview">`};r.readAsDataURL(i.files[0])}}
+updatePag();
+  </script>
+</body>
+</html>

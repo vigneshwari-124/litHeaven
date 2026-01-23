@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>LitHeaven - My Profile</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+
+<style>
+:root{--purple:#6f2b67;--light:#8e4a86}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Roboto,Arial;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#6f2b67;overflow-x:hidden;max-width:100vw}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+
+header.navbar-area{background:var(--purple);color:#fff;padding:12px 0}
+.navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff}
+.logo-circle{width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;animation:float 3s ease-in-out infinite;position:relative}
+.book-logo{width:35px;filter:brightness(0)invert(1)}
+.logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+.tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+.brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+.main-nav{display:flex;gap:20px}
+.main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;text-decoration:none}
+.main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+.header-icons{display:flex;gap:16px;align-items:center}
+.icon-btn{color:#fff;font-size:20px;cursor:pointer;transition:all .3s;position:relative}
+.icon-btn:hover{transform:scale(1.2)}
+.icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+.address-card{background:#f5f0f6;border:2px solid #d8b5d8;border-radius:12px;padding:15px;font-size:14px;color:#6f2b67;line-height:1.6}
+
+.search-wrap{display:flex;justify-content:center;padding:30px 15px;background:#fff}
+.search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:12px 24px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 20px rgba(111,43,103,.15);border:1px solid #702767}
+.search-box input{flex:1;border:0;background:0 0;outline:0;color:#702767;font-size:15px}
+.search-box input::placeholder{color:#702767}
+.search-box .btn{background:#702767;border:0;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding:0;transition:all .3s;border:1px solid #702767}
+.search-box .btn:hover{transform:rotate(90deg)scale(1.1)}
+
+.main-container{max-width:1200px;margin:30px auto;padding:0 20px;display:flex;gap:20px}
+.sidebar{width:240px;background:#fff;border:2px solid #6f2b67;border-radius:16px;padding:15px;height:fit-content;position:sticky;top:20px}
+.sidebar-nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:12px 15px;color:#6f2b67;text-decoration:none;font-weight:600;font-size:14px;border-radius:10px;transition:all .3s;border:2px solid transparent}
+.sidebar-link:hover{background:#f5f0f6;border-color:#d8b5d8}
+.sidebar-link.active{background:#6f2b67;color:#fff}
+.sidebar-link i{font-size:16px;width:20px}
+.sidebar{ position: relative;z-index:1;}
+.sidebar-link{pointer-events: auto;}
+
+
+.content{flex:1}
+.profile-card{background:#fff;border:2px solid #6f2b67;border-radius:16px;padding:30px}
+.profile-img-wrapper{width:120px;height:120px;border-radius:50%;border:4px solid #6f2b67;margin:0 auto 20px;overflow:hidden;cursor:pointer;position:relative}
+.profile-img-wrapper img{width:100%;height:100%;object-fit:cover}
+.upload-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(111,43,103,.85);display:flex;align-items:center;justify-content:center;opacity:0;transition:all .3s}
+.profile-img-wrapper:hover .upload-overlay{opacity:1}
+.upload-overlay i{color:#fff;font-size:24px}
+
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-weight:600;color:#6f2b67;margin-bottom:6px;font-size:13px}
+.form-control-profile{width:100%;background:#fff;border:2px solid #d8b5d8;color:#6f2b67;border-radius:50px;padding:10px 18px;font-size:14px;transition:all .3s}
+.form-control-profile:focus{outline:none;border-color:#6f2b67}
+.form-control-profile:disabled{background:#f5f0f6;color:#999}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+.btn-group{display:flex;gap:12px;margin-top:25px;justify-content:center;flex-wrap:wrap}
+.btn{padding:11px 30px;border-radius:50px;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .3s}
+.btn-edit{background:#6f2b67;color:#fff}
+.btn-edit:hover{background:#8e4a86;transform:translateY(-2px)}
+.btn-password{background:#fff;color:#6f2b67;border:2px solid #6f2b67}
+.btn-password:hover{background:#f5f0f6}
+
+
+.modal{display:none;position:fixed; z-index:10000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.6);overflow:auto}
+.modal{pointer-events: none;}
+.body.modal-open {  overflow: hidden;  position: fixed; width: 100%;}
+.modal.show{display:flex !important;pointer-events: auto;}
+#editModal{display:none;position:fixed;z-index:1050;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px}
+#editModal .modal-content{padding:0;width:90%;max-width:420px;border-radius:16px;border:2px solid #6f2b67;display:flex;flex-direction:column}
+#editModal .modal-header{padding:12px 18px;background:#fff;border-bottom:2px solid #f5f0f6;display:flex;justify-content:space-between;align-items:center}
+#editModal .modal-title{font-size:15px;font-weight:700;color:#6f2b67;margin:0}
+#editModal .close{color:#6f2b67;font-size:22px;font-weight:700;cursor:pointer;border:none;background:none;padding:0;line-height:1}
+#editModal .close:hover{color:#8e4a86}
+#editModal .modal-body{padding:18px;overflow:hidden;flex:1}
+#editModal .form-group{margin-bottom:10px}
+#editModal .form-label{display:block;font-weight:600;color:#6f2b67;margin-bottom:4px;font-size:11px}
+#editModal .form-control-profile{width:100%;background:#fff;border:2px solid #d8b5d8;color:#6f2b67;border-radius:50px;padding:7px 14px;font-size:12px;transition:all .3s}
+#editModal .btn-group{display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+#editModal .btn{padding:7px 20px;border-radius:50px;font-weight:600;font-size:12px;border:none;cursor:pointer;transition:all .3s}
+#editModal small{font-size:10px}
+.modal-content{background:#fff;margin:2% auto;padding:0;width:90%;max-width:500px;border-radius:16px;border:2px solid #6f2b67;max-height:none;display:flex;flex-direction:column}
+#passwordModal{display:none;position:fixed;z-index:10000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;}
+#passwordModal .modal-content{background:#fff;padding:0;width:90%;max-width:420px;border-radius:16px;border:2px solid #6f2b67;display:flex;flex-direction:column;max-height:90vh;margin:0;}
+#passwordModal .modal-body{padding:18px;overflow-y:auto;flex:0 0 auto;}
+
+.modal-header{position:sticky;top:0;z-index:2;background:#fff;}
+.modal-title{font-size:18px;font-weight:700;color:#6f2b67;margin:0}
+.close{color:#6f2b67;font-size:26px;font-weight:700;cursor:pointer;border:none;background:none}
+.close:hover{color:#8e4a86}
+.modal-body{padding:22px;overflow:hidden;flex:1}
+.modal-body::-webkit-scrollbar{display:none;}
+
+.crop-container{width:100%;max-height:50vh;overflow:hidden;margin:0}
+.crop-preview{width:100%;display:block}
+
+.disabled-input{background:#f5f0f6!important;color:#999!important;cursor:not-allowed!important;opacity:1!important;}
+.disabled-input:focus{outline:none!important;box-shadow:none!important;border-color:#d8b5d8!important;}
+.disabled-input-email{background:#f5f0f6!important;color:#999!important;cursor:not-allowed!important;opacity:1!important;border:2px solid #d8b5d8!important;}
+.disabled-input-email:focus{outline:none!important;box-shadow:none!important;border-color:#d8b5d8!important;}
+.disabled-input-email:disabled{background:#f5f0f6!important;color:#999!important;}
+
+.logout-btn{width:100%;background:none;border:#6f2b67;text-align:left;display:flex;align-items:center;gap:12px;padding:12px 15px;font-weight:600;font-size:14px;color:#6f2b67;border-radius:10px;transition:all .3s;border-top:1px solid #a75ea7;}
+.logout-btn i{font-size:16px;width:20px;color:#6f2b67;}
+.logout-btn:hover{background:#d8b5d8;transform:translateX(3px);}
+
+.cta-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 22px;border-radius:30px;color:#6f2b67;font-weight:600;font-size:14px;text-decoration:none;transition:.3s;box-shadow:0 6px 16px rgba(111,43,103,.25);}
+.cta-link i{font-size:13px;}
+.cta-link:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(111,43,103,.35);background:linear-gradient(135deg,#8e4a86,#6f2b67);}
+
+
+footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
+.footer-content{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px}
+.footer-section h5{font-size:15px;font-weight:700;margin-bottom:12px}
+.footer-section p,.footer-section a{font-size:13px;color:#d8b5d8;text-decoration:none;display:block;margin-bottom:6px}
+.footer-section a:hover{color:#fff}
+.footer-bottom{text-align:center;margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,.2);font-size:12px}
+
+.swal2-container{
+  z-index:20000 !important;
+}
+@media(max-width:768px){
+  .main-container{flex-direction:column}
+  .sidebar{width:100%;position:static}
+  .sidebar-nav{flex-direction:row;flex-wrap:wrap}
+  .sidebar-nav li{flex:1;min-width:140px}
+  .form-row{grid-template-columns:1fr}
+  .main-nav{display:none}
+  .nav-row{flex-wrap:wrap;gap:10px}
+  .search-wrap{padding:20px 15px}
+  .profile-card{padding:20px}
+  .btn-group{flex-direction:column}
+  .btn{width:100%}
+  .brand .txt{font-size:18px}
+  .logo-circle{width:50px;height:50px}
+  .book-logo{width:28px}
+}
+
+.password-field{position:relative;width:100%;}
+.password-field input{padding-right:45px;}
+.toggle-eye{position:absolute;right:18px;top:50%;transform:translateY(-50%);cursor:pointer;color:#6f2b67;font-size:14px;z-index:5;}
+.toggle-eye:hover{color:#8e4a86;}
+
+@media(max-width:576px){.toggle-eye{right:14px;font-size:13px;}}
+@media(max-width:414px){
+  .sidebar-link{font-size:12px;padding:10px 12px}
+  .sidebar-link i{font-size:14px}
+  .profile-img-wrapper{width:100px;height:100px}
+  .form-control-profile{padding:9px 15px;font-size:13px}
+  .btn{padding:10px 20px;font-size:13px}
+  .modal-content{margin:5% auto;width:95%;max-height:85vh}
+  .navbar-container{padding:0 10px}
+  .logo-text{font-size:6px}
+  .brand .txt{font-size:16px}
+  .logo-circle{width:45px;height:45px}
+  .book-logo{width:25px}
+  .search-wrap{padding:15px 10px}
+}
+</style>
+</head>
+<body>
+
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="nav-row">
+      <a class="brand" href="/">
+        <div class="logo-circle">
+          <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+          <div class="logo-text">LitHeaven</div>
+          <div class="tagline">Your Literary Escape</div>
+        </div>
+        <div class="txt">LitHeaven</div>
+      </a>
+      <nav class="main-nav d-none d-lg-flex">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/shop">Shop</a>
+        <a class="nav-link" href="/about">About</a>
+        <a class="nav-link" href="/contact">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <div class="icon-btn"><i class="fa-regular fa-heart"></i></div>
+        <div class="icon-btn">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <div class="icon-badge">2</div>
+        </div>
+       <a href="/profile" class="icon-btn">
+      <i class="fa-regular fa-user"></i>
+       </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <input type="text" placeholder="What are you looking for?">
+    <button class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+  </div>
+</div>
+
+<div class="main-container">
+  <aside class="sidebar">
+    <ul class="sidebar-nav">
+      <li><a href="#" class="sidebar-link active"><i class="fa-solid fa-box"></i><span>My Orders</span></a></li>
+      <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+      <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
+      <li><a href="#" class="sidebar-link"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
+      <li><a href="#" class="sidebar-link"><i class="fa-solid fa-star"></i><span>My Reviews</span></a></li>
+      <li><a href="#" class="sidebar-link"><i class="fa-solid fa-ticket"></i><span>My Coupons</span></a></li>
+      <li class="mt-2"> <button type="button" id="logoutBtn" class="sidebar-link logout-btn"><i class="fa-solid fa-right-from-bracket"></i>
+      <span>Logout</span></button></li>
+    </ul>
+  </aside>
+
+  <div class="content">
+    <div class="profile-card">
+      <div style="text-align:center">
+        <div class="profile-img-wrapper" onclick="document.getElementById('fileInput').click()">
+        <img id="profileImg" src="<%= user.profileImage?.url || '/images/avatar.png' %>" alt="Profile"/>
+        <div class="upload-overlay">
+          <i class="fa-solid fa-camera"></i>
+          <i class="fa-solid fa-trash" onclick="deleteProfileImage(event)" style="margin-left:12px; color:#fff; cursor:pointer;"></i>
+        </div>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="image/*" hidden>
+      </div>
+
+
+      <form>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control-profile" value="<%= user.name %>" disabled>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control-profile"  value="<%= user.email %>" disabled>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-control-profile" value="<%= user.phone %>" disabled>
+          </div>
+        </div>
+        
+        <div class="form-group">
+        <label class="form-label">Referral Code</label>
+        <input type="text" class="form-control-profile disabled-input" value="01623V" disabled>
+        </div>
+
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-edit" onclick="openModal('editModal')">
+            <i class="fa-solid fa-pen"></i> Edit Profile
+          </button>
+          
+          <% if (!isGoogleUser) { %>
+          <button type="button" class="btn btn-password"
+          onclick="handleChangePasswordClick()">
+          <i class="fa-solid fa-lock"></i> Change Password
+          </button>
+          <% } %>
+
+        </div>
+
+  
+<hr style="margin:30px 0;border:1px dashed #d8b5d8">
+
+<div class="address-box">
+  <h6><i class="fa-solid fa-location-dot"></i> Address</h6>
+
+  <% if (!primaryAddress) { %>
+    
+    <div class="address-card" style="text-align:center;color:#8e4a86">
+      <p>No address added yet</p>
+      <a href="/addresses" class="cta-link">
+      <i class="fa-solid fa-plus"></i> Add Address
+      </a>
+    </div>
+  <% } else { %>
+   
+    <div class="address-card">
+      <p><strong><%= primaryAddress.fullName %></strong></p>
+      <p><%= primaryAddress.addressLine1 %></p>
+
+      <% if (primaryAddress.addressLine2) { %>
+        <p><%= primaryAddress.addressLine2 %></p>
+      <% } %>
+
+      <p><%= primaryAddress.city %> – <%= primaryAddress.zip %></p>
+      <p><%= primaryAddress.country %></p>
+    </div>
+  <% } %>
+</div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="cropModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Crop Profile Image</h3>
+      <button class="close" onclick="closeCrop()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="crop-container"><img id="cropImage" class="crop-preview"></div>
+      <div class="btn-group" style="margin-top:20px">
+        <button id="applyBtn" class="btn btn-edit" onclick="applyCrop()"><i class="fa-solid fa-check"></i> Apply</button>
+        <button class="btn btn-password" onclick="closeCrop()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Profile</h3>
+      <button class="close" onclick="closeModal('editModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+     <form  id="editProfileForm" action="/profile/edit" method="POST">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text"  name="name" class="form-control-profile"  value="<%= user.name %>"  required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email"  name="email" id="editEmail" class="form-control-profile disabled-input-email" value="<%= user.email %>"  disabled>
+          <small id="editEmailErr" class="text-danger"></small>
+          <input type="hidden" id="oldEmail" value="john@example.com">
+          <button type="button" class="btn btn-password" style="margin-top:10px" onclick="location.href='/profile/change-email'">
+          <i class="fa-solid fa-envelope"></i> Change Email
+          </button>
+
+          <small id="emailStatus" style="display:block;margin-top:6px;color:#8e4a86;font-weight:600"></small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel"  name="phone"  id="editPhone" class="form-control-profile" value="<%= user.phone %>" >
+          <small id="editPhoneErr" class="text-danger"></small>
+        </div>
+
+        <div class="form-group">
+        <label class="form-label">Referral Code</label>
+        <input type="text" class="form-control-profile disabled-input" value="01623V" disabled>
+        </div>
+
+        <div class="btn-group">
+          <button type="submit" class="btn btn-edit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="passwordModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Change Password</h3>
+      <button class="close" onclick="closeModal('passwordModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="changePassword(event)" >
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <div class="password-field">
+            <input type="password" id="currentPassword" class="form-control-profile" placeholder="Enter current password">
+            <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('currentPassword', this)"></i>
+          </div>
+          <small id="currentPassErr" class="text-danger"></small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <div class="password-field">
+            <input type="password" id="newPassword" class="form-control-profile" placeholder="Enter new password">
+            <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('newPassword', this)"></i>
+          </div>
+          <small id="newPassErr" class="text-danger"></small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <div class="password-field">
+            <input type="password" id="confirmPassword" class="form-control-profile" placeholder="Confirm new password">
+            <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('confirmPassword', this)"></i>
+          </div>
+          <small id="confirmPassErr" class="text-danger"></small>
+        </div>
+        
+        <div class="btn-group">
+          <button type="submit" class="btn btn-edit">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h5>Get In Touch</h5>
+      <p>LitHeaven Company<br>Gandhipuram road<br>Coimbatore - 641018</p>
+      <p>support@litheaven.com</p>
+    </div>
+    <div class="footer-section">
+      <h5>Quick Links</h5>
+      <a href="/">Home</a>
+      <a href="/shop">Shop Books</a>
+      <a href="/about">About Us</a>
+    </div>
+    <div class="footer-section">
+      <h5>LitHeaven</h5>
+      <p>Read, learn, and enjoy stories that inspire every reader.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 LITHEAVEN. All Rights Reserved.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+<script>
+let cropper;
+
+// function closeModal(id){const modal = document.getElementById(id);modal.classList.remove('show');}
+function closeCrop() {
+  if(cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  closeModal('cropModal');
+  document.body.classList.remove('modal-open'); 
+}
+
+
+function openModal(id){
+  const modal = document.getElementById(id);
+  modal.classList.add('show');
+  document.body.classList.add('modal-open'); 
+
+  if(id === 'editModal'){
+    runEditProfileValidation(); 
+  }
+}
+
+function runEditProfileValidation() {
+  
+  if (editPhone.value.length === 0) {
+    editPhoneErr.textContent = "Phone is required";
+  } 
+  else if (editPhone.value.length < 10) {
+    editPhoneErr.textContent = "Phone number must be 10 digits";
+  } 
+  else {
+    editPhoneErr.textContent = "";
+  }
+}
+
+
+
+function togglePassword(inputId, icon) {
+  const input = document.getElementById(inputId);
+  
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    input.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
+}
+
+const editEmail = document.getElementById("editEmail");
+const editPhone = document.getElementById("editPhone");
+
+const editEmailErr = document.getElementById("editEmailErr");
+const editPhoneErr = document.getElementById("editPhoneErr");
+
+
+
+editEmail.addEventListener("input", () => {
+  const emailRegex = /^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+  if (editEmail.value.trim() === "") {
+    editEmailErr.textContent = "Email is required";
+  } else if (!emailRegex.test(editEmail.value)) {
+    editEmailErr.textContent = "Email must be lowercase & valid format";
+  } else {
+    editEmailErr.textContent = "";
+  }
+});
+
+
+editPhone.addEventListener("input", () => {
+  editPhone.value = editPhone.value.replace(/[^0-9]/g, "");
+
+  if (editPhone.value.length > 10) {
+    editPhone.value = editPhone.value.slice(0, 10);
+  }
+
+  if (editPhone.value.length === 0) {
+    editPhoneErr.textContent = "Phone is required";
+  } else if (editPhone.value.length < 10) {
+    editPhoneErr.textContent = "Phone number must be 10 digits";
+  }else {
+    editPhoneErr.textContent = "";
+  }
+});
+
+const currentPassword = document.getElementById("currentPassword");
+const newPassword = document.getElementById("newPassword");
+const confirmPassword = document.getElementById("confirmPassword");
+
+const currentPassErr = document.getElementById("currentPassErr");
+const newPassErr = document.getElementById("newPassErr");
+const confirmPassErr = document.getElementById("confirmPassErr");
+
+const passwordRegex = /^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+
+
+newPassword.addEventListener("input", () => {
+  if (newPassword.value.trim() === "") {
+    newPassErr.textContent = "New password is required";
+  } else if (!passwordRegex.test(newPassword.value)) {
+    newPassErr.textContent = "Min 8 chars, 1 uppercase & 1 symbol required";
+  } else {
+    newPassErr.textContent = "";
+  }
+});
+
+confirmPassword.addEventListener("input", () => {
+  if (confirmPassword.value.trim() === ""){
+    confirmPassErr.textContent = "Confirm password is required";
+  } else if(confirmPassword.value !== newPassword.value) {
+    confirmPassErr.textContent = "Passwords do not match";
+  }else {
+    confirmPassErr.textContent = "";
+  }
+});
+
+function resetChangePasswordForm() {
+  currentPassword.value = "";
+  newPassword.value = "";
+  confirmPassword.value = "";
+
+  currentPassErr.textContent = "";
+  newPassErr.textContent = "";
+  confirmPassErr.textContent = "";
+}
+
+function closeModal(id){
+  const modal = document.getElementById(id);
+  modal.classList.remove('show');
+  document.body.classList.remove('modal-open'); 
+
+  if(id === 'passwordModal'){
+    resetChangePasswordForm();   
+  }
+}
+async function changePassword(e){
+  e.preventDefault();
+  const current=currentPassword.value.trim()
+  const newPass =newPassword.value.trim()
+  const confirm=confirmPassword.value.trim()
+
+  currentPassErr.textContent=""
+  newPassErr.textContent=""
+  confirmPassErr.textContent=""
+
+   let hasError = false;
+
+    if(!current){
+    currentPassErr.textContent = "Current password is required";
+    hasError = true;
+  }
+
+  if(!newPass){
+    newPassErr.textContent = "New password is required";
+    hasError = true;
+  }
+
+   if(!confirm){
+    confirmPassErr.textContent = "Confirm password is required";
+    hasError = true;
+  }
+
+   if(hasError) return;
+
+   if(!passwordRegex.test(newPass)){
+    newPassErr.textContent = "Min 8 chars, 1 uppercase & 1 symbol required";
+    return;
+  }
+
+  if(newPass !== confirm){
+    confirmPassErr.textContent = "Passwords do not match";
+    return;
+  }
+
+  try{
+    const res=await fetch('/profile/change-password',{
+      method:"POST",
+      headers:{
+        "Content-type":"application/json"
+      },
+      body:JSON.stringify({
+        currentPassword:current,
+        newPassword:newPass
+      })
+    })
+    const data=await res.json()
+
+    if(!data.success){
+      Swal.fire({
+        icon:'error',
+        title:'Error',
+        text: data.message || "Current password is incorrect",
+        confirmButtonColor:'#6f2b67'
+      });
+      return;
+    }
+     Swal.fire({
+      icon:'success',
+      title:'Password Changed!',
+      text:'Your password has been updated successfully.',
+      confirmButtonColor:'#6f2b67',
+      timer:1500
+    });
+
+    
+    resetChangePasswordForm();
+    closeModal('passwordModal');
+
+  }catch(err){
+    console.log(err)
+    Swal.fire({
+  icon:"error",
+  title:"Server Error",
+  text:"Something went wrong. Try again later.",
+  confirmButtonColor:"#6f2b67"
+});
+  }
+}
+
+
+let emailChanged = false;
+let isUploading = false 
+
+function applyCrop() {
+  if (!cropper || isUploading) return
+
+  isUploading = true
+
+  const applyBtn = document.getElementById('applyBtn')
+  applyBtn.disabled = true
+  applyBtn.innerText = 'Uploading...'
+
+  cropper.getCroppedCanvas({  width: 300,height: 300 }).toBlob(async (blob) => {
+
+    const formData = new FormData()
+    formData.append('profileImage', blob)
+
+    try {
+      const res = await fetch('/profile/upload-image', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        document.getElementById('profileImg').src = data.imageUrl
+        Swal.fire('Image Updated!', '', 'success')
+        closeCrop()
+      }
+
+    } catch (err) {
+      console.error(err)
+      alert('Upload failed')
+    } finally {
+      isUploading = false
+      applyBtn.disabled = false
+      applyBtn.innerText = 'Apply'
+    }
+  },
+  'image/jpeg',
+  0.7  
+)
+}
+
+
+
+function handleChangePasswordClick(){
+  openModal('passwordModal');
+}
+
+document.getElementById('fileInput').addEventListener('change',(e)=>{
+  const file=e.target.files[0];
+  if(file){
+    const reader=new FileReader();
+    reader.onload=(e)=>{
+      const img=document.getElementById('cropImage');
+      img.src=e.target.result;
+      openModal('cropModal');
+      if(cropper)cropper.destroy();
+      cropper=new Cropper(img,{aspectRatio:1,viewMode:1,autoCropArea:1,dragMode:'move'});
+    };
+    reader.readAsDataURL(file);
+  }
+  e.target.value='';
+});
+
+async function deleteProfileImage(e) {
+    e.stopPropagation();  
+
+    const confirm = await Swal.fire({
+      title: 'Delete profile image?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6f2b67'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch('/profile/delete-image', { method: 'DELETE' });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('profileImg').src = '/images/avatar.png';
+      cropper = null 
+      Swal.fire('Deleted!', '', 'success');
+    }
+  }
+
+document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  Swal.fire({
+    title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html: `
+      <p style="font-size:14px;color:#555;margin-bottom:8px">
+        Are you sure you want to logout? 💜
+      </p>
+      <p style="font-size:13px;color:#888">
+        You can login again anytime.
+      </p>
+    `,
+    imageUrl: "/images/go-out-thro-removebg-preview.png",
+    imageWidth: 130,
+    imageHeight: 130,
+    imageAlt: "Logout illustration",
+
+    showCancelButton: true,
+    confirmButtonText: "🚪 Logout",
+    cancelButtonText: "Stay Here",
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#d6c3d3",
+    reverseButtons: true,
+
+    background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+    backdrop: "rgba(0,0,0,0.6)",
+
+    showClass: {
+      popup: 'animate__animated animate__fadeInUp'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutDown'
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/logout";
+    }
+  });
+});
+
+
+window.onclick=(e)=>{if(e.target.classList.contains('modal')){if(e.target.id==='cropModal')closeCrop();else e.target.classList.remove('show')}}
+</script>
+
+</body>
+</html>

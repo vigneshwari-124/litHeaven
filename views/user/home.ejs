@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box}
+    body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
+    
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideLeft{from{opacity:0;transform:translateX(-50px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes slideRight{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+    
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;background:0 0;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after{width:80%}
+    .main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s}
+    .icon-btn:hover{transform:scale(1.2)rotate(5deg)}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    
+
+    .dropdown-menu { border-radius: 12px; border: none;box-shadow: 0 10px 30px rgba(111, 43, 103, 0.25);padding: 8px;}
+    .dropdown-item {border-radius: 8px;padding: 10px 14px;font-weight: 600;color: #333;transition: all 0.25s ease;position: relative;}
+    .dropdown-item:hover {background: linear-gradient(135deg, #6f2b67, #8e4a86);color: #fff;transform: translateX(5px);}
+    .dropdown-item:focus {background: linear-gradient(135deg, #6f2b67, #8e4a86);color: #fff; outline: none;}
+    .dropdown-item i {color: #6f2b67;transition: color 0.25s ease;}
+    .dropdown-item:hover i,.dropdown-item:focus i {color: #fff;}
+     #profileMenu:hover,#profileMenu:focus {background: rgba(255, 255, 255, 0.15);border-radius: 50%;padding: 6px;}
+
+    .search-wrap{display:flex;justify-content:center;padding:30px 15px;background:#fff;animation:fadeUp 1s;width:100%}
+    .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:12px 24px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 20px rgba(111,43,103,.15);transition:all .3s ;  border:1px solid #702767; }
+    .search-box:hover{box-shadow:0 10px 30px rgba(111,43,103,.25);transform:translateY(-2px)}
+    .search-box input{flex:1;border:0;background:0 0;outline:0;color:var;font-size:15px}
+    .search-box input::placeholder{color:#702767}
+    .search-box .btn{background:#702767;border:0;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:all .3s ; border:1px solid #702767;}
+    .search-box .btn:hover{transform:rotate(90deg)scale(1.1)}
+    
+    .hero{background:url('/images/bookworld.jpeg') center/cover;padding:100px 15px;color:#fff;width:100%;overflow:hidden;position:relative;min-height:500px}
+    /* .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(111,43,103,.7)} */
+    .hero>*{position:relative;z-index:1}
+    .hero .title-small{color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:2px;font-size:12px;animation:slideLeft 1s}
+    .hero h1{color:#fff;font-size:2.8rem;font-weight:800;line-height:1.1;margin-bottom:20px;animation:slideLeft 1.2s}
+    .hero p.lead{color:#f0e5f5;max-width:560px;font-size:1rem;animation:slideLeft 1.4s}
+    .hero .btn-danger{background:#fff;color:var(--purple);border:none;padding:12px 32px;border-radius:50px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.2);transition:all .3s;animation:slideLeft 1.6s}
+    .hero .btn-danger:hover{transform:translateY(-3px)scale(1.05);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    
+    .feature-row{background:linear-gradient(135deg,#fff 0%,#f8f4f9 50%,#f0e5f5 100%);padding:40px 15px;box-shadow:0 4px 20px rgba(111,43,103,.1);width:100%;position:relative;overflow:hidden}
+    .feature-row::before{content:'';position:absolute;width:300px;height:300px;background:rgba(111,43,103,.05);border-radius:50%;top:-150px;left:-150px}
+    .feature-row::after{content:'';position:absolute;width:400px;height:400px;background:rgba(142,74,134,.05);border-radius:50%;bottom:-200px;right:-200px}
+    .feature-item{animation:fadeUp .8s;transition:all .3s;position:relative;z-index:1}
+    .feature-item:hover{transform:translateY(-10px)}
+    .feature-row i{font-size:2rem;color:var(--purple);transition:all .3s}
+    .feature-item:hover i{transform:scale(1.2)rotate(360deg)}
+    .feature-row .fw-600{color:var(--purple);font-weight:700;margin-top:12px}
+    .feature-row small{color:#777}
+    
+    .categories-section{padding:60px 15px;background:linear-gradient(180deg,#fff 0%,#faf8fb 100%);width:100%;overflow:hidden}
+    .categories-section h3{text-align:center;font-size:32px;font-weight:700;margin-bottom:50px;color:var(--purple);position:relative;animation:fadeUp .8s}
+    .categories-section h3::after{content:'';width:80px;height:4px;background:linear-gradient(90deg,var(--purple),var(--light));position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border-radius:2px}
+    .slider-wrapper{position:relative;max-width:1200px;margin:0 auto;overflow:hidden;padding:20px 80px}
+    .slider-track{display:flex;transition:transform .5s ease}
+    .category-item{min-width:200px;margin:0 15px;text-align:center;flex-shrink:0}
+    .category-icon{width:120px;height:120px;background:linear-gradient(135deg,#f8f4f9 0%,#f0e5f5 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 20px rgba(111,43,103,.15);transition:all .4s;border:3px solid #f0e5f5}
+    .category-icon:hover{transform:scale(1.15)rotate(5deg);box-shadow:0 15px 40px rgba(111,43,103,.3);border-color:var(--purple)}
+    .category-icon img{width:60px;height:60px;object-fit:cover;border-radius:50%;transition:all .3s}
+    .category-icon:hover img{transform:scale(1.1)}
+    .category-name{font-weight:600;color:#333;font-size:14px}
+    .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:var(--purple);border:none;width:45px;height:45px;border-radius:50%;box-shadow:0 4px 16px rgba(111,43,103,.3);cursor:pointer;z-index:10;font-size:22px;color:#fff;display:flex;align-items:center;justify-content:center;transition:all .3s}
+    .slider-btn:hover{background:var(--light);transform:translateY(-50%)scale(1.1)}
+    .slider-btn-left{left:20px}
+    .slider-btn-right{right:20px}
+    
+    .bestseller-section{padding:60px 15px;background:linear-gradient(135deg,#faf8fb 0%,#f0e5f5 100%);width:100%;overflow:hidden}
+    .bestseller-title{font-size:32px;font-weight:700;margin-bottom:50px;text-align:center;color:var(--purple);position:relative;animation:fadeUp .8s}
+    .bestseller-title::after{content:'';width:80px;height:4px;background:linear-gradient(90deg,var(--purple),var(--light));position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border-radius:2px}
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;max-width:1200px;margin:0 auto}
+    .product-card{background:#fff;border-radius:20px;padding:20px;text-align:center;box-shadow:0 8px 24px rgba(111,43,103,.12);transition:all .4s;overflow:hidden;border:2px solid #f0e5f5;position:relative}
+    .product-card img{width:100%;height:280px;object-fit:cover;border-radius:16px;transition:all .4s}
+    .product-card .title{font-weight:700;margin-top:16px;font-size:18px;color:#333}
+    .product-card .author{color:var(--muted);font-size:13px}
+    .price-row{margin-top:12px;display:flex;gap:10px;align-items:center;justify-content:center}
+    .old-price{text-decoration:line-through;color:#999;font-size:14px}
+    .new-price{color:var(--purple);font-weight:800;font-size:20px;transition:all .3s}
+    .rating{color:var(--purple);margin-top:10px;font-size:16px}
+    .product-card:hover{transform:translateY(-15px);box-shadow:0 20px 50px rgba(111,43,103,.25);border-color:var(--purple)}
+    .product-card:hover img{transform:scale(1.1)rotate(2deg)}
+    .product-card:hover .new-price{transform:scale(1.1);color:#8e4a86}
+    
+    .card-actions{position:absolute;top:20px;right:20px;display:flex;flex-direction:column;gap:10px;opacity:0;transition:all .3s}
+    .product-card:hover .card-actions{opacity:1}
+    .action-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer;transition:all .3s;color:var(--purple);font-size:16px}
+    .action-btn:hover{transform:scale(1.1);background:var(--purple);color:#fff;animation:droplet .5s}
+    
+    .promo-row{padding:60px 15px;display:flex;gap:30px;flex-wrap:wrap;justify-content:center;max-width:1200px;margin:0 auto;background:#fff;width:100%}
+    .promo{flex:1 1 450px;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(111,43,103,.15);background-size:cover;background-position:center;min-height:400px;display:flex;flex-direction:column;justify-content:flex-end;transition:all .4s;border:2px solid #f0e5f5;position:relative}
+    .promo::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(111,43,103,.8) 100%);transition:all .3s}
+    .promo-content{padding:40px;position:relative;z-index:1;color:#fff}
+    .promo:hover{transform:translateY(-12px)scale(1.02);box-shadow:0 20px 50px rgba(111,43,103,.3);border-color:var(--purple)}
+    .promo:hover::before{background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(111,43,103,.9) 100%)}
+    .promo h4{color:#fff;font-weight:800;font-size:28px;margin-bottom:15px;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+    .promo p{color:#fff;font-size:16px}
+    .promo-btn{background:#fff;color:var(--purple);border:none;padding:12px 28px;border-radius:50px;font-weight:600;margin-top:20px;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.2);animation:droplet 2s infinite}
+    .promo-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+    .promo1{background-image:url('/images/hoo.jpeg')}
+    .promo2{background-image:url('/images/my.jpeg')}
+    
+     .btn-purple{background:#6f2b67;color:#fff;border:none;font-weight:600;border-radius:50px;height:38px;font-size:13px;box-shadow:0 4px 12px rgba(111,43,103,0.25);transition:all 0.3s;animation:droplet 3s infinite;}
+    .btn-purple:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 5px 16px rgba(111,43,103,0.35);}
+    .btn-outline-purple{border:2px solid #6f2b67;color:#6f2b67;background:#fff;border-radius:50px;font-weight:600;height:38px;font-size:13px;transition:all 0.3s;animation:droplet 3s infinite 1s;box-shadow:0 3px 10px rgba(111,43,103,0.12);}
+    .btn-outline-purple:hover{background:#6f2b67;color:#fff;transform:translateY(-2px);box-shadow:0 5px 14px rgba(111,43,103,0.25);}
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+    
+    @media(max-width:992px){.products-grid{grid-template-columns:repeat(2,1fr);gap:20px}.hero h1{font-size:2.2rem}}
+    @media(max-width:768px){.main-nav{display:none}.brand .txt{font-size:18px}.logo-circle{width:50px;height:50px}.book-logo{width:28px}.search-wrap{padding:20px 15px}.search-box{padding:10px 18px;max-width:100%}.hero{padding:60px 15px;min-height:400px}.hero h1{font-size:1.8rem}.slider-wrapper{padding:20px 60px}.category-item{min-width:150px}.category-icon{width:100px;height:100px}.category-icon img{width:50px;height:50px}.slider-btn{width:40px;height:40px;font-size:20px}.slider-btn-left{left:15px}.slider-btn-right{right:15px}.products-grid{grid-template-columns:repeat(2,1fr)}.promo{flex:1 1 100%;min-height:350px}}
+    @media(max-width:576px){.top-offer{font-size:12px;padding:6px}.products-grid{grid-template-columns:1fr;gap:20px}.product-card img{height:240px}.hero{padding:50px 15px;min-height:350px}.hero h1{font-size:1.6rem}.search-box input{font-size:14px}.search-box .btn{width:36px;height:36px;font-size:14px}.header-icons{gap:12px}.icon-btn{font-size:18px}.promo{flex:1 1 100%;min-height:300px}.promo-content{padding:30px}.categories-section h3{font-size:24px}.bestseller-title{font-size:24px}}
+    @media(max-width:390px){.hero h1{font-size:1.4rem}.product-card{padding:15px}.product-card img{height:200px}.brand .txt{font-size:16px}.logo-circle{width:45px;height:45px}.book-logo{width:25px}.slider-btn-left{left:5px}.slider-btn-right{right:5px}.navbar-container{padding:0 10px}.search-wrap{padding:15px 10px}.hero{padding:40px 10px 30px;min-height:300px}.categories-section{padding:40px 10px}.bestseller-section{padding:40px 10px}.promo-row{padding:40px 10px}.promo{min-height:280px}.promo h4{font-size:22px}.promo-content{padding:25px}}
+  </style>
+</head>
+<body>
+  <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+  <header class="navbar-area">
+    <div class="navbar-container">
+      <div class="row align-items-center g-0">
+        <div class="col-6 d-flex align-items-center gap-3">
+          <a class="brand" href="#">
+            <div class="logo-circle">
+              <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+              <div class="logo-text">LitHeaven</div>
+              <div class="tagline">Your Literary Escape</div>
+            </div>
+            <div class="txt">LitHeaven</div>
+          </a>
+          <nav class="main-nav d-none d-lg-flex">
+            <a class="nav-link" href="#">Home</a>
+            <a class="nav-link" href="#">Shop</a>
+            <a class="nav-link" href="#">About</a>
+            <a class="nav-link" href="#">Contact</a>
+          </nav>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          <div class="header-icons">
+            <div class="icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
+            <div class="icon-btn position-relative" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge">2</div>
+            </div>
+
+<%if(!isLoggedIn){%>
+    <a href="/login" class="icon-btn">
+    <i class="fa-regular fa-user"></i>
+    </a>
+<%}else {%>  
+    <div class="dropdown">
+    <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+      <i class="fa-regular fa-user"></i>
+    </div>
+
+    <ul class="dropdown-menu dropdown-menu-end p-2">
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
+          <i class="fa-regular fa-id-badge"></i> Profile
+        </a>
+      </li>
+      <li>
+        <a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </li>
+    </ul>
+    </div>
+<% } %>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <input type="text" style="color: #6f2b67;" placeholder="What are you looking for?">
+      <button class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="container-fluid">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-12 text-center">
+          <div class="title-small">Year end sale</div>
+          <h1>Get 70% Off For All<br>Design Books</h1>
+          <p class="lead mx-auto">Donec sodales sagittis magna. SedMaecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.</p>
+          <button class="btn btn-danger btn-lg mt-3">Shop Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="feature-row">
+    <div class="container-fluid">
+      <div class="row text-center g-3">
+        <div class="col-md-4 py-3 feature-item">
+          <i class="bi bi-send-check"></i>
+          <div class="fw-600">FREE SHIPPING</div>
+          <small>Order over $100</small>
+        </div>
+        <div class="col-md-4 py-3 feature-item">
+          <i class="bi bi-shield-lock"></i>
+          <div class="fw-600">SECURE PAYMENT</div>
+          <small>100% Secure</small>
+        </div>
+        <div class="col-md-4 py-3 feature-item">
+          <i class="bi bi-tag"></i>
+          <div class="fw-600">BEST PRICE</div>
+          <small>Guaranteed Price</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="categories-section">
+    <h3>Popular Categories in Books</h3>
+    <div class="slider-wrapper">
+      <button class="slider-btn slider-btn-left" onclick="move(-1)">‹</button>
+      <div class="slider-track" id="track">
+        <div class="category-item">
+          <div class="category-icon">
+            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=200" alt="Non-fiction">
+          </div>
+          <div class="category-name">Non-fiction</div>
+        </div>
+        <div class="category-item">
+          <div class="category-icon">
+            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=200" alt="Children's">
+          </div>
+          <div class="category-name">Children's</div>
+        </div>
+        <div class="category-item">
+          <div class="category-icon">
+            <img src="https://images.unsplash.com/photo-1529486378-1f72c3d7d257?q=80&w=200" alt="Fiction">
+          </div>
+          <div class="category-name">Fiction</div>
+        </div>
+        <div class="category-item">
+          <div class="category-icon">
+            <img src="https://images.unsplash.com/photo-1496104679561-38b3a6182010?q=80&w=200" alt="Special">
+          </div>
+          <div class="category-name">Special Interest</div>
+        </div>
+        <div class="category-item">
+          <div class="category-icon">
+            <img src="https://images.unsplash.com/photo-1476954207750-5bf8b5f3b5a9?q=80&w=200" alt="Academic">
+          </div>
+          <div class="category-name">Academic / Education</div>
+        </div>
+      </div>
+      <button class="slider-btn slider-btn-right" onclick="move(1)">›</button>
+    </div>
+  </section>
+
+  <section class="bestseller-section">
+    <div class="container-fluid">
+      <div class="bestseller-title">Best Seller</div>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="card-actions">
+            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+          <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800" alt="Book">
+          <div class="title">Cosmic journey</div>
+          <div class="author">Richard Solind</div>
+          <div class="price-row">
+            <div class="old-price">$9.99</div>
+            <div class="new-price">$5.00</div>
+          </div>
+            <button type="submit" class="btn btn-purple w-50">ADD</button>
+        </div>
+        <div class="product-card">
+          <div class="card-actions">
+            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+          <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=800" alt="Book">
+          <div class="title">King of Envy</div>
+          <div class="author">Morgan Tigheus</div>
+          <div class="price-row">
+            <div class="old-price">$12.99</div>
+            <div class="new-price">$6.00</div>
+          </div>
+            <button type="submit" class="btn btn-purple w-50">ADD</button>
+        </div>
+        <div class="product-card">
+          <div class="card-actions">
+            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800" alt="Book">
+          <div class="title">The Trading</div>
+          <div class="author">Tohonn Grisach</div>
+          <div class="price-row">
+            <div class="old-price">$15.00</div>
+            <div class="new-price">$8.00</div>
+          </div>
+          <button type="submit" class="btn btn-purple w-50">ADD</button>
+        </div>
+        <div class="product-card">
+          <div class="card-actions">
+            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+          <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=800" alt="Book">
+          <div class="title">Onme Kours</div>
+          <div class="author">Unknown</div>
+          <div class="price-row">
+            <div class="old-price">$10.99</div>
+            <div class="new-price">$5.50</div>
+          </div>
+            <button type="submit" class="btn btn-purple w-50">ADD</button>
+</div>
+<div class="product-card">
+<div class="card-actions">
+<button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+<button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+</div>
+<img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800" alt="Book">
+<div class="title">Onyx Storm</div>
+<div class="author">Other Carong</div>
+<div class="price-row">
+<div class="old-price">$9.99</div>
+<div class="new-price">$4.99</div>
+</div>
+  <button type="submit" class="btn btn-purple w-50">ADD</button>
+</div>
+<div class="product-card">
+<div class="card-actions">
+<button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+<button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+</div>
+<img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800" alt="Book">
+<div class="title">Psychology of Money</div>
+<div class="author">Morgan Housel</div>
+<div class="price-row">
+<div class="old-price">$14.99</div>
+<div class="new-price">$7.99</div>
+</div>
+  <button type="submit" class="btn btn-purple w-50">ADD</button>
+</div>
+</div>
+</div>
+</section>
+  <section class="promo-row">
+    <div class="promo promo1">
+      <div class="promo-content">
+        <h4>BOOK FESTIVAL</h4>
+        <p>All books are flat <strong>50% OFF</strong></p>
+        <button class="promo-btn">🔥 HOT DEAL</button>
+      </div>
+    </div>
+    <div class="promo promo2">
+      <div class="promo-content">
+        <h4>30% Discount On Books</h4>
+        <p>Learn Language - Special Offers</p>
+        <button class="promo-btn">⏰ LIMITED TIME</button>
+      </div>
+    </div>
+  </section>
+  <footer class="site-footer">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5>Get In Touch</h5>
+          <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+          <p><small>support@litheaven.com</small></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Shop Books</a></li>
+            <li><a href="#">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h5>LitHeaven</h5>
+          <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+        </div>
+      </div>
+      <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    const track = document.getElementById('track');
+    const items = [...track.children];
+    items.forEach(i => track.appendChild(i.cloneNode(true)));
+    
+    let idx = 0, moving = false;
+    
+    function move(dir) {
+      if (moving) return;
+      moving = true;
+      idx += dir;
+      track.style.transform = `translateX(-${idx * 230}px)`;
+      
+      setTimeout(() => {
+        if (idx >= 5) { track.style.transition = 'none'; idx = 0; track.style.transform = 'translateX(0)'; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
+        if (idx < 0) { track.style.transition = 'none'; idx = 4; track.style.transform = `translateX(-${idx * 230}px)`; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
+        moving = false;
+      }, 500);
+    }
+
+    document.addEventListener('click', function(e){
+      const menu = document.querySelector('.profile-dropdown');
+      if(!menu) return;
+      const toggle = document.getElementById('profileMenu');
+      if(toggle && toggle.contains(e.target)) return;
+      const shown = document.querySelector('.dropdown-menu.show');
+      if(shown && !shown.contains(e.target)) {
+        const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
+        if(bsDropdown) bsDropdown.hide();
+      }
+    });
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.product-card, .promo, .feature-item').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+  
+  <script>
+  document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+    e.preventDefault();
+    Swal.fire({
+  title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+  html: `
+    <p style="font-size:14px;color:#555;margin-bottom:8px">
+      Are you sure you want to logout? 💜
+    </p>
+    <p style="font-size:13px;color:#888">
+      You can login again anytime.
+    </p>
+  `,
+  imageUrl: "/images/go-out-thro-removebg-preview.png",
+  imageWidth: 130,
+  imageHeight: 130,
+  imageAlt: "Logout illustration",
+  showCancelButton: true,
+  confirmButtonText: "🚪 Logout",
+  cancelButtonText: "Stay Here",
+  confirmButtonColor: "#6f2b67",
+  cancelButtonColor: "#d6c3d3",
+  reverseButtons: true,
+  background: "#fff",
+  backdrop: `
+    rgbargba(0,0,0,0.6)
+    url("/images/soft-wave.gif")
+    center top
+    no-repeat
+  `,
+   background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+
+  backdrop: "rgba(0,0,0,0.6)",
+  showClass: {
+    popup: 'animate__animated animate__fadeInUp'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOutDown'
+  }
+}).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/logout";
+      }
+    });
+  });
+</script>
+</body>
+</html>

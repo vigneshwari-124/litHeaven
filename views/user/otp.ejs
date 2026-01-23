@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify OTP</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+
+@keyframes fadeIn{to{opacity:1;}}
+@keyframes droplet{0%{transform:scale(1);border-radius:50%;}50%{transform:scale(1.05);border-radius:60% 40% 60% 40%;}100%{transform:scale(1);border-radius:50%;}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+body{background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);background-attachment:fixed;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;color:#6f2b67;padding:20px;position:relative;overflow:hidden;}
+
+body::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='book1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23ff9a9e;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fecfef;stop-opacity:1' /%3E%3C/linearGradient%3E%3ClinearGradient id='book2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23a8edea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fed6e3;stop-opacity:1' /%3E%3C/linearGradient%3E%3ClinearGradient id='book3' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ffecd2;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fcb69f;stop-opacity:1' /%3E%3C/linearGradient%3E%3ClinearGradient id='book4' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a1c4fd;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23c2e9fb;stop-opacity:1' /%3E%3C/linearGradient%3E%3ClinearGradient id='book5' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d299c2;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23fef9d7;stop-opacity:1' /%3E%3C/linearGradient%3E%3ClinearGradient id='book6' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23fddb92;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23d1fdff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cg opacity='0.28'%3E%3Cg transform='translate(40,50) rotate(-15)'%3E%3Cpath d='M0,0 Q20,-8 40,0 L40,50 Q20,42 0,50 Z' fill='url(%23book1)' stroke='%23ff6b9d' stroke-width='1.5'/%3E%3Cpath d='M40,0 Q60,-8 80,0 L80,50 Q60,42 40,50 Z' fill='url(%23book2)' stroke='%23a8d8ea' stroke-width='1.5'/%3E%3Cline x1='40' y1='0' x2='40' y2='50' stroke='%23e91e63' stroke-width='2'/%3E%3Cpath d='M8,12 L32,12 M8,20 L32,20 M8,28 L30,28 M8,36 L32,36' stroke='%23ff6b9d' stroke-width='0.8' stroke-linecap='round' opacity='0.5'/%3E%3Cpath d='M48,12 L72,12 M48,20 L72,20 M48,28 L70,28 M48,36 L72,36' stroke='%23a8d8ea' stroke-width='0.8' stroke-linecap='round' opacity='0.5'/%3E%3C/g%3E%3Cg transform='translate(280,40)'%3E%3Cg%3E%3Crect x='0' y='0' width='80' height='15' rx='2' fill='url(%23book3)' stroke='%23ff9a76' stroke-width='1.5'/%3E%3Cpath d='M5,7 L75,7' stroke='white' stroke-width='1' opacity='0.4'/%3E%3Crect x='3' y='3' width='3' height='9' fill='%23fc8d62' rx='1'/%3E%3C/g%3E%3Cg transform='translate(0,18)'%3E%3Crect x='0' y='0' width='80' height='15' rx='2' fill='url(%23book4)' stroke='%237ec8e3' stroke-width='1.5'/%3E%3Cpath d='M5,7 L75,7' stroke='white' stroke-width='1' opacity='0.4'/%3E%3Crect x='3' y='3' width='3' height='9' fill='%235dade2' rx='1'/%3E%3C/g%3E%3Cg transform='translate(0,36)'%3E%3Crect x='0' y='0' width='80' height='15' rx='2' fill='url(%23book5)' stroke='%23c284b9' stroke-width='1.5'/%3E%3Cpath d='M5,7 L75,7' stroke='white' stroke-width='1' opacity='0.4'/%3E%3Crect x='3' y='3' width='3' height='9' fill='%23a569bd' rx='1'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(50,280)'%3E%3Cg transform='rotate(-5 20 60)'%3E%3Crect x='0' y='0' width='25' height='80' rx='2' fill='url(%23book6)' stroke='%23f8b500' stroke-width='1.5'/%3E%3Cpath d='M12,8 L12,72' stroke='%23f39c12' stroke-width='1.5' opacity='0.5'/%3E%3Crect x='3' y='3' width='19' height='5' fill='white' opacity='0.3' rx='1'/%3E%3C/g%3E%3Cg transform='translate(30,0) rotate(3 20 60)'%3E%3Crect x='0' y='0' width='25' height='85' rx='2' fill='url(%23book1)' stroke='%23ff6b9d' stroke-width='1.5'/%3E%3Cpath d='M12,8 L12,77' stroke='%23e91e63' stroke-width='1.5' opacity='0.5'/%3E%3Crect x='3' y='3' width='19' height='5' fill='white' opacity='0.3' rx='1'/%3E%3C/g%3E%3Cg transform='translate(60,0) rotate(-4 20 60)'%3E%3Crect x='0' y='0' width='25' height='78' rx='2' fill='url(%23book4)' stroke='%237ec8e3' stroke-width='1.5'/%3E%3Cpath d='M12,8 L12,70' stroke='%235dade2' stroke-width='1.5' opacity='0.5'/%3E%3Crect x='3' y='3' width='19' height='5' fill='white' opacity='0.3' rx='1'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(260,270) rotate(12)'%3E%3Cpath d='M0,0 Q25,-10 50,0 L50,60 Q25,50 0,60 Z' fill='url(%23book5)' stroke='%23c284b9' stroke-width='1.5'/%3E%3Cpath d='M50,0 Q75,-10 100,0 L100,60 Q75,50 50,60 Z' fill='url(%23book3)' stroke='%23ff9a76' stroke-width='1.5'/%3E%3Cline x1='50' y1='0' x2='50' y2='60' stroke='%23a569bd' stroke-width='2'/%3E%3Cpath d='M10,15 L40,15 M10,25 L40,25 M10,35 L38,35 M10,45 L40,45' stroke='%23c284b9' stroke-width='0.8' stroke-linecap='round' opacity='0.5'/%3E%3Cpath d='M60,15 L90,15 M60,25 L90,25 M60,35 L88,35 M60,45 L90,45' stroke='%23ff9a76' stroke-width='0.8' stroke-linecap='round' opacity='0.5'/%3E%3C/g%3E%3Cg transform='translate(180,150) rotate(-8)'%3E%3Crect x='0' y='0' width='60' height='45' rx='3' fill='url(%23book2)' stroke='%23a8d8ea' stroke-width='1.5'/%3E%3Crect x='5' y='5' width='50' height='35' rx='2' fill='white' opacity='0.2'/%3E%3Cpath d='M30,5 L30,40' stroke='%237ec8e3' stroke-width='2' opacity='0.6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-size:450px 450px;pointer-events:none;z-index:0;}
+
+.logo-circle{position:relative;width:70px;height:70px;border-radius:50%;border:2px solid #6f2b67;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 15px;animation:float 3s ease-in-out infinite;box-shadow:0 3px 12px rgba(111,43,103,.2);}
+
+.book-logo{width:40px;filter:brightness(0) saturate(100%) invert(21%) sepia(47%) saturate(1789%) hue-rotate(285deg) brightness(85%) contrast(92%);}
+
+.logo-text{position:absolute;bottom:5px;font-size:8px;font-weight:800;color:#6f2b67;letter-spacing:.6px;}
+
+.tagline{position:absolute;bottom:0;font-size:4px;opacity:.8;color:#6f2b67;letter-spacing:.4px;}
+
+.container-box{max-width:650px;width:100%;border:2px solid #6f2b67;border-radius:15px;padding:25px 20px;box-shadow:0 8px 30px rgba(111,43,103,.18);background:#fff;position:relative;z-index:1;overflow:hidden;}
+
+.title{font-size:22px;font-weight:600;text-align:center;margin-bottom:10px;color:#6f2b67;}
+.title span{opacity:0;animation:fadeIn .4s forwards;}
+
+.sub{text-align:center;color:#8e4a86;margin-bottom:20px;font-size:14px;}
+
+.otp-wrapper{display:flex;justify-content:center;gap:10px;margin-bottom:15px;width:100%;max-width:100%;box-sizing:border-box;}
+
+.otp-input{width:calc(16.666% - 8px);min-width:40px;max-width:50px;height:50px;font-size:20px;border:2px solid #d8b5d8;border-radius:6px;background:#fff;color:#6f2b67;text-align:center;transition:.3s;box-sizing:border-box;}
+
+.otp-input:focus{box-shadow:0 0 0 .2rem rgba(111,43,103,.25);border-color:#6f2b67;outline:none;}
+
+.timer{text-align:center;font-size:14px;margin-bottom:10px;color:#8e4a86;}
+
+.btn-purple{background:#6f2b67;color:#fff;border:none;font-weight:600;border-radius:50px;height:45px;font-size:14px;box-shadow:0 4px 12px rgba(111,43,103,.25);transition:.3s;animation:droplet 3s infinite;}
+
+.btn-purple:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 5px 16px rgba(111,43,103,.35);}
+
+.btn-purple:disabled{background:#d8b5d8;color:#fff;cursor:not-allowed;}
+
+.resend-btn{display:block;margin:10px auto 0;background:none;border:none;color:#6f2b67;font-size:13px;cursor:pointer;font-weight:600;}
+
+.resend-btn:disabled{color:#b89eb8;cursor:not-allowed;}
+
+.resend-btn:hover:not(:disabled){color:#8e4a86;}
+
+.back-link{text-align:center;margin-top:15px;}
+.back-link a{color:#6f2b67;text-decoration:none;font-weight:600;border-bottom:2px solid transparent;transition:.3s;}
+.back-link a:hover{border-bottom:2px solid #6f2b67;}
+
+.right-img{display:flex;align-items:center;justify-content:center;}
+.right-img img{width:220px;max-width:100%;}
+
+#maskedEmail{text-align:center;font-size:12px;color:#8e4a86;margin-bottom:10px;}
+
+@media(max-width:991px){.right-img img{width:180px;}}
+
+@media(max-width:768px){
+  body{padding:15px;}
+  .container-box{padding:20px 15px;max-width:500px;}
+  .right-img{display:none;}
+  .otp-input{width:calc(16.666% - 6px);min-width:38px;max-width:45px;height:48px;font-size:18px;}
+  .otp-wrapper{gap:8px;}
+}
+
+@media(max-width:576px){
+  body{padding:10px;}
+  .container-box{padding:20px 15px;}
+  .logo-circle{width:60px;height:60px;}
+  .book-logo{width:35px;}
+  .logo-text{font-size:7px;}
+  .tagline{font-size:3.5px;}
+  .title{font-size:20px;}
+  .sub{font-size:13px;margin-bottom:15px;}
+  .otp-wrapper{gap:6px;}
+  .otp-input{width:calc(16.666% - 5px);min-width:36px;max-width:42px;height:46px;font-size:17px;}
+  .timer{font-size:13px;}
+  .btn-purple{height:42px;font-size:13px;}
+  .resend-btn{font-size:12px;}
+  #maskedEmail{font-size:11px;}
+}
+
+@media(max-width:400px){
+  .container-box{padding:18px 12px;}
+  .logo-circle{width:55px;height:55px;}
+  .book-logo{width:32px;}
+  .title{font-size:18px;}
+  .sub{font-size:12px;}
+  .otp-wrapper{gap:5px;}
+  .otp-input{width:calc(16.666% - 4px);min-width:34px;max-width:38px;height:44px;font-size:16px;}
+  .btn-purple{height:40px;font-size:12px;}
+}
+
+@media(max-width:360px){
+  .container-box{padding:15px 10px;}
+  .otp-wrapper{gap:4px;}
+  .otp-input{width:calc(16.666% - 3px);min-width:32px;max-width:35px;height:42px;font-size:15px;}
+  .title{font-size:17px;}
+  .sub{font-size:11px;}
+}
+
+@media(max-width:320px){
+  .otp-wrapper{gap:3px;}
+  .otp-input{width:calc(16.666% - 2.5px);min-width:30px;max-width:32px;height:40px;font-size:14px;}
+  .title{font-size:16px;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container-box row align-items-center">
+
+<!-- LEFT -->
+<div class="col-md-6">
+
+  <div class="logo-circle">
+    <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo">
+    <div class="logo-text">LitHeaven</div>
+    <div class="tagline">CHOOSE YOUR BOOKS</div>
+  </div>
+
+  <div class="title" id="animatedTitle"></div>
+  <div class="sub">Enter the 6-digit code sent to your email</div>
+
+  <form id="sentOtp">
+    <p id="maskedEmail"></p>
+    
+    <div class="otp-wrapper">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+      <input type="text" maxlength="1" class="otp-input" name="otp[]" inputmode="numeric">
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer">
+      Resend OTP in <span id="timer"></span>
+    </div>
+
+    <button type="submit" id="verifyBtn" class="btn btn-purple w-100 py-2">
+      VERIFY OTP
+    </button>
+
+    <!-- RESEND BUTTON -->
+    <button type="button" id="resendBtn" class="resend-btn" disabled>
+      Resend OTP
+    </button>
+
+    <p id="msg"></p>
+
+    
+  </form>
+
+</div>
+
+
+<div class="col-md-6 right-img">
+  <img src="/images/otp-removebg-preview.png">
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+  
+</script>
+<script>
+
+ 
+
+// ===== PREVENT BACK BUTTON =====
+(function() {
+  
+  window.onpageshow = function(event) {
+    if (event.persisted) {
+      window.location.reload();
+    }
+  };
+
+  history.replaceState(null, null, location.href);
+  
+  window.addEventListener('popstate', function(event) {
+    history.pushState(null, null, location.href);
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+      e.preventDefault();
+    }
+  });
+})();
+
+// window.addEventListener("beforeunload", function () {
+//   if (!otpVerified) {
+//     navigator.sendBeacon("/clear-otp-session");
+//   }
+// // });
+
+let otpVerified = false;
+
+const sentOpt=document.getElementById('sentOtp')
+const otpInputs = document.querySelectorAll('.otp-input');
+const verifyBtn = document.getElementById("verifyBtn");
+const timerEl = document.getElementById("timer");
+const resendBtn = document.getElementById("resendBtn");
+
+
+const maskedEmail = "<%= email %>".replace(/(.{2}).+(@.+)/, "$1*****$2");
+document.getElementById("maskedEmail").innerText = maskedEmail;
+
+const otpExpiresAt = Number("<%= otpExpiresAt %>");
+
+let timeLeft =Math.max(0,Math.floor((otpExpiresAt-Date.now())/1000)
+) 
+let countdown;
+function updateTimer(){
+  const min=String(Math.floor(timeLeft/60)).padStart(2,"0");
+  const sec=String(timeLeft%60).padStart(2,"0");
+  timerEl.textContent=`${min}:${sec}`;
+
+  if(timeLeft<=0){
+    clearInterval(countdown)
+    verifyBtn.disabled=true;
+    resendBtn.disabled=false
+  }
+}
+
+function startTimer(){
+  if (countdown) clearInterval(countdown); 
+  verifyBtn.disabled=timeLeft<=0
+  resendBtn.disabled=timeLeft>0
+
+  updateTimer()
+
+  if(timeLeft>0){
+    countdown=setInterval(()=>{
+      timeLeft--;
+      updateTimer();
+
+    },1000)
+  }
+}
+
+startTimer();
+sentOpt.addEventListener('submit',async(e)=>{
+  e.preventDefault()
+
+  if (verifyBtn.disabled) {
+    Swal.fire({
+      icon: "warning",
+      text: "OTP expired. Please resend OTP",
+      confirmButtonColor:"#6f2b67"
+    });
+    return;
+  }
+  const otp=Array.from(otpInputs).map(i=>i.value).join("")
+    if(otp.length!==6){
+      Swal.fire({
+        icon:"warning",
+        text:"Please enter 6-digit OTP",
+        confirmButtonColor:"#6f2b67"
+      })
+      return;
+    }
+
+  try{
+    
+    const res=await fetch('/otp',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({otp})
+
+    })
+    const data=await res.json();
+    if(!data.success){
+      Swal.fire({
+        icon:"error",
+        text:data.message,
+        confirmButtonColor:"#6f2b67"
+      })
+      
+      return
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Success",
+      text: data.message,
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      otpVerified = true; 
+      window.location.replace(data.redirect)
+    });
+
+  }catch(err){
+    Swal.fire({
+      icon: "error",
+      text: "Server error. Try again",
+      confirmButtonColor:"#6f2b67"
+    });
+
+  }
+})
+
+
+
+/* TITLE ANIMATION */
+const text="Verify OTP";
+const title=document.getElementById("animatedTitle");
+text.split("").forEach((c,i)=>{
+  const s=document.createElement("span");
+  s.textContent=c===" "?"\u00A0":c;
+  s.style.animationDelay=`${i*0.1}s`;
+  title.appendChild(s);
+});
+
+resendBtn.onclick =async ()=>{
+ 
+    try {
+    const res = await fetch('/otp/resend', { method: "POST" });
+    const data = await res.json();
+   Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: res.ok ? "success" : "error",
+      title: data.message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+
+  if(res.ok){
+    otpInputs.forEach(input => input.value = "");
+     timeLeft=Math.floor((data.otpExpiresAt-Date.now())/1000)
+     verifyBtn.disabled = false;
+     resendBtn.disabled = true;
+     startTimer();
+  }
+     
+  } catch (err) {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: "error",
+      title: "Something went wrong",
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
+  
+};
+
+
+  otpInputs.forEach((input, i) => {
+    input.addEventListener('focus', () => {
+    for (let j = 0; j < i; j++) {
+      if (!otpInputs[j].value) {
+        otpInputs[j].focus();
+        return;
+      }
+    }
+  });
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/\D/g, '').slice(0, 1);
+    if (input.value && otpInputs[i + 1]) {
+      otpInputs[i + 1].focus();
+    }
+   });
+
+   input.addEventListener('keydown', (e) => {
+    if (e.key === "Backspace") {
+      if (input.value) {
+        input.value = "";
+      } else if (otpInputs[i - 1]) {
+        otpInputs[i - 1].focus();
+        otpInputs[i - 1].value = "";
+      }
+    }
+  });
+
+   });
+
+otpInputs[0].addEventListener('paste', (e) => {
+  e.preventDefault();
+  const paste = e.clipboardData.getData('text').replace(/\D/g,'').slice(0, otpInputs.length);
+
+  let firstEmpty = 0;
+  while (firstEmpty < otpInputs.length && otpInputs[firstEmpty].value) {
+    firstEmpty++;
+  }
+  paste.split('').forEach((char, i) => {
+    if (otpInputs[i]) otpInputs[i].value = char;
+  });
+   const next = firstEmpty + paste.length;
+  if (otpInputs[next]) otpInputs[next].focus();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,745 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+    
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
+    
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:14px;}
+    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
+    
+    .filter-row{display:flex;gap:15px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+    .filter-select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:8px;padding:8px 15px;color:#6f2b67;font-size:13px;outline:none;cursor:pointer;}
+    
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
+    .table-search{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:20px;padding:8px 15px;width:100%;max-width:300px;outline:none;color:#6f2b67;font-size:13px;}
+    .table-search::placeholder{color:rgba(111,43,103,0.5);}
+
+    .table-search-wrapper{display:flex;align-items:center;gap:8px;background:rgba(111,43,103,.1);border:1px solid #6f2b67;border-radius:20px;padding:6px 14px;}
+    .table-search-wrapper i{color:#6f2b67;font-size:14px;}
+    .table-search{border:none;outline:none;background:transparent;width:220px;font-size:13px;color:#6f2b67;}
+
+    .table-wrapper{height:480px; overflow-y:auto; overflow-x:auto; margin-bottom: 20px;  scroll-behavior: smooth;}
+    .customers-table{width:100%;border-collapse:collapse;min-width:900px;table-layout: fixed; }
+    .customers-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
+    .customers-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .customers-table tr:hover{background:rgba(111,43,103,0.05);}
+    .customers-table td,
+    .customers-table th{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+    .status-badge{padding:6px 12px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;min-width:80px;text-align:center;}
+    .status-active{background:rgba(220,53,69,0.2);color:#dc3545;}
+    .status-block{background:rgba(40,167,69,0.2);color:#28a745;}
+    
+    .toggle-switch{position:relative;width:50px;height:24px;background:#28a745;border-radius:15px;cursor:pointer;transition:0.3s; min-width:50px;}
+    .toggle-switch.active{background:#dc3545;}
+    .toggle-slider{position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;}
+    .toggle-switch.active .toggle-slider{left:28px;}
+    
+    .icon-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:18px;transition:0.3s;}
+    .icon-btn:hover{color:#5a2252;transform:scale(1.15);}
+    
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
+    
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+    
+    /* Modal Styles */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+    .modal.show{display:flex;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:0;max-width:1000px;width:100%;max-height:90vh;overflow:hidden;position:relative;margin:auto;}
+    
+    .modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+    .modal-header h2{font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .close-modal{background:rgba(255,255,255,0.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
+    
+    .modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px);}
+    .modal-body::-webkit-scrollbar{width:8px;}
+    .modal-body::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:10px;}
+    
+    /* User Profile in Modal */
+    .user-profile-header{background:linear-gradient(135deg,rgba(111,43,103,0.1),rgba(111,43,103,0.05));border:1px solid rgba(111,43,103,0.2);border-radius:12px;padding:20px;margin-bottom:25px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+    .profile-avatar-large{width:80px;height:80px;border-radius:50%;background:#6f2b67;color:#fff;display:flex;align-items:center;justify-content:center;font-size:35px;border:3px solid #fff;box-shadow:0 4px 15px rgba(111,43,103,0.3);}
+    .profile-info-large h3{font-size:22px;color:#6f2b67;margin-bottom:5px;}
+    .profile-meta-large{display:flex;gap:15px;font-size:13px;color:rgba(0,0,0,0.6);flex-wrap:wrap;}
+    .profile-meta-large span{display:flex;align-items:center;gap:5px;}
+    
+    .admin-warning{background:rgba(255,193,7,.15);border:1px solid #ffc107;color:#856404;padding:12px 18px;border-radius:10px;margin-bottom:20px;font-size:14px;font-weight:600;}
+
+    .tabs{display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid rgba(111,43,103,0.2);flex-wrap:wrap;}
+    .tab-btn{background:transparent;border:none;padding:12px 20px;color:#6f2b67;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:0.3s;}
+    .tab-btn:hover{background:rgba(111,43,103,0.05);}
+    .tab-btn.active{border-bottom-color:#6f2b67;color:#5a2252;}
+    
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    
+    /* Info Cards */
+    .info-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-card{background:rgba(111,43,103,0.05);border:1px solid rgba(111,43,103,0.2);border-radius:12px;padding:20px;}
+    .card-title{font-size:16px;font-weight:700;color:#6f2b67;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid rgba(111,43,103,0.2);}
+    .info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(111,43,103,0.1);}
+    .info-label{font-size:13px;color:rgba(0,0,0,0.6);font-weight:600;}
+    .info-value{font-size:13px;color:#333;font-weight:500;}
+    
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;}
+      .search-box{max-width:100%;}
+      .customers-table{min-width:750px;}
+      .info-cards-grid{grid-template-columns:1fr;}
+      .modal-body{padding:15px;}
+      .user-profile-header{flex-direction:column;text-align:center;}
+    }
+    
+    @media(max-width:480px){
+      .main-content{padding:10px;}
+      .user-info div:first-child{display:none;}
+      .customers-table{min-width:650px;}
+      .customers-table th,.customers-table td{padding:8px 5px;font-size:11px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    
+    <a href="/admin/dashboard" class="menu-item">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="#">Category</a>
+      <a href="#">Sub-Category</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="#">Category Offers</a>
+      <a href="#">Sub-Category Offers</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="#" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="#">App Settings</a>
+      <a href="#">User Settings</a>
+    </div>
+    
+    <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <div class="user-info">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <div class="page-header">
+      <h1 class="page-title">Customers</h1>
+    </div>
+    
+   
+    <div class="filter-row">
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="active">Block</option>
+        <option value="blocked">Unblock</option>
+      </select>
+      <select class="filter-select" id="limitSelect">
+        <option value="7">Show 7 entries</option>
+        <option value="15">Show 15 entries</option>
+        <option value="25">Show 25 entries</option>
+      </select>
+    </div>
+    
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Customer List</div>
+        <div class="table-search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" class="table-search" placeholder="Search customers..." id="searchInput" />
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="customers-table">
+          <thead>
+            <tr>
+              <th>S.NO</th>
+              <th>CUSTOMER</th>
+              <th>EMAIL</th>
+              <th>PHONE NUMBER</th>
+              <th>REGISTERED</th>
+              <th>STATUS</th>
+              <th>BLOCK/UNBLOCK</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          
+         <tbody></tbody>
+
+      </table>  
+
+    </div>
+
+      <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- USER DETAILS MODAL -->
+  <div class="modal" id="customerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> <span id="modalCustomerName">User Details</span></h2>
+        <button class="close-modal" onclick="closeModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- User Profile Header -->
+        <div class="user-profile-header">
+          <div class="profile-avatar-large">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="profile-info-large">
+            <h3 id="userFullName">Rajesh Kumar</h3>
+            <div class="profile-meta-large">
+              <span><i class="fas fa-envelope"></i> <span id="userEmail">rajesh.kumar@gmail.com</span></span>
+              <span><i class="fas fa-phone"></i> <span id="userPhone">+91 98765 43210</span></span>
+              <span><i class="fas fa-calendar"></i> Joined: <span id="userJoined">Jan 15, 2024</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('info',this)">
+            <i class="fas fa-info-circle"></i> User Info
+          </button>
+          <button class="tab-btn" onclick="switchTab('orders',this)">
+            <i class="fas fa-shopping-cart"></i> Orders
+          </button>
+        </div>
+
+        <!-- TAB 1: User Info -->
+        <div class="tab-content active" id="infoTab">
+          <div class="info-cards-grid">
+            <div class="info-card">
+              <h3 class="card-title">Personal Information</h3>
+              <div class="info-row">
+                <span class="info-label">Full Name:</span>
+                <span class="info-value"></span> 
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span class="info-value"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Joined:</span>
+                <span class="info-value"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="info-value" style="color:#28a745;font-weight:700;"></span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <h3 class="card-title">Shipping Address</h3>
+              <div id="addressBox"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Orders -->
+        <div class="tab-content" id="ordersTab">
+          <div class="info-card" style="margin-top:0;">
+            <h3 class="card-title">Order History</h3>
+            <div style="overflow-x:auto;">
+              <table class="customers-table">
+                <thead>
+                  <tr>
+                    <th>ORDER ID</th>
+                    <th>DATE</th>
+                    <th>ITEMS</th>
+                    <th>STATUS</th>
+                    <th>AMOUNT</th>
+                  </tr>
+                </thead>
+                <div class="tab-content" id="ordersTab">
+                <div class="info-card" style="margin-top:0;">
+                <h3 class="card-title">Order History</h3>
+
+                <div style=" text-align:center; padding:30px 10px;color:#8e4a86;font-size:14px;font-weight:600;">
+                <i class="fas fa-box-open" style="font-size:26px;margin-bottom:10px;"></i>
+                <div>No orders placed yet</div>
+                </div>
+
+                </div>
+                </div>
+                    
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+const searchInput = document.getElementById('searchInput')
+const tbody = document.querySelector('.customers-table tbody')
+const pagination = document.getElementById('pagination')
+const statusFilter = document.getElementById('statusFilter')
+const limitSelect = document.getElementById('limitSelect')
+
+let timer
+let currentPage=1
+let LIMIT=7
+
+async function loadUsers(page=1) {
+    currentPage = page
+  const query=searchInput.value.trim()
+  const status = statusFilter.value
+
+  try {
+      const res = await fetch(`/admin/customer/search?query=${query}&status=${status}&page=${page}&limit=${LIMIT}`)
+      const data = await res.json()
+
+      tbody.innerHTML = ''
+
+      if (!data.users || data.users.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center;">
+               'No users found'
+            </td>
+          </tr>
+        `
+        pagination.innerHTML = '' 
+        return
+      }
+
+      data.users.forEach((user, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${(page-1)* LIMIT +index + 1}</td>
+            <td><strong>${user.name || 'User'}</strong></td>
+            <td>${user.email}</td>
+            <td>${user.phone || '-'}</td>
+            <td>${new Date(user.createdAt).toDateString()}</td>
+            <td>
+              <span class="status-badge ${
+                user.isBlocked ? 'status-block' : 'status-active'
+              }">
+                ${user.isBlocked ? 'UNBLOCK' : 'BLOCK'}
+              </span>
+            </td>
+            <td>
+              <div class="toggle-switch ${
+                user.isBlocked ? '' : 'active'
+              }" onclick="toggleBlock('${user._id}', this)">
+                <div class="toggle-slider"></div>
+              </div>
+            </td>
+            <td>
+              <button class="icon-btn" onclick="viewCustomer('${user._id}')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `
+      })
+
+     
+    renderPagination(data.totalPages, page)
+    
+
+    } catch (err) {
+      console.log(err)
+  }
+}
+
+//////////////////////
+
+searchInput.addEventListener('input',()=>{
+  clearTimeout(timer)
+  timer=setTimeout(()=>{
+    loadUsers(1)
+  },400)
+})
+
+//////////////////////
+
+statusFilter.addEventListener('change', () => 
+loadUsers(1))
+
+/////////////////////
+
+
+limitSelect.addEventListener('change', () => {
+  LIMIT = Number(limitSelect.value.match(/\d+/)[0])
+  loadUsers(1)
+})
+
+/////////////////////
+
+function renderPagination(totalPages,page){
+
+  pagination.innerHTML=''
+
+  const MAX_VISIBLE=5
+  let start = Math.max(1, page - Math.floor(MAX_VISIBLE / 2))
+  let end = start + MAX_VISIBLE - 1
+
+  
+  if (end > totalPages) {
+    end = totalPages
+    start = Math.max(1, end - MAX_VISIBLE + 1)
+  }
+
+  
+pagination.innerHTML += `
+<button class="page-btn"  ${page === 1 ? 'disabled' : ''} 
+onclick="loadUsers(${page - 1})">‹</button>
+`
+  
+  for(let i=start; i<=end; i++){
+    pagination.innerHTML+=`
+      <button class="page-btn ${i === page ? 'active' : ''}"
+      onclick="loadUsers(${i})">${i}</button>
+    `
+  }
+
+ 
+    pagination.innerHTML+=`
+      <button class="page-btn"  ${page === totalPages ? 'disabled' : ''} 
+      onclick="loadUsers(${page + 1})">›</button>
+    `
+  
+}
+
+
+////////////////////////////////////////////////////////////
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadUsers(1)
+})
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function toggleMenu(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+async function viewCustomer(userId){
+  console.log('Clicked ID:', userId)
+  try{
+    const res=await fetch(`/admin/customers/${userId}`)
+    const data=await res.json()
+
+    console.log(data)    
+    if(!data.success){
+      alert("User not found")
+      return
+    }
+
+    const user = data.user
+ document.getElementById('customerModal').classList.add('show')
+
+    document.getElementById('modalCustomerName').innerText = user.name || 'User'
+    document.getElementById('userFullName').innerText = user.name || '-'
+    document.getElementById('userEmail').innerText = user.email || '-'
+    document.getElementById('userPhone').innerText = user.phone || '-'
+    document.getElementById('userJoined').innerText =
+    new Date(user.createdAt).toDateString()
+    const infoRows = document.querySelectorAll('#infoTab .info-card:first-child .info-row')
+
+    infoRows[0].querySelector('.info-value').innerText = user.name || '-'  
+    infoRows[1].querySelector('.info-value').innerText = user.email || '-'
+    infoRows[2].querySelector('.info-value').innerText = user.phone || '-'  
+    infoRows[3].querySelector('.info-value').innerText = new Date(user.createdAt).toDateString()  
+    infoRows[4].querySelector('.info-value').innerText = user.isBlocked ? 'Blocked' : 'Active' 
+    infoRows[4].querySelector('.info-value').style.color = user.isBlocked ? '#dc3545' : '#28a745' 
+
+    if(!data.hasAddress){
+    document.getElementById('addressBox').innerHTML = `
+      <p style="color:#8e4a86;font-weight:600;">
+        Address not added yet
+      </p>
+    `
+  }else{
+    const addr = data.address
+    document.getElementById('addressBox').innerHTML = `
+      <div class="info-row">
+        <span class="info-label">City:</span>
+        <span class="info-value">${addr.city}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">State:</span>
+        <span class="info-value">${addr.state}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Pincode:</span>
+        <span class="info-value">${addr.pincode}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Country:</span>
+        <span class="info-value">${addr.country}</span>
+      </div>
+    `
+  }
+
+    
+
+    
+
+  }catch(err){
+    console.log(err)
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function closeModal() {
+  document.getElementById('customerModal').classList.remove('show');
+}
+
+function switchTab(tabName, el) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'))
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'))
+
+  el.classList.add('active')
+  document.getElementById(tabName + 'Tab').classList.add('active')
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = data.redirect
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+async function toggleBlock(userId, el) {
+  try {
+    const res = await fetch(`/admin/users/${userId}/block`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Session Expired',
+          text: 'Please login again',
+          confirmButtonColor: '#6f2b67'
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+        return
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Action failed',
+        confirmButtonColor: '#6f2b67'
+      })
+      return
+    }
+
+
+
+    const data = await res.json()
+
+    const badge = el.closest('tr').querySelector('.status-badge')
+
+    if (data.isBlocked) {
+      badge.textContent = 'UNBLOCK'
+      badge.className = 'status-badge status-block'
+      el.classList.remove('active')
+    } else {
+      badge.textContent = 'BLOCK'
+      badge.className = 'status-badge status-active'
+      el.classList.add('active')
+    }
+
+  } catch (err) {
+    console.log(err)
+    Swal.fire({
+      icon: 'error',
+      title: 'Something went wrong',
+      text: 'Please try again',
+      confirmButtonColor: '#6f2b67'
+    })
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+document.getElementById('customerModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  </script>
+
+</body>
+</html>

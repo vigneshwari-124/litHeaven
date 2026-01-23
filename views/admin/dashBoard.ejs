@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;max-width:100vw;}
+    
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+    
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);overflow-x:hidden;}
+    
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:14px;}
+    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    
+    .page-title{font-size:28px;font-weight:700;margin-bottom:25px;}
+    
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:30px;}
+    .stat-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px;transition:0.3s;}
+    .stat-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(111,43,103,0.3);}
+    .stat-icon{width:40px;height:40px;border-radius:10px;background:rgba(111,43,103,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;color:#5a2252;margin-bottom:10px;}
+    .stat-label{font-size:12px;color:rgba(111,43,103,0.7);margin-bottom:5px;}
+    .stat-value{font-size:24px;font-weight:800;color:#5a2252;}
+    .stat-subtitle{font-size:10px;color:rgba(111,43,103,0.6);margin-top:5px;}
+    
+    .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:30px;}
+    .chart-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+    .chart-title{font-size:18px;font-weight:700;}
+    .chart-filter{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:6px;padding:5px 15px;color:#6f2b67;font-size:12px;cursor:pointer;position:relative;}
+    .dropdown-menu{display:none;position:absolute;top:100%;right:0;background:#fff;border:1px solid #6f2b67;border-radius:6px;margin-top:5px;z-index:100;min-width:150px;}
+    .dropdown-menu.show{display:block;}
+    .dropdown-item{padding:8px 15px;color:#6f2b67;font-size:12px;cursor:pointer;transition:0.2s;}
+    .dropdown-item:hover{background:rgba(111,43,103,0.1);color:#5a2252;}
+    .chart-placeholder{height:300px;background:rgba(111,43,103,0.05);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(111,43,103,0.3);font-size:14px;}
+    
+    .donut-chart{width:200px;height:200px;margin:20px auto;}
+    .legend-item{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;}
+    .legend-dot{width:12px;height:12px;border-radius:50%;margin-right:8px;}
+    
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-wrapper{overflow-x:auto;max-height:400px;overflow-y:auto;margin:15px 0;}
+    .table-wrapper::-webkit-scrollbar{height:8px;width:8px;}
+    .table-wrapper::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:4px;}
+    .orders-table{width:100%;border-collapse:collapse;min-width:700px;}
+    .orders-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#5a2252;border-bottom:2px solid #6f2b67;white-space:nowrap;}
+    .orders-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .orders-table tr:hover{background:rgba(111,43,103,0.05);}
+    
+    .status-badge{padding:6px 0;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;width:90px;text-align:center;}
+    .status-pending{background:rgba(255,193,7,0.2);color:#ffc107;}
+    .status-shipped{background:rgba(0,123,255,0.2);color:#007bff;}
+    .status-processing{background:rgba(108,117,125,0.2);color:#6c757d;}
+    .status-cancel{background:rgba(220,53,69,0.2);color:#dc3545;}
+    
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.3s;}
+    .page-btn:hover:not(.active),.page-btn.active{background:#6f2b67;color:#fff;}
+    
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+    
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;}
+    .modal.show{display:flex;}
+    
+    .profile-modal .modal-content{max-width:400px;text-align:center;background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:35px;position:relative;}
+    .profile-avatar{width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,0.1);margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;}
+    .profile-avatar i{font-size:50px;color:#6f2b67;}
+    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:#6f2b67;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;}
+    .camera-icon i{font-size:16px;color:#fff;}
+    .profile-input{display:none;}
+    .profile-name{font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px;}
+    .profile-email{font-size:14px;color:rgba(111,43,103,0.7);margin-bottom:20px;}
+    .save-btn{background:#6f2b67;color:#fff;border:none;padding:12px;border-radius:20px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;}
+    .save-btn:hover{background:#5a2252;}
+    .close-modal{position:absolute;top:12px;right:15px;background:transparent;border:none;font-size:24px;color:#6f2b67;cursor:pointer;}
+    
+    @media(max-width:992px){
+      .charts-row{grid-template-columns:1fr;}
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+    }
+    
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .stats-grid{grid-template-columns:1fr;}
+      .top-bar{flex-direction:column;}
+      .search-box{max-width:100%;}
+      .table-wrapper{max-height:350px;}
+    }
+    
+    @media(max-width:480px){
+      .main-content{padding:10px;}
+      .user-info div:first-child{display:none;}
+      .logo-circle{width:100px;height:100px;}
+      .book-logo{font-size:28px;}
+      .logo-text{font-size:12px;}
+      .table-wrapper{max-height:300px;}
+      .orders-table{min-width:550px;}
+      .orders-table th,.orders-table td{font-size:11px;padding:8px;}
+    }
+    
+    @media(min-width:320px) and (max-width:420px){
+      .main-content{padding:8px;}
+      .table-card{padding:15px;}
+      .table-wrapper{max-height:280px;}
+      .orders-table{min-width:500px;}
+      .orders-table th,.orders-table td{font-size:10px;padding:6px 4px;}
+      .status-badge{font-size:9px;padding:4px 0;width:75px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    
+    <a href="/admin/dashboard" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="#">Category Offers</a>
+      <a href="#">Sub-Category Offers</a>
+    </div>
+    
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="/admin/customer" class="menu-item">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
+    </a>
+    <a href="#" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="#">App Settings</a>
+      <a href="#">User Settings</a>
+    </div>
+    
+    <button  id="adminLogoutBtn"  class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <div class="user-info" onclick="openProfile()">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <h1 class="page-title">Dashboard</h1>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value">690</div>
+        <div class="stat-subtitle">Completed + Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-label">Total User</div>
+        <div class="stat-value">5,000</div>
+        <div class="stat-subtitle">Total Customer Count</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-label">Total Earning</div>
+        <div class="stat-value">10,000</div>
+        <div class="stat-subtitle">Increase last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+        <div class="stat-label">Total Sales</div>
+        <div class="stat-value">4.8k</div>
+        <div class="stat-subtitle">Revenue increase this month</div>
+      </div>
+    </div>
+    
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Weekly Sales</div>
+            <div style="font-size:12px;color:rgba(111,43,103,0.6);margin-top:5px;">
+              Total Earning: <strong style="color:#5a2252;">41,512k</strong>
+            </div>
+          </div>
+          <div class="chart-filter" onclick="toggleDropdown('weeklyFilter')">
+            <i class="fas fa-chart-bar"></i> <span id="weeklyText">Today</span> <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+            <div class="dropdown-menu" id="weeklyFilter">
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Today')">Today</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Yesterday')">Yesterday</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last 7 Days')">Last 7 Days</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last 30 Days')">Last 30 Days</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','This Month')">This Month</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last Month')">Last Month</div>
+              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last Year')">Last Year</div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-placeholder">
+          <div style="text-align:center;">
+            <i class="fas fa-chart-line" style="font-size:48px;margin-bottom:15px;"></i>
+            <div>Weekly Sales Chart</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Orders Status</div>
+        </div>
+        <div class="donut-chart">
+          <svg viewBox="0 0 200 200" style="transform:rotate(-90deg);">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(111,43,103,0.1)" stroke-width="30"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#6f2b67" stroke-width="30" stroke-dasharray="157 503"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#e74c3c" stroke-width="30" stroke-dasharray="50 610" stroke-dashoffset="-157"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#5a2252" stroke-width="30" stroke-dasharray="80 580" stroke-dashoffset="-207"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#2ecc71" stroke-width="30" stroke-dasharray="216 444" stroke-dashoffset="-287"/>
+          </svg>
+        </div>
+        <div>
+          <div class="legend-item">
+            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#6f2b67;"></div>Shipping</div>
+            <strong>32.8k (21%)</strong>
+          </div>
+          <div class="legend-item">
+            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#e74c3c;"></div>Refunds</div>
+            <strong>11 (11%)</strong>
+          </div>
+          <div class="legend-item">
+            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#5a2252;"></div>Order</div>
+            <strong>14.87 (1%)</strong>
+          </div>
+          <div class="legend-item">
+            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#2ecc71;"></div>Income</div>
+            <strong>3,271 (861%)</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="table-card">
+      <div class="chart-header">
+        <div class="chart-title">Recent Order</div>
+        <div class="chart-filter" onclick="toggleDropdown('orderFilter')">
+          <span id="orderText">Today</span> <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+          <div class="dropdown-menu" id="orderFilter">
+            <div class="dropdown-item" onclick="selectFilter('orderText','Today')">Today</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','Yesterday')">Yesterday</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','Last 7 Days')">Last 7 Days</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','Last 30 Days')">Last 30 Days</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','This Month')">This Month</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','Last Month')">Last Month</div>
+            <div class="dropdown-item" onclick="selectFilter('orderText','Last Year')">Last Year</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>ORDER ID</th>
+              <th>PRODUCT NAME</th>
+              <th>ITEMS</th>
+              <th>ORDER DATE</th>
+              <th>PRICE</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>#CT0023</td>
+              <td>Books</td>
+              <td>2 Items</td>
+              <td>28 Mar 2025</td>
+              <td>$00.00</td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>#CT0024</td>
+              <td>Books</td>
+              <td>2 Items</td>
+              <td>28 Mar 2025</td>
+              <td>$00.00</td>
+              <td><span class="status-badge status-shipped">Shipped</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>#CT0025</td>
+              <td>Books</td>
+              <td>2 Items</td>
+              <td>28 Mar 2025</td>
+              <td>$00.00</td>
+              <td><span class="status-badge status-shipped">Shipped</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>#CT0026</td>
+              <td>Books</td>
+              <td>2 Items</td>
+              <td>28 Mar 2025</td>
+              <td>$00.00</td>
+              <td><span class="status-badge status-cancel">Cancel</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>#CT0027</td>
+              <td>Books</td>
+              <td>2 Items</td>
+              <td>28 Mar 2025</td>
+              <td>$00.00</td>
+              <td><span class="status-badge status-processing">Processing</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="pagination">
+        <span style="font-size:13px;margin-right:10px;">1-10 of 46</span>
+        <button class="page-btn" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn" onclick="goToPage(1)">1</button>
+        <button class="page-btn" onclick="goToPage(2)">2</button>
+        <button class="page-btn" onclick="goToPage(3)">3</button>
+        <button class="page-btn">...</button>
+        <button class="page-btn" onclick="goToPage(5)">5</button>
+        <button class="page-btn" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal profile-modal" id="profileModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeProfile()">×</button>
+      <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+        <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-camera"></i>
+        </div>
+      </div>
+      <input type="file" id="fileInput" class="profile-input" accept="image/*">
+      <div class="profile-name">App Admin</div>
+      <div class="profile-email">support@litheaven.com</div>
+      <button class="save-btn" onclick="closeProfile()">UPDATE PROFILE</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+
+let currentPage=1;
+function toggleMenu(id){document.getElementById(id).classList.toggle('show');}
+function toggleDropdown(id){event.stopPropagation();document.getElementById(id).classList.toggle('show');}
+function selectFilter(textId,value){document.getElementById(textId).textContent=value;document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));}
+function openProfile(){document.getElementById('profileModal').classList.add('show');}
+function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+function goToPage(page){currentPage=page;document.querySelectorAll('.pagination .page-btn').forEach(btn=>{btn.textContent==page?btn.classList.add('active'):btn.classList.remove('active');});}
+function nextPage(){if(currentPage<5){currentPage++;goToPage(currentPage);}}
+function prevPage(){if(currentPage>1){currentPage--;goToPage(currentPage);}}
+document.addEventListener('click',()=>{document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));});
+goToPage(1);
+
+
+document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
+
+window.onpageshow = function (event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+};
+
+
+</script>
+</body>
+</html>
