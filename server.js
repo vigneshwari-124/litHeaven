@@ -34,12 +34,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-
 app.use('/',userRouter)
 app.use('/admin', adminRouter)
 
-
-
+app.use((req, res) => {
+  res.status(404).render('errors/404')
+})
 
 app.listen(process.env.PORT)
