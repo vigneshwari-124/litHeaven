@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sub-Categories - LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+  
+  
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#6f2b67;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+    
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#8a3a7f;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#8a3a7f;}
+    
+    .error-text{color:#dc3545;font-size:12px;display:block;margin-top:5px;}
+
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#8a3a7f;}
+    
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;margin-bottom:0;}
+    
+    .add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 25px;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(111,43,103,0.4);display:flex;align-items:center;gap:8px;font-size:13px;}
+    .add-btn:hover{background:#8a3a7f;}
+    
+    .filter-bar{display:flex;gap:10px;margin-bottom:15px;align-items:center;font-size:13px;flex-wrap:wrap;}
+    .filter-bar select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;color:#6f2b67;padding:8px 15px;border-radius:8px;outline:none;cursor:pointer;font-size:13px;}
+    
+    .table-container{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:20px;overflow-x:auto;}
+    .table-wrapper{height:480px;overflow-y:auto;overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#8a3a7f;border-bottom:2px solid #6f2b67;}
+    td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);vertical-align:middle;}
+    tr:hover{background:rgba(111,43,103,0.05);}
+    
+    .img-box{width:60px;height:60px;border:2px solid #6f2b67;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(111,43,103,0.05);}
+    .img-box img{width:100%;height:100%;object-fit:cover;}
+    .img-box i{font-size:24px;color:#6f2b67;opacity:0.4;}
+    
+    .circle-img { width: 60px; height: 60px; border-radius: 8px; border: 2px solid #6f2b67;  display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(111,43,103,0.05);}
+    .circle-img img {width: 100%; height: 100%; object-fit: cover;}
+    .circle-img i { font-size: 24px; color: #6f2b67; opacity:0.4; }
+
+    /* LIST/UNLIST button - replaces old status badge */
+    .list-toggle-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:120px;height:32px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.3s ease;}
+    .list-toggle-btn.listed{background:rgba(40,167,69,0.15);color:#28a745;border:1.5px solid rgba(40,167,69,0.4);}
+    .list-toggle-btn.listed:hover{background:rgba(40,167,69,0.25);transform:scale(1.03);}
+    .list-toggle-btn.unlisted{background:rgba(220,53,69,0.15);color:#dc3545;border:1.5px solid rgba(220,53,69,0.4);}
+    .list-toggle-btn.unlisted:hover{background:rgba(220,53,69,0.25);transform:scale(1.03);}
+    
+    .edit-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:18px;transition:0.3s;padding:5px;}
+    .edit-btn:hover{color:#5a2252;transform:scale(1.15);}
+
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.3s;}
+    .page-btn.active{background:#6f2b67;color:#fff;}
+    .page-btn:hover:not(.active){background:rgba(111,43,103,0.1);}
+
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(111,43,103,0.15);backdrop-filter:blur(5px);z-index:1500;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+    .modal.show{display:flex;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:0;max-width:500px;width:100%;max-height:90vh;overflow:hidden;position:relative;margin:auto;box-shadow:0 10px 40px rgba(111,43,103,0.3);}
+    
+    .modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+    .modal-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .modal-header h3{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;margin:0;}
+    .close-modal{background:rgba(255,255,255,0.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
+    
+    .modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px);}
+    .modal-body::-webkit-scrollbar{width:8px;}
+    .modal-body::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:10px;}
+    
+    .form-group{margin-bottom:20px;}
+    .form-label{display:block;font-size:13px;font-weight:600;color:#6f2b67;margin-bottom:8px;}
+    .form-input{width:100%;padding:10px 15px;border:1px solid #6f2b67;border-radius:8px;background:rgba(111,43,103,0.05);color:#333;font-size:14px;outline:none;transition:0.3s;}
+    .form-input:focus{border-color:#8e4a86;background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,0.1);}
+    .form-textarea{resize:vertical;min-height:100px;}
+
+     .img-preview{width:120px;height:120px;border:3px dashed #6f2b67;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;transition:0.3s;overflow:hidden;position:relative;margin:0 auto;}
+    .img-preview:hover{background:rgba(111,43,103,0.05);border-color:#8a3a7f;}
+    .img-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+    .img-preview .placeholder{text-align:center;color:#fff;width:60px;height:60px;background:#6f2b67;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+    .img-preview .placeholder i{font-size:30px;color:#fff;}
+
+    .checkbox-group{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+    .checkbox-group input{width:18px;height:18px;cursor:pointer;accent-color:#6f2b67;}
+    .checkbox-group label{font-size:13px;font-weight:600;color:#6f2b67;cursor:pointer;margin:0;}
+    
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:20px;border-top:1px solid rgba(111,43,103,0.2);}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:0.3s;border:none;}
+    .btn-cancel{background:rgba(111,43,103,0.1);color:#6f2b67;}
+    .btn-cancel:hover{background:rgba(111,43,103,0.2);}
+    .btn-save{background:#6f2b67;color:#fff;}
+    .btn-save:hover{background:#5a2252;}
+    
+    .featured-heart{font-size:18px;color:#ccc;cursor:pointer;transition:0.3s;  position: relative;}
+    .featured-heart.active{color:#8a3a7f; animation: heartPop 0.45s ease-out;}
+
+    @keyframes heartPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  55% { transform: scale(0.9); }
+  75% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.featured-heart::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(111, 43, 103, 0.4);
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.featured-heart.active::after {
+  animation: ripple 0.5s ease-out;
+}
+
+@keyframes ripple {
+  0% { opacity: 0.6; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+    .swal2-container {z-index: 3000 !important;}
+
+     .profile-modal .modal-content{max-width:400px;text-align:center;}
+    .profile-avatar{width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,0.1);margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;}
+    .profile-avatar i{font-size:50px;color:#6f2b67;}
+    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:linear-gradient(135deg,#6f2b67,#5a2252);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;box-shadow:0 4px 15px rgba(111,43,103,0.5);}
+    .camera-icon i{font-size:16px;color:#fff;}
+    .profile-input{display:none;}
+    .profile-name{font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px;}
+    .profile-email{font-size:14px;color:rgba(111,43,103,0.7);margin-bottom:20px;}
+    
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+
+    .crop-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:3000;align-items:center;justify-content:center;padding:20px;}
+    .crop-modal.show{display:flex;}
+    .crop-modal-content{background:#fff;border:3px solid #6f2b67;border-radius:20px;padding:0;max-width:450px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(111,43,103,0.6);animation:zoomIn 0.3s ease;}
+
+    @keyframes zoomIn{
+      from{transform:scale(0.9);opacity:0;}
+      to{transform:scale(1);opacity:1;}
+    }
+    
+    .crop-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;}
+    
+    .crop-body{padding:20px;}
+    
+    .crop-container{max-width:100%;height:280px;background:#f5f3ff;border:2px solid #6f2b67;border-radius:12px;overflow:hidden;margin-bottom:15px;}
+    #cropImage{max-width:100%;display:block;}
+    
+    .crop-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:15px;}
+    .crop-btn{background:rgba(111,43,103,0.1);border:2px solid #6f2b67;color:#6f2b67;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:0.3s;display:flex;align-items:center;gap:6px;}
+    .crop-btn:hover{background:#6f2b67;color:#fff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(111,43,103,0.3);}
+    .crop-btn i{font-size:12px;}
+    
+    .crop-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:15px;border-top:2px solid rgba(111,43,103,0.2);}
+    .btn-crop-cancel{background:rgba(220,53,69,0.1);color:#dc3545;border:2px solid #dc3545;}
+    .btn-crop-cancel:hover{background:#dc3545;color:#fff;}
+    .btn-crop-done{background:#6f2b67;color:#fff;box-shadow:0 4px 15px rgba(111,43,103,0.4);}
+    .btn-crop-done:hover{background:#5a2252;transform:translateY(-2px);}
+
+    .featured-heart.active { color: #6f2b67; }
+
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;gap:10px;align-items:flex-start;}
+      .table-container{padding:10px;}
+      th,td{padding:8px;font-size:11px;}
+      .modal-content{width:95%;padding:20px;}
+      .modal-body{padding:15px;}
+      .crop-modal-content{max-width:95%;}
+      .crop-container{height:250px;}
+      .crop-controls{gap:5px;}
+      .crop-btn{padding:6px 10px;font-size:11px;}
+    }
+    
+    @media(max-width:480px){
+      .page-title{font-size:18px;}
+      .add-btn{padding:8px 15px;font-size:12px;}
+      .modal-content{padding:15px;}
+      .modal-title{font-size:16px;}
+      .form-group label{font-size:11px;}
+      .form-group input,.form-group select,.form-group textarea{font-size:12px;padding:6px 10px;}
+      th,td{font-size:10px;padding:6px;}
+      .img-box{width:50px;height:50px;}
+      .crop-container{height:220px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+ <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    
+    <a href="/admin/dashboard" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="/admin/order" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
+    </div>
+    
+    <a href="/admin/product" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="/admin/coupon" class="menu-item">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="/admin/categoryOff">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
+    </div>
+    
+    <a href="/admin/author" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="/admin/admin" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="/admin/customer" class="menu-item">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <!-- <a href="/admin/rating" class="menu-item">
+      <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
+    </a> -->
+    <a href="/admin/salesReport" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="/admin/appSetting">App Settings</a>
+      <a href="/admin/language">Language</a>
+    </div>
+    
+    <button  id="adminLogoutBtn"  class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <h1 class="page-title">Sub-Categories</h1>
+      <div class="user-info" onclick="openProfile()">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <div class="filter-bar">
+      <!-- REMOVED: statusFilter select -->
+      <select id="limitSelect">
+        <option value="6">Show 6 entries</option>
+        <option value="15">Show 15 entries</option>
+        <option value="30">Show 30 entries</option>
+      </select>
+      <button class="add-btn" onclick="openModal()" style="margin-left:auto;">
+        <i class="fas fa-plus"></i> ADD SUB-CATEGORY
+      </button>
+    </div>
+    
+    <div class="table-container">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;">
+        <div style="font-size:18px;font-weight:700;color:#6f2b67;">Sub-Category List</div>
+        <div style="position:relative;flex:1;max-width:350px;">
+          <i class="fas fa-search" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#6f2b67;font-size:14px;"></i>
+          <input type="text" id="searchInput" placeholder="Search sub-categories..." style="width:100%;padding:8px 15px 8px 40px;border:1px solid #6f2b67;border-radius:20px;background:rgba(111,43,103,0.05);color:#6f2b67;font-size:13px;outline:none;">
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table id="subCategoryTable">
+          <thead>
+            <tr>
+              <th style="width:10%;">IMAGE</th>
+              <th style="width:18%;">SUB-CATEGORY</th>
+              <th style="width:18%;">PARENT CATEGORY</th>
+              <th style="width:25%;">DESCRIPTION</th>
+              <th style="width:8%;">FEATURED</th>
+              <th style="width:13%;">LIST/UNLIST</th>
+              <th style="width:8%;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div id="emptyMessage" style="display:none;height: 100%;text-align:center;padding:40px;font-size:16px;font-weight:600;color:#6f2b67;">
+          Sub-category not yet added
+        </div>
+      </div>
+      
+      <div class="pagination"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-layer-group"></i> <span id="modalTitle">Add Sub-Category</span></h2>
+        <button class="close-modal" onclick="closeModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="subCategoryForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="form-label">Category Name *</label>
+            <input type="text" class="form-input" id="catName" placeholder="Enter category name">
+            <small class="error-text" id="nameError"></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Category Description *</label>
+            <textarea class="form-input form-textarea" id="catDesc" placeholder="Enter description"></textarea>
+            <small class="error-text" id="descError"></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Parent Category</label>
+            <select class="form-input" id="parentCat">
+                <option value="">Select Category</option>
+            </select>
+            <small class="error-text" id="parentError"></small>
+          </div>
+          
+          <!-- REMOVED: Status select -->
+
+          <div class="img-preview" onclick="document.getElementById('imageInput').click()">
+            <img id="previewImg" style="display:none">
+            <div class="placeholder">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+          </div>
+
+          <input type="file" id="imageInput" accept="image/*" hidden>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-save">Save Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal profile-modal" id="profileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> Profile</h2>
+        <button class="close-modal" onclick="closeProfile()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+          <div class="camera-icon" onclick="document.getElementById('profileInput').click()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+        <input type="file" id="profileInput" class="profile-input" accept="image/*">
+        <div class="profile-name">App Admin</div>
+        <div class="profile-email">support@litheaven.com</div>
+        <button class="btn btn-save" style="width:100%;" onclick="closeProfile()">UPDATE PROFILE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Modal -->
+  <div class="crop-modal" id="cropModal">
+    <div class="crop-modal-content">
+      <div class="crop-header">
+        <h3><i class="fas fa-crop-alt"></i> Crop Image</h3>
+        <button class="close-modal" onclick="closeCropModal()">×</button>
+      </div>
+      
+      <div class="crop-body">
+        <div class="crop-container">
+          <img id="cropImage" src="" alt="Image to crop">
+        </div>
+        
+        <div class="crop-controls">
+          <button class="crop-btn" onclick="rotateCropLeft()">
+            <i class="fas fa-undo"></i> Rotate Left
+          </button>
+          <button class="crop-btn" onclick="rotateCropRight()">
+            <i class="fas fa-redo"></i> Rotate Right
+          </button>
+          <button class="crop-btn" onclick="flipHorizontal()">
+            <i class="fas fa-arrows-alt-h"></i> Flip H
+          </button>
+          <button class="crop-btn" onclick="flipVertical()">
+            <i class="fas fa-arrows-alt-v"></i> Flip V
+          </button>
+          <button class="crop-btn" onclick="resetCrop()">
+            <i class="fas fa-sync-alt"></i> Reset
+          </button>
+        </div>
+        
+        <div class="crop-footer">
+          <button class="btn btn-crop-cancel" onclick="closeCropModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="btn btn-crop-done" onclick="applyCrop()">
+            <i class="fas fa-check"></i> Apply Crop
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+  <script>
+  let editingSubCategoryId = null;
+  let cropper = null;
+  let croppedBlob = null;
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 1000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.style.zIndex = 3000;
+  }
+});
+
+///// UI Functions
+function toggleMenu(id){document.getElementById(id).classList.toggle('show');}
+
+function openModal() {
+  editingSubCategoryId = null;
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('modalTitle').textContent = 'Add Sub-Category';
+  document.getElementById('subCategoryForm').reset();
+  
+  const previewImg = document.getElementById('previewImg');
+  const placeholder = document.querySelector('.placeholder');
+  previewImg.style.display = 'none';
+  placeholder.style.display = 'flex';
+  
+  croppedBlob = null;
+  
+  loadParentCategories();
+}
+
+/////  Edit Modal
+function openEditModal(item) {
+  editingSubCategoryId = item._id;
+
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('modalTitle').textContent = 'Edit Sub-Category';
+
+  document.getElementById('catName').value = item.name || '';
+  document.getElementById('catDesc').value = item.description || '';
+  // REMOVED: statusSelect — no longer set here
+
+  loadParentCategories().then(() => {
+    document.getElementById('parentCat').value = item.parentCategory?._id || '';
+  });
+
+  const previewImg = document.getElementById('previewImg');
+  const placeholder = document.querySelector('.placeholder');
+  
+  if (item.image?.url) {
+    previewImg.src = item.image.url;
+    previewImg.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    previewImg.style.display = 'none';
+    placeholder.style.display = 'flex';
+  }
+  
+  croppedBlob = null;
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+  editingSubCategoryId = null;
+  croppedBlob = null;
+}
+
+function openProfile(){document.getElementById('profileModal').classList.add('show');}
+function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Toggle List/Unlist status
+async function toggleListStatus(id, currentDeleted) {
+
+  const confirm = await Swal.fire({
+    title: currentDeleted ? "List this sub-category?" : "Unlist this sub-category?",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#6f2b67',
+    confirmButtonText: "Yes"
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  try {
+
+    const res = await fetch(`/admin/sub-category/delete/${id}`, {
+      method: 'PATCH',
+      credentials: 'same-origin'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      Toast.fire({
+        icon: 'error',
+        title: data.message || "Action failed"
+      });
+      return;
+    }
+
+    Toast.fire({
+      icon: 'success',
+      title: data.isDeleted
+        ? 'Sub-category Unlisted'
+        : 'Sub-category Listed'
+    });
+
+    fetchSubCategories(currentPage);
+
+  } catch (err) {
+    console.error(err);
+    Toast.fire({
+      icon: 'error',
+      title: 'Server error'
+    });
+  }
+}
+
+///// Fetch Sub-Categories
+
+let currentPage = 1;
+let currentSearch = '';
+let currentStatus = 'all';
+let totalPages = 1;
+let LIMIT = 6;
+
+async function fetchSubCategories(page = 1) {
+  try {
+    currentPage = page; 
+
+    const res = await fetch(
+      `/admin/sub-category/data?page=${page}&limit=${LIMIT}&search=${currentSearch}`,
+      { credentials: 'same-origin' }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error('API failed');
+    }
+    
+    const tbody = document.querySelector('#subCategoryTable tbody');
+    const emptyMsg = document.getElementById('emptyMessage');
+    const pagination = document.querySelector('.pagination');
+
+    tbody.innerHTML = '';
+    pagination.innerHTML = '';
+
+    if (!data.subCategories || data.subCategories.length === 0) {
+      emptyMsg.style.display = 'block';
+      return;
+    }
+
+    emptyMsg.style.display = 'none';
+
+    data.subCategories.forEach(item => {
+    const isListed = !item.isDeleted;
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>
+           <div class="circle-img">
+         ${ item.image?.url 
+         ? `<img src="${item.image.url}" alt="img">`
+          : `<i class="fas fa-image"></i>`
+        }
+          </div>
+        </td>
+        <td>${item.name}</td>
+        <td>${item.parentCategory?.name || '-'}</td>
+        <td>${item.description}</td>
+        <td>
+          <i class="fas fa-heart featured-heart ${item.isFeatured ? 'active' : ''}"
+            onclick="toggleFeatured(this, '${item._id}')">
+          </i>
+        </td>
+        <td>
+           <button
+    class="list-toggle-btn ${isListed ? 'listed' : 'unlisted'}"
+    onclick="toggleListStatus('${item._id}', ${JSON.stringify(item.isDeleted)})">
+    <i class="fas fa-${isListed ? 'check-circle' : 'times-circle'}"></i>
+    ${isListed ? 'LISTED' : 'UNLISTED'}
+  </button>
+        </td>
+        <td>
+          <button class="edit-btn" 
+          onclick='openEditModal(${JSON.stringify(item)})'>
+          <i class="fas fa-edit"></i></button>
+        </td>`;
+
+      tbody.appendChild(tr);
+    });
+
+    currentPage = data.currentPage;
+    totalPages = data.totalPages;
+
+    renderPagination();
+  } catch (err) {
+    console.error('Fetch error', err);
+    const tbody = document.querySelector('#subCategoryTable tbody');
+    const emptyMsg = document.getElementById('emptyMessage');
+    const pagination = document.querySelector('.pagination');
+    
+    tbody.innerHTML = '';
+    pagination.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    emptyMsg.innerText = 'Unable to load sub-categories';
+  }
+}
+
+async function toggleFeatured(el, id) {
+  try {
+    const res = await fetch(`/admin/sub-category/featured/${id}`, {
+      method: 'PUT',
+      credentials: 'same-origin'
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      Toast.fire({
+        icon: 'error',
+        title: data.message || 'Failed to update featured status'
+      });
+      return;
+    }
+
+    if (data.isFeatured) {
+      el.classList.add('active');
+      Toast.fire({ icon: 'success', title: 'Marked as Featured' });
+    } else {
+      el.classList.remove('active');
+      Toast.fire({ icon: 'success', title: 'Removed from Featured' });
+    }
+
+  } catch (err) {
+    Toast.fire({ icon: 'error', title: 'Server error' });
+  }
+}
+
+
+//// Pagination:
+function renderPagination() {
+  const pagination = document.querySelector('.pagination');
+  pagination.innerHTML = '';
+
+  pagination.innerHTML += `
+    <button class="page-btn"
+      ${currentPage === 1 ? 'disabled' : ''}
+      onclick="fetchSubCategories(${currentPage - 1})">
+      ‹
+    </button>
+  `;
+
+  for (let i = 1; i <= totalPages; i++) {
+    pagination.innerHTML += `
+      <button class="page-btn ${i === currentPage ? 'active' : ''}"
+        onclick="fetchSubCategories(${i})">
+        ${i}
+      </button>
+    `;
+  }
+
+  pagination.innerHTML += `
+    <button class="page-btn"
+      ${currentPage === totalPages ? 'disabled' : ''}
+      onclick="fetchSubCategories(${currentPage + 1})">
+      ›
+    </button>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetchSubCategories(1);
+  loadParentCategories();
+});
+
+
+/////Search – ENTER press:
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    currentSearch = e.target.value.trim();
+    fetchSubCategories(1);
+  }
+});
+
+// REMOVED: statusFilter event listener
+
+document.getElementById('limitSelect').addEventListener('change', (e) => {
+  LIMIT = Number(e.target.value); 
+  fetchSubCategories(1); 
+});
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// Crop Functions
+
+document.getElementById('imageInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = document.getElementById('cropImage');
+    img.src = reader.result;
+
+    document.getElementById('cropModal').classList.add('show');
+
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(img, {
+      aspectRatio: 1,
+      viewMode: 2,
+      dragMode: 'move',
+      autoCropArea: 0.8,
+      restore: false,
+      guides: true,
+      center: true,
+      highlight: true,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false,
+      background: true,
+      responsive: true,
+      checkOrientation: true,
+      scalable: true,
+      zoomable: true,
+      modal: true,
+    });
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+function closeCropModal() {
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  document.getElementById('cropModal').classList.remove('show');
+}
+
+function rotateCropLeft(){ if(cropper) cropper.rotate(-90); }
+function rotateCropRight(){ if(cropper) cropper.rotate(90); }
+function flipHorizontal(){
+  if(cropper){
+    const data = cropper.getData();
+    cropper.scaleX(data.scaleX === -1 ? 1 : -1);
+  }
+}
+function flipVertical(){
+  if(cropper){
+    const data = cropper.getData();
+    cropper.scaleY(data.scaleY === -1 ? 1 : -1);
+  }
+}
+function resetCrop(){ if(cropper) cropper.reset(); }
+
+function applyCrop() {
+  if (!cropper) return;
+  
+  cropper.getCroppedCanvas({
+    width: 400,
+    height: 400,
+    imageSmoothingEnabled: true,
+    imageSmoothingQuality: 'high'
+  }).toBlob((blob) => {
+    croppedBlob = blob;
+
+    const url = URL.createObjectURL(blob);
+    const preview = document.getElementById('previewImg');
+    const placeholder = document.querySelector('.placeholder');
+    
+    preview.src = url;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+
+    closeCropModal();
+  }, 'image/jpeg', 0.9);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+// Form Validation
+document.getElementById("catName").addEventListener("input", () => {
+  document.getElementById("nameError").textContent = "";
+});
+
+document.getElementById("catDesc").addEventListener("input", () => {
+  document.getElementById("descError").textContent = "";
+});
+
+document.getElementById("parentCat").addEventListener("change", () => {
+  document.getElementById("parentError").textContent = "";
+});
+
+
+// Form Submit
+document.getElementById('subCategoryForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const nameInput = document.getElementById("catName");
+  const descInput = document.getElementById("catDesc");
+  const parentInput = document.getElementById("parentCat");
+
+  const name = nameInput.value.trim();
+  const description = descInput.value.trim();
+  const parentCategory = parentInput.value;
+  // REMOVED: status from form
+
+  const nameError = document.getElementById("nameError");
+  const descError = document.getElementById("descError");
+  const parentError = document.getElementById("parentError");
+
+  nameError.textContent = "";
+  descError.textContent = "";
+  parentError.textContent = "";
+
+  let isValid = true;
+
+  if (!name) { nameError.textContent = 'Name required'; isValid = false; }
+  if (!description) { descError.textContent = 'Description required'; isValid = false; }
+  if (!parentCategory) { parentError.textContent = 'Select parent category'; isValid = false; }
+
+  if (!isValid) return;
+
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('description', description);
+  formData.append('parentCategory', parentCategory);
+  // REMOVED: status append
+
+  if (croppedBlob) {
+    formData.append('image', croppedBlob, 'cropped-image.jpg');
+  }
+
+  const url = editingSubCategoryId
+    ? `/admin/sub-category/${editingSubCategoryId}`
+    : '/admin/sub-category';
+
+  const method = editingSubCategoryId ? 'PUT' : 'POST';
+  
+  try {
+    const res = await fetch(url, {
+      method,
+      body: formData,
+      credentials: 'same-origin'
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      Toast.fire({
+        icon: 'success',
+        title: editingSubCategoryId
+          ? 'Sub-category updated successfully'
+          : 'Sub-category added successfully'
+      });
+
+      closeModal();
+      fetchSubCategories(1);
+
+      editingSubCategoryId = null;
+      croppedBlob = null;
+
+      document.getElementById("subCategoryForm").reset();
+      const previewImg = document.getElementById('previewImg');
+      const placeholder = document.querySelector('.placeholder');
+      previewImg.style.display = "none";
+      placeholder.style.display = "flex";
+
+    } else {
+      Toast.fire({
+        icon: 'error',
+        title: data.message || 'Failed to add sub-category'
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+    Toast.fire({ icon: 'error', title: 'Server error' });
+  }
+});
+
+
+
+///// Load Parent Categories
+async function loadParentCategories() {
+  try {
+    const res = await fetch('/admin/parent-categories',{
+        credentials: 'same-origin'
+    });
+    const data = await res.json();
+
+    const parentSelect = document.getElementById('parentCat');
+
+    parentSelect.innerHTML = '<option value="">Select Category</option>';
+
+    if (!data.success || data.categories.length === 0) {
+      return;
+    }
+
+    data.categories.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat._id;
+      option.textContent = cat.name;
+      parentSelect.appendChild(option);
+    });
+
+  } catch (err) {
+    console.error('Failed to load parent categories', err);
+  }
+}
+
+  </script>
+</body>
+</html>
