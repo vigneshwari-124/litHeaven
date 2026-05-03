@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>Checkout – LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --purple:  #6f2b67;
+      --light:   #8e4a86;
+      --muted:   #6c6c6c;
+      --pur-lt:  #f3e8f2;
+      --pur-mid: #c49abf;
+      --border:  #b88ab4;
+      --sale:    #e8412e;
+      --ink:     #1a0f18;
+      --success: #2e7d32;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"DM Sans","Segoe UI",Roboto,Arial;
+      background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);
+      color:#222;overflow-x:hidden;max-width:100vw;min-height:100vh;
+    }
+
+    @keyframes fadeUp   {from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown {from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse    {0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float    {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes slideUp  {from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shineSweep{0%{transform:translateX(-100%) rotate(25deg)}100%{transform:translateX(300%) rotate(25deg)}}
+    @keyframes rotateBorder{to{--angle:360deg}}
+    @keyframes floatOrb1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-22px) scale(1.08)}}
+    @keyframes popIn    {0%{opacity:0;transform:scale(.85)}60%{transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+    @keyframes checkDraw{0%{stroke-dashoffset:50}100%{stroke-dashoffset:0}}
+    @keyframes ripple   {0%{transform:scale(0);opacity:.5}100%{transform:scale(3);opacity:0}}
+    @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100px) rotate(720deg);opacity:0}}
+
+    /* ─── TOP BAR ─── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+    /* ─── HEADER ─── */
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after{width:80%}
+    .main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i{color:#fff}
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+
+    /* ─── BREADCRUMB ─── */
+    .breadcrumb-wrap{background:#fff;padding:13px 20px;border-bottom:1px solid #f0e5f5}
+    .breadcrumb{margin:0;font-size:13px}
+    .breadcrumb-item a{color:var(--purple);text-decoration:none;font-weight:600}
+    .breadcrumb-item.active{color:#999;font-weight:500}
+    .breadcrumb-item+.breadcrumb-item::before{color:#d0c0d0}
+
+    /* ─── PAGE TITLE ─── */
+    .page-title-strip{background:linear-gradient(135deg,var(--purple) 0%,var(--light) 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+    .page-title-strip::before{content:'🛍️';font-size:130px;position:absolute;right:-10px;top:50%;transform:translateY(-50%);opacity:.08;user-select:none;pointer-events:none}
+    .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s}
+    .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;animation:fadeUp 1s}
+
+    /* ─── STEPPER ─── */
+    .stepper-wrap{max-width:500px;margin:28px auto 0;display:flex;align-items:center;justify-content:center;gap:0;animation:fadeUp .9s}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+    .step-circle{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .4s}
+    .step-circle.active{background:#fff;color:var(--purple)}
+    .step-circle.done{background:rgba(255,255,255,.85);color:var(--purple)}
+    .step-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.75);letter-spacing:.8px;text-transform:uppercase}
+    .step-label.active{color:#fff}
+    .step-line{flex:1;height:2px;background:rgba(255,255,255,.25);margin-top:-18px}
+    .step-line.done{background:rgba(255,255,255,.7)}
+
+    /* ─── MAIN LAYOUT ─── */
+    .checkout-wrap{max-width:1200px;margin:0 auto;padding:36px 20px 60px;display:grid;grid-template-columns:1fr 420px;gap:28px;animation:fadeUp .9s}
+
+    /* ─── SECTION CARDS (frosted orb bg matching wishlist) ─── */
+    .section-card{
+      position:relative;border-radius:20px;padding:24px;
+      background:
+        radial-gradient(ellipse 55% 45% at 8% 12%, rgba(196,130,210,.18) 0%,transparent 70%),
+        radial-gradient(ellipse 40% 50% at 92% 85%, rgba(111,43,103,.13) 0%,transparent 65%),
+        linear-gradient(145deg,#faf4fd 0%,#f2e8f9 35%,#ede0f5 65%,#f5edfb 100%);
+      border:1.5px solid rgba(184,138,180,.30);
+      box-shadow:0 2px 0 rgba(255,255,255,.85) inset,0 8px 32px rgba(111,43,103,.10),0 1px 4px rgba(111,43,103,.06);
+      overflow:hidden;margin-bottom:20px;
+    }
+    .section-card::before{content:'';position:absolute;inset:0;border-radius:20px;background-image:radial-gradient(circle,rgba(111,43,103,.06) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;z-index:0}
+    .section-card > *{position:relative;z-index:1}
+
+    .section-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .section-title-icon{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+
+    /* ─── ADDRESS ─── */
+    .addr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .addr-card{border:2px solid rgba(184,138,180,.4);border-radius:14px;padding:14px;cursor:pointer;transition:all .3s;background:rgba(255,255,255,.7);position:relative}
+    .addr-card:hover{border-color:var(--purple);background:rgba(243,232,242,.9);transform:translateY(-2px)}
+    .addr-card.selected{border-color:var(--purple);background:rgba(243,232,242,.95);box-shadow:0 4px 16px rgba(111,43,103,.15)}
+    .addr-card.selected::after{content:'✓';position:absolute;top:8px;right:10px;width:20px;height:20px;background:var(--purple);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+    .addr-default-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(111,43,103,.1);color:var(--purple);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:6px}
+    .addr-name{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px}
+    .addr-line{font-size:11.5px;color:var(--muted);line-height:1.5}
+    .addr-phone{font-size:11px;color:var(--purple);font-weight:600;margin-top:4px}
+    .btn-add-addr{border:2px dashed var(--border);background:transparent;color:var(--purple);border-radius:14px;padding:14px;width:100%;font-weight:700;font-size:12px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-add-addr:hover{border-color:var(--purple);background:rgba(111,43,103,.06)}
+
+    /* ADDRESS MODAL */
+    .addr-modal-overlay{position:fixed;inset:0;background:rgba(26,15,24,.5);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .addr-modal-overlay.open{opacity:1;pointer-events:all}
+    .addr-modal{background:linear-gradient(145deg,#faf4fd,#f2e8f9);border-radius:20px;padding:28px;width:90%;max-width:480px;border:1.5px solid rgba(184,138,180,.3);box-shadow:0 20px 60px rgba(111,43,103,.25);transform:scale(.9) translateY(20px);transition:all .35s;max-height:90vh;overflow-y:auto}
+    .addr-modal-overlay.open .addr-modal{transform:scale(1) translateY(0)}
+    .modal-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border:none;background:rgba(111,43,103,.1);border-radius:50%;color:var(--purple);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .modal-close:hover{background:var(--purple);color:#fff}
+    .form-group{margin-bottom:14px}
+    .form-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--purple);margin-bottom:6px;display:block}
+    .form-ctrl{width:100%;border:1.5px solid rgba(184,138,180,.5);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:rgba(255,255,255,.8);transition:all .3s;outline:none}
+    .form-ctrl:focus{border-color:var(--purple);background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,.08)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn-save-addr{width:100%;background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:12px;padding:13px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;margin-top:8px}
+    .btn-save-addr:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(111,43,103,.3)}
+
+    /* ─── COUPON ─── */
+    .coupon-row{display:flex;gap:10px}
+    .coupon-input{flex:1;border:2px solid rgba(184,138,180,.5);border-radius:12px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:rgba(255,255,255,.8);outline:none;transition:all .3s}
+    .coupon-input:focus{border-color:var(--purple);background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,.08)}
+    .btn-apply-coupon{background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:12px;padding:11px 20px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap}
+    .btn-apply-coupon:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(111,43,103,.3)}
+    .coupon-success{display:flex;align-items:center;gap:8px;background:rgba(46,125,50,.08);border:1.5px solid rgba(46,125,50,.3);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;font-weight:600;color:var(--success);animation:slideUp .4s ease}
+    .coupon-error{display:flex;align-items:center;gap:8px;background:rgba(232,65,46,.06);border:1.5px solid rgba(232,65,46,.25);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;font-weight:600;color:var(--sale);animation:slideUp .4s ease}
+    .coupon-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(111,43,103,.1);color:var(--purple);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:8px}
+    .coupon-chip button{background:none;border:none;cursor:pointer;color:var(--purple);font-size:12px;padding:0;line-height:1}
+    .available-coupons{margin-top:12px}
+    .avail-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .coupon-tag{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--border);background:rgba(255,255,255,.7);color:var(--purple);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;margin:3px;cursor:pointer;transition:all .2s}
+    .coupon-tag:hover{background:var(--pur-lt);border-color:var(--purple)}
+
+    /* ─── ORDER ITEMS ─── */
+    .order-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(184,138,180,.2)}
+    .order-item:last-child{border-bottom:none;padding-bottom:0}
+    .order-item-img{width:56px;height:72px;border-radius:8px;object-fit:cover;border:1.5px solid rgba(184,138,180,.3);flex-shrink:0}
+    .order-item-info{flex:1}
+    .order-item-title{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--ink);line-height:1.3}
+    .order-item-meta{font-size:10px;color:var(--muted);margin-top:2px}
+    .order-item-qty{font-size:11px;color:var(--purple);font-weight:700;margin-top:4px;background:rgba(111,43,103,.08);display:inline-block;padding:2px 8px;border-radius:6px}
+    .order-item-price{font-size:14px;font-weight:800;color:var(--purple);white-space:nowrap;font-family:'DM Sans',sans-serif;text-align:right}
+    .order-item-orig{font-size:10px;color:var(--pur-mid);text-decoration:line-through;text-align:right}
+
+    /* ─── ORDER SUMMARY SIDEBAR ─── */
+    .summary-sticky{position:sticky;top:20px}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(184,138,180,.15);font-size:13px}
+    .summary-row:last-of-type{border-bottom:none}
+    .summary-row .label{color:var(--muted);font-weight:500}
+    .summary-row .val{font-weight:700;color:var(--ink)}
+    .summary-row.discount .val{color:var(--success);font-weight:700}
+    .summary-row.coupon-row-sum .val{color:var(--sale);font-weight:700}
+    .summary-row.free .val{color:var(--success)}
+    .summary-divider{height:1.5px;background:linear-gradient(90deg,var(--border),transparent);margin:10px 0}
+    .summary-total{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0}
+    .summary-total .label{font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--ink)}
+    .summary-total .val{font-size:1.3rem;font-weight:800;color:var(--purple);font-family:'DM Sans',sans-serif}
+    .tax-note{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
+
+    /* ─── PAYMENT ─── */
+    .payment-opt{border:2px solid rgba(184,138,180,.4);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all .3s;background:rgba(255,255,255,.7);display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .payment-opt:hover{border-color:var(--purple);background:rgba(243,232,242,.9)}
+    .payment-opt.selected{border-color:var(--purple);background:rgba(243,232,242,.95);box-shadow:0 4px 16px rgba(111,43,103,.12)}
+    .payment-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+    .payment-opt.selected .payment-radio{border-color:var(--purple);background:var(--purple)}
+    .payment-opt.selected .payment-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
+    .payment-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .payment-name{font-weight:700;font-size:13px;color:var(--ink)}
+    .payment-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+    .payment-badge{margin-left:auto;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+    .cod-badge{background:rgba(46,125,50,.1);color:var(--success)}
+    .coming-badge{background:rgba(111,43,103,.1);color:var(--purple)}
+    .disabled-opt{opacity:.5;pointer-events:none}
+
+    /* ─── PLACE ORDER BUTTON ─── */
+    .btn-place-order{
+      width:100%;background:linear-gradient(135deg,var(--purple),var(--light));
+      color:#fff;border:none;border-radius:14px;padding:16px;
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;
+      cursor:pointer;transition:all .35s;position:relative;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      letter-spacing:.3px;margin-top:16px;
+    }
+    .btn-place-order:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(111,43,103,.35)}
+    .btn-place-order:active{transform:scale(.98)}
+    .btn-place-order::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);transform:translateX(-100%) rotate(25deg);opacity:0}
+    .btn-place-order:hover::after{opacity:1;animation:shineSweep 1s forwards}
+    .btn-place-order .lock-icon{font-size:13px;opacity:.85}
+
+    /* ─── TRUST BADGES ─── */
+    .trust-row{display:flex;justify-content:center;gap:16px;margin-top:14px;flex-wrap:wrap}
+    .trust-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:600}
+    .trust-item i{color:var(--purple);font-size:12px}
+
+    /* ═══════════════════════════════
+       SUCCESS PAGE (hidden initially)
+    ═══════════════════════════════ */
+    #successPage{
+      display:none;
+      max-width:600px;margin:0 auto;padding:60px 20px;text-align:center;
+      animation:popIn .6s ease;
+    }
+    .success-circle{
+      width:110px;height:110px;border-radius:50%;
+      background:linear-gradient(135deg,var(--purple),var(--light));
+      margin:0 auto 24px;display:flex;align-items:center;justify-content:center;
+      position:relative;box-shadow:0 0 0 0 rgba(111,43,103,.4);
+      animation:popIn .6s ease .2s both;
+    }
+    .success-circle::before{
+      content:'';position:absolute;inset:-8px;border-radius:50%;
+      border:2px dashed rgba(111,43,103,.3);animation:float 4s ease-in-out infinite;
+    }
+    .success-check-svg{width:52px;height:52px}
+    .success-check-svg .check-path{
+      stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;
+      fill:none;stroke-dasharray:50;stroke-dashoffset:50;
+      animation:checkDraw .5s ease .7s forwards;
+    }
+    .success-card{
+      position:relative;border-radius:24px;padding:36px 28px;
+      background:radial-gradient(ellipse 55% 45% at 8% 12%,rgba(196,130,210,.18) 0%,transparent 70%),
+        radial-gradient(ellipse 40% 50% at 92% 85%,rgba(111,43,103,.13) 0%,transparent 65%),
+        linear-gradient(145deg,#faf4fd 0%,#f2e8f9 35%,#ede0f5 65%,#f5edfb 100%);
+      border:1.5px solid rgba(184,138,180,.30);
+      box-shadow:0 2px 0 rgba(255,255,255,.85) inset,0 8px 32px rgba(111,43,103,.10);
+      overflow:hidden;
+    }
+    .success-card::before{content:'';position:absolute;inset:0;border-radius:24px;background-image:radial-gradient(circle,rgba(111,43,103,.06) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+    .success-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--ink);margin-bottom:8px}
+    .success-sub{font-size:14px;color:var(--muted);margin-bottom:6px}
+    .order-id-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(111,43,103,.08);color:var(--purple);font-weight:800;font-size:13px;padding:6px 16px;border-radius:20px;margin:12px 0;border:1.5px solid rgba(184,138,180,.3)}
+    .success-divider{height:1.5px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:20px 0}
+    .success-detail-row{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid rgba(184,138,180,.12)}
+    .success-detail-row .sd-label{color:var(--muted)}
+    .success-detail-row .sd-val{font-weight:700;color:var(--ink)}
+    .success-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+    .btn-success-primary{flex:1;background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:12px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;min-width:140px}
+    .btn-success-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(111,43,103,.3)}
+    .btn-success-secondary{flex:1;border:2px solid var(--border);background:rgba(255,255,255,.8);color:var(--purple);border-radius:12px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;min-width:140px}
+    .btn-success-secondary:hover{border-color:var(--purple);background:rgba(243,232,242,.95)}
+    .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+    .confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall 2.5s ease forwards}
+
+    /* ─── FOOTER ─── */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+
+    @media(max-width:1024px){.checkout-wrap{grid-template-columns:1fr}}
+    @media(max-width:768px){
+      .main-nav{display:none}
+      .addr-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      .checkout-wrap{padding:20px 12px 50px}
+    }
+    @media(max-width:390px){
+      .brand .txt{font-size:16px}
+      .logo-circle{width:48px;height:48px}
+      .book-logo{width:26px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+  <header class="navbar-area">
+    <div class="navbar-container">
+      <div class="row align-items-center g-0">
+        <div class="col-6 d-flex align-items-center gap-3">
+          <a class="brand" href="/">
+            <div class="logo-circle">
+              <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+              <div class="logo-text">LitHeaven</div>
+              <div class="tagline">Your Literary Escape</div>
+            </div>
+            <div class="txt">LitHeaven</div>
+          </a>
+          <nav class="main-nav d-none d-lg-flex">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/contact">Contact</a>
+          </nav>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+          <div class="header-icons">
+            <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div class="icon-badge">2</div>
+            </a>
+            <a class="icon-btn position-relative" href="/cart" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge">3</div>
+            </a>
+            <div class="dropdown">
+              <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-user"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end p-2">
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+                <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+              </ul>
+            </div>
+            <button class="hamburger-btn d-lg-none" id="menuToggle">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu d-lg-none">
+    <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+  </div>
+
+  <div class="breadcrumb-wrap">
+    <nav><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+      <li class="breadcrumb-item"><a href="/cart">Cart</a></li>
+      <li class="breadcrumb-item active">Checkout</li>
+    </ol></nav>
+  </div>
+
+  <div class="page-title-strip">
+    <h2>🛍️ Checkout</h2>
+    <p>You're almost there — just a few steps away!</p>
+    <!-- STEPPER -->
+    <div class="stepper-wrap">
+      <div class="step-item">
+        <div class="step-circle done" id="step1"><i class="fa-solid fa-check" style="font-size:12px"></i></div>
+        <div class="step-label">Cart</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step-item">
+        <div class="step-circle active" id="step2">2</div>
+        <div class="step-label active">Checkout</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-circle" id="step3">3</div>
+        <div class="step-label">Confirmed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ CHECKOUT PAGE ═══════════════════ -->
+  <div id="checkoutPage">
+    <div class="checkout-wrap">
+
+      <!-- LEFT COLUMN -->
+      <div>
+
+        <!-- 1. DELIVERY ADDRESS -->
+        <div class="section-card" id="addressSection">
+          <div class="section-title">
+            <div class="section-title-icon"><i class="fa-solid fa-location-dot"></i></div>
+            Delivery Address
+          </div>
+
+          <div class="addr-grid" id="addrGrid">
+            <!-- addresses rendered by JS -->
+          </div>
+
+          <div style="margin-top:12px">
+            <button class="btn-add-addr" onclick="openAddrModal()">
+              <i class="fa-solid fa-plus"></i> Add New Address
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. COUPON -->
+        <div class="section-card">
+          <div class="section-title">
+            <div class="section-title-icon"><i class="fa-solid fa-tag"></i></div>
+            Apply Coupon
+          </div>
+
+          <div class="coupon-row">
+            <input class="coupon-input" type="text" id="couponInput" placeholder="Enter coupon code…" oninput="this.value=this.value.toUpperCase()">
+            <button class="btn-apply-coupon" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div id="couponMsg"></div>
+          <div id="couponChip" style="display:none">
+            <div class="coupon-chip">
+              <i class="fa-solid fa-tag"></i>
+              <span id="couponChipText"></span>
+              <button onclick="removeCoupon()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          </div>
+
+          <div class="available-coupons">
+            <div class="avail-title">Available Coupons</div>
+            <span class="coupon-tag" onclick="fillCoupon('NEW1')"><i class="fa-solid fa-percent"></i> NEW1 — 10% off</span>
+            <span class="coupon-tag" onclick="fillCoupon('SAVE50')"><i class="fa-solid fa-percent"></i> SAVE50 — ₹50 off</span>
+            <span class="coupon-tag" onclick="fillCoupon('BOOK20')"><i class="fa-solid fa-percent"></i> BOOK20 — 20% off</span>
+          </div>
+        </div>
+
+        <!-- 4. PAYMENT METHOD -->
+        <div class="section-card">
+          <div class="section-title">
+            <div class="section-title-icon"><i class="fa-solid fa-wallet"></i></div>
+            Payment Method
+          </div>
+
+          <div class="payment-opt selected" id="payOpt-cod" onclick="selectPayment('cod')">
+            <div class="payment-radio"><span></span></div>
+            <div class="payment-icon" style="background:rgba(46,125,50,.1)"><i class="fa-solid fa-money-bill-wave" style="color:var(--success)"></i></div>
+            <div>
+              <div class="payment-name">Cash on Delivery</div>
+              <div class="payment-sub">Pay when your books arrive</div>
+            </div>
+            <span class="payment-badge cod-badge">Available</span>
+          </div>
+
+          <div class="payment-opt disabled-opt" id="payOpt-online">
+            <div class="payment-radio"></div>
+            <div class="payment-icon" style="background:rgba(111,43,103,.08)"><i class="fa-solid fa-credit-card" style="color:var(--purple)"></i></div>
+            <div>
+              <div class="payment-name">Online Payment</div>
+              <div class="payment-sub">UPI / Cards / Net Banking</div>
+            </div>
+            <span class="payment-badge coming-badge">Coming Soon</span>
+          </div>
+
+          <div class="payment-opt disabled-opt" id="payOpt-wallet">
+            <div class="payment-radio"></div>
+            <div class="payment-icon" style="background:rgba(111,43,103,.08)"><i class="fa-solid fa-wallet" style="color:var(--purple)"></i></div>
+            <div>
+              <div class="payment-name">LitHeaven Wallet</div>
+              <div class="payment-sub">Use your wallet balance</div>
+            </div>
+            <span class="payment-badge coming-badge">Coming Soon</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN — ORDER ITEMS + SUMMARY -->
+      <div>
+        <div class="summary-sticky">
+
+          <!-- ORDER ITEMS -->
+          <div class="section-card">
+            <div class="section-title">
+              <div class="section-title-icon"><i class="fa-solid fa-book"></i></div>
+              Order Items
+              <span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)" id="itemCountLabel"></span>
+            </div>
+            <div id="orderItemsList"></div>
+          </div>
+
+          <!-- ORDER SUMMARY -->
+          <div class="section-card">
+            <div class="section-title">
+              <div class="section-title-icon"><i class="fa-solid fa-receipt"></i></div>
+              Order Summary
+            </div>
+
+            <div class="summary-row">
+              <span class="label">Subtotal (<span id="sumItemCount">3</span> items)</span>
+              <span class="val" id="sumSubtotal">₹0</span>
+            </div>
+            <div class="summary-row discount">
+              <span class="label">Product Discount</span>
+              <span class="val" id="sumDiscount">−₹0</span>
+            </div>
+            <div class="summary-row coupon-row-sum" id="sumCouponRow" style="display:none">
+              <span class="label">Coupon Discount</span>
+              <span class="val" id="sumCouponDisc"></span>
+            </div>
+            <div class="summary-row" id="sumTaxRow">
+              <span class="label">GST (18%)</span>
+              <span class="val" id="sumTax">₹0</span>
+            </div>
+            <div class="summary-row free">
+              <span class="label">Delivery Charge</span>
+              <span class="val" id="sumDelivery">FREE</span>
+            </div>
+
+            <div class="summary-divider"></div>
+            <div class="summary-total">
+              <span class="label">Total Amount</span>
+              <span class="val" id="sumTotal">₹0</span>
+            </div>
+            <div class="tax-note" id="taxNote">Inclusive of all taxes</div>
+
+            <button class="btn-place-order" onclick="placeOrder()">
+              <span class="lock-icon"><i class="fa-solid fa-lock"></i></span>
+              Place Order
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <div class="trust-row">
+              <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Secure Checkout</div>
+              <div class="trust-item"><i class="fa-solid fa-truck"></i> Fast Delivery</div>
+              <div class="trust-item"><i class="fa-solid fa-rotate-left"></i> Easy Returns</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /checkoutPage -->
+
+  <!-- ═══════════════════ SUCCESS PAGE ═══════════════════ -->
+  <div id="successPage">
+    <div class="success-card" style="max-width:580px;margin:0 auto">
+      <div class="success-circle">
+        <svg class="success-check-svg" viewBox="0 0 52 52">
+          <polyline class="check-path" points="14,26 22,34 38,18"/>
+        </svg>
+      </div>
+
+      <div class="success-title">Order Placed! 🎉</div>
+      <p class="success-sub">Thank you for shopping with LitHeaven 💜<br>Your books are on their way to you!</p>
+
+      <div class="order-id-pill">
+        <i class="fa-solid fa-hashtag"></i>
+        Order <span id="successOrderId">LH-2025-00123</span>
+      </div>
+
+      <div id="successIllustration" style="margin:20px 0">
+        <img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" style="width:100px;opacity:.85;animation:float 3s ease-in-out infinite" alt="Books">
+      </div>
+
+      <div class="success-divider"></div>
+
+      <div id="successDetails"></div>
+
+      <div class="success-actions">
+        <button class="btn-success-primary" onclick="window.location.href='/orders'">
+          <i class="fa-solid fa-box-open me-2"></i> View Order Details
+        </button>
+        <button class="btn-success-secondary" onclick="window.location.href='/shop'">
+          <i class="fa-solid fa-store me-2"></i> Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ ADDRESS MODAL ═══════════════════ -->
+  <div class="addr-modal-overlay" id="addrModalOverlay" onclick="closeAddrModal(event)">
+    <div class="addr-modal" style="position:relative">
+      <button class="modal-close" onclick="closeAddrModal(null,true)"><i class="fa-solid fa-xmark"></i></button>
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;color:var(--ink);margin-bottom:20px" id="modalTitle">
+        <i class="fa-solid fa-location-dot" style="color:var(--purple);margin-right:8px"></i>Add New Address
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input class="form-ctrl" type="text" id="fName" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input class="form-ctrl" type="tel" id="fPhone" placeholder="+91 XXXXX XXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address Line 1 *</label>
+        <input class="form-ctrl" type="text" id="fAddr1" placeholder="House/Flat No., Street Name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address Line 2</label>
+        <input class="form-ctrl" type="text" id="fAddr2" placeholder="Landmark (optional)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          <input class="form-ctrl" type="text" id="fCity" placeholder="City">
+        </div>
+        <div class="form-group">
+          <label class="form-label">State *</label>
+          <input class="form-ctrl" type="text" id="fState" placeholder="State">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Pincode *</label>
+          <input class="form-ctrl" type="text" id="fPin" placeholder="6-digit pincode" maxlength="6">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address Type</label>
+          <select class="form-ctrl" id="fType">
+            <option value="Home">🏠 Home</option>
+            <option value="Work">🏢 Work</option>
+            <option value="Other">📍 Other</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <input type="checkbox" id="fDefault" style="accent-color:var(--purple);width:15px;height:15px">
+        <label for="fDefault" style="font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Set as default address</label>
+      </div>
+      <button class="btn-save-addr" onclick="saveAddress()">
+        <i class="fa-solid fa-check me-2"></i> Save Address
+      </button>
+    </div>
+  </div>
+
+  <!-- confetti container -->
+  <div class="confetti-wrap" id="confettiWrap"></div>
+
+  <footer class="site-footer" id="mainFooter">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5>Get In Touch</h5>
+          <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+          <p><small><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="13606663637c6167537f7a677b767265767d3d707c7e">[email&#160;protected]</a></small></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop Books</a></li>
+            <li><a href="/about">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h5>LitHeaven</h5>
+          <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+        </div>
+      </div>
+      <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  /* ═══════════════════════════════════════════
+     DEMO DATA  (replace with real API calls)
+  ═══════════════════════════════════════════ */
+ 
+  const demoItems = [
+    { _id:'i1', title:'The Midnight Library', author:'Matt Haig', language:'English', format:'Paperback', qty:1, image:'https://covers.openlibrary.org/b/isbn/9780525559474-M.jpg', price:399, mrp:499 },
+    { _id:'i2', title:'Atomic Habits',       author:'James Clear', language:'English', format:'Hardcover', qty:2, image:'https://covers.openlibrary.org/b/isbn/9780735211292-M.jpg', price:549, mrp:699 },
+    { _id:'i3', title:'Ikigai',              author:'Héctor García', language:'Tamil',  format:'Paperback', qty:1, image:'https://covers.openlibrary.org/b/isbn/9780143130727-M.jpg', price:249, mrp:299 },
+  ];
+
+  const COUPONS = { 'NEW1':{ type:'percent', value:10 }, 'SAVE50':{ type:'flat', value:50 }, 'BOOK20':{ type:'percent', value:20 } };
+
+  /* ═══════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════ */
+  let selectedAddr = addresses.find(a=>a.isDefault)?._id || addresses[0]?._id;
+  let appliedCoupon= null;
+  let editingAddrId= null;
+  let selectedPayment = 'cod';
+
+  /* ═══════════════════════════════════════════
+     RENDER ADDRESSES
+  ═══════════════════════════════════════════ */
+ function renderAddresses(){
+  const grid = document.getElementById('addrGrid');
+
+  // 🔥 primary first வரணும்
+  const sorted = [...addresses].sort((a,b)=> b.isPrimary - a.isPrimary);
+
+  grid.innerHTML = sorted.map(a=>`
+    <div class="addr-card ${a._id===selectedAddr?'selected':''}" 
+         onclick="selectAddr('${a._id}')">
+
+      ${a.isPrimary ? `<div class="addr-default-badge">Default</div>`:''}
+
+      <div class="addr-name">${a.fullName}</div>
+
+      <div class="addr-line">${a.addressLine1}</div>
+      <div class="addr-line">${a.city}, ${a.state} - ${a.zip}</div>
+
+      <div style="margin-top:10px; display:flex; gap:8px">
+
+        <button onclick="editAddr(event,'${a._id}')">
+          <i class="fa fa-pen"></i>
+        </button>
+
+        <button onclick="deleteAddr(event,'${a._id}')">
+          <i class="fa fa-trash"></i>
+        </button>
+
+        ${!a.isPrimary ? `
+        <button onclick="setDefaultAddr(event,'${a._id}')">
+          Set Default
+        </button>` : ''}
+
+      </div>
+
+    </div>
+  `).join('');
+}
+
+async function setDefaultAddr(e,id){
+  e.stopPropagation();
+
+  await fetch(`/api/addresses/${id}/default`, {
+    method:'PATCH'
+  });
+
+  loadAddresses();
+}
+
+  function selectAddr(id){ selectedAddr=id; renderAddresses(); }
+
+  function setDefault(e,id){
+    e.stopPropagation();
+    addresses=addresses.map(a=>({...a,isDefault:a._id===id}));
+    selectedAddr=id;
+    renderAddresses();
+  }
+
+  /* ═══════════════════════════════════════════
+     RENDER ORDER ITEMS
+  ═══════════════════════════════════════════ */
+  function renderItems(){
+    const list = document.getElementById('orderItemsList');
+    list.innerHTML = demoItems.map(item=>`
+      <div class="order-item">
+        <img src="${item.image}" class="order-item-img" onerror="this.src='https://via.placeholder.com/56x72/f3e8f2/6f2b67?text=📖'">
+        <div class="order-item-info">
+          <div class="order-item-title">${item.title}</div>
+          <div class="order-item-meta">${item.author} · ${item.language} · ${item.format}</div>
+          <div class="order-item-qty">Qty: ${item.qty}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px">
+          <div class="order-item-orig">₹${item.mrp * item.qty}</div>
+          <div class="order-item-price">₹${item.price * item.qty}</div>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('itemCountLabel').textContent = demoItems.length + ' items';
+  }
+
+  /* ═══════════════════════════════════════════
+     PRICE CALCULATION
+  ═══════════════════════════════════════════ */
+  function calcPrices(){
+    const subtotal   = demoItems.reduce((s,i)=>s+(i.mrp*i.qty),0);
+    const discounted = demoItems.reduce((s,i)=>s+(i.price*i.qty),0);
+    const itemDisc   = subtotal - discounted;
+    const gst        = Math.round(discounted * 0.18);
+    let couponDisc   = 0;
+    if(appliedCoupon){
+      const c=COUPONS[appliedCoupon];
+      couponDisc = c.type==='percent' ? Math.round(discounted*c.value/100) : c.value;
+    }
+    const delivery = discounted>499 ? 0 : 49;
+    const total    = discounted + gst - couponDisc + delivery;
+
+    document.getElementById('sumItemCount').textContent = demoItems.reduce((s,i)=>s+i.qty,0);
+    document.getElementById('sumSubtotal').textContent  = '₹'+subtotal;
+    document.getElementById('sumDiscount').textContent  = '−₹'+itemDisc;
+    document.getElementById('sumTax').textContent       = '₹'+gst;
+    document.getElementById('sumDelivery').textContent  = delivery===0 ? 'FREE' : '₹'+delivery;
+    document.getElementById('sumTotal').textContent     = '₹'+total;
+    document.getElementById('taxNote').textContent      = 'Inclusive of GST (₹'+gst+')';
+
+    if(appliedCoupon){
+      document.getElementById('sumCouponRow').style.display='flex';
+      document.getElementById('sumCouponDisc').textContent='−₹'+couponDisc;
+    } else {
+      document.getElementById('sumCouponRow').style.display='none';
+    }
+    return {subtotal,discounted,itemDisc,gst,couponDisc,delivery,total};
+  }
+
+  /* ═══════════════════════════════════════════
+     COUPON
+  ═══════════════════════════════════════════ */
+  function applyCoupon(){
+    const code = document.getElementById('couponInput').value.trim().toUpperCase();
+    const msg  = document.getElementById('couponMsg');
+    const chip = document.getElementById('couponChip');
+    if(!code){ msg.innerHTML='<div class="coupon-error"><i class="fa-solid fa-circle-exclamation"></i> Enter a coupon code</div>'; return; }
+    if(COUPONS[code]){
+      appliedCoupon=code;
+      const c=COUPONS[code];
+      const desc=c.type==='percent'?`${c.value}% off`:`₹${c.value} off`;
+      msg.innerHTML=`<div class="coupon-success"><i class="fa-solid fa-circle-check"></i> Coupon "${code}" applied — ${desc}!</div>`;
+      chip.style.display='block';
+      document.getElementById('couponChipText').textContent=code+' ('+desc+')';
+      calcPrices();
+    } else {
+      appliedCoupon=null;
+      msg.innerHTML='<div class="coupon-error"><i class="fa-solid fa-circle-xmark"></i> Invalid coupon code</div>';
+      chip.style.display='none';
+      calcPrices();
+    }
+  }
+
+  function removeCoupon(){
+    appliedCoupon=null;
+    document.getElementById('couponInput').value='';
+    document.getElementById('couponMsg').innerHTML='';
+    document.getElementById('couponChip').style.display='none';
+    calcPrices();
+  }
+
+  function fillCoupon(code){
+    document.getElementById('couponInput').value=code;
+    applyCoupon();
+  }
+
+  /* ═══════════════════════════════════════════
+     PAYMENT
+  ═══════════════════════════════════════════ */
+  function selectPayment(type){
+    selectedPayment=type;
+    document.querySelectorAll('.payment-opt').forEach(el=>el.classList.remove('selected'));
+    document.getElementById('payOpt-'+type)?.classList.add('selected');
+  }
+
+  /* ═══════════════════════════════════════════
+     ADDRESS MODAL
+  ═══════════════════════════════════════════ */
+  function openAddrModal(editing=null){
+    editingAddrId=editing;
+    const overlay=document.getElementById('addrModalOverlay');
+    const title=document.getElementById('modalTitle');
+    if(editing){
+      const a=addresses.find(x=>x._id===editing);
+      title.innerHTML='<i class="fa-solid fa-pen" style="color:var(--purple);margin-right:8px"></i>Edit Address';
+      document.getElementById('fName').value=a.name;
+      document.getElementById('fPhone').value=a.phone;
+      document.getElementById('fAddr1').value=a.line1;
+      document.getElementById('fAddr2').value=a.line2||'';
+      document.getElementById('fCity').value=a.city;
+      document.getElementById('fState').value=a.state;
+      document.getElementById('fPin').value=a.pin;
+      document.getElementById('fType').value=a.type;
+      document.getElementById('fDefault').checked=a.isDefault;
+    } else {
+      title.innerHTML='<i class="fa-solid fa-location-dot" style="color:var(--purple);margin-right:8px"></i>Add New Address';
+      ['fName','fPhone','fAddr1','fAddr2','fCity','fState','fPin'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('fType').value='Home';
+      document.getElementById('fDefault').checked=false;
+    }
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  function editAddr(e,id){ e.stopPropagation(); openAddrModal(id); }
+
+  function closeAddrModal(e,force=false){
+    if(force||e?.target===document.getElementById('addrModalOverlay')){
+      document.getElementById('addrModalOverlay').classList.remove('open');
+      document.body.style.overflow='';
+    }
+  }
+
+  function saveAddress(){
+    const name=document.getElementById('fName').value.trim();
+    const phone=document.getElementById('fPhone').value.trim();
+    const line1=document.getElementById('fAddr1').value.trim();
+    const city=document.getElementById('fCity').value.trim();
+    const state=document.getElementById('fState').value.trim();
+    const pin=document.getElementById('fPin').value.trim();
+    if(!name||!phone||!line1||!city||!state||!pin){
+      Swal.fire({icon:'warning',title:'Missing Fields',text:'Please fill all required fields.',confirmButtonColor:'#6f2b67'});
+      return;
+    }
+    if(!/^\d{6}$/.test(pin)){
+      Swal.fire({icon:'warning',title:'Invalid Pincode',text:'Please enter a valid 6-digit pincode.',confirmButtonColor:'#6f2b67'});
+      return;
+    }
+    const isDefault=document.getElementById('fDefault').checked;
+    if(isDefault) addresses=addresses.map(a=>({...a,isDefault:false}));
+
+    if(editingAddrId){
+      addresses=addresses.map(a=>a._id===editingAddrId?{...a,name,phone,line1,line2:document.getElementById('fAddr2').value.trim(),city,state,pin,type:document.getElementById('fType').value,isDefault}:a);
+    } else {
+      const newAddr={_id:'addr'+Date.now(),name,phone,line1,line2:document.getElementById('fAddr2').value.trim(),city,state,pin,type:document.getElementById('fType').value,isDefault};
+      addresses.push(newAddr);
+      if(isDefault||addresses.length===1) selectedAddr=newAddr._id;
+    }
+    closeAddrModal(null,true);
+    renderAddresses();
+    Swal.fire({icon:'success',title:'Address Saved!',timer:1500,showConfirmButton:false,confirmButtonColor:'#6f2b67'});
+  }
+
+  /* ═══════════════════════════════════════════
+     PLACE ORDER
+  ═══════════════════════════════════════════ */
+  async function placeOrder(){
+    if(!selectedAddr){
+      Swal.fire({icon:'warning',title:'Select Address',text:'Please select a delivery address.',confirmButtonColor:'#6f2b67'});
+      return;
+    }
+
+    const result=await Swal.fire({
+      title:'<span style="color:#6f2b67;font-weight:800">Confirm Order 📦</span>',
+      html:`<p style="font-size:14px;color:#555">Place this order with <strong>Cash on Delivery</strong>?</p>`,
+      showCancelButton:true,
+      confirmButtonText:'Yes, Place Order!',
+      cancelButtonText:'Review Again',
+      confirmButtonColor:'#6f2b67',
+      background:'linear-gradient(135deg,#f6eef6,#efe3f0)',
+    });
+
+    if(!result.isConfirmed) return;
+
+    // Simulate API call
+    Swal.fire({title:'Placing Order…',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+    await new Promise(r=>setTimeout(r,1800));
+    Swal.close();
+
+    showSuccess();
+  }
+
+  /* ═══════════════════════════════════════════
+     SUCCESS PAGE
+  ═══════════════════════════════════════════ */
+  function showSuccess(){
+    const prices=calcPrices();
+    const addr=addresses.find(a=>a._id===selectedAddr);
+    const orderId='LH-'+Date.now().toString().slice(-6);
+
+    document.getElementById('successOrderId').textContent=orderId;
+    document.getElementById('successDetails').innerHTML=`
+      <div class="success-detail-row"><span class="sd-label">Delivery To</span><span class="sd-val">${addr.name}</span></div>
+      <div class="success-detail-row"><span class="sd-label">Address</span><span class="sd-val">${addr.line1}, ${addr.city}</span></div>
+      <div class="success-detail-row"><span class="sd-label">Payment</span><span class="sd-val">Cash on Delivery</span></div>
+      <div class="success-detail-row"><span class="sd-label">Items</span><span class="sd-val">${demoItems.length} books</span></div>
+      <div class="success-detail-row"><span class="sd-label">Total Paid</span><span class="sd-val" style="color:var(--purple)">₹${prices.total}</span></div>
+      ${appliedCoupon?`<div class="success-detail-row"><span class="sd-label">Coupon Used</span><span class="sd-val" style="color:var(--success)">${appliedCoupon} (−₹${prices.couponDisc})</span></div>`:''}
+    `;
+
+    document.getElementById('checkoutPage').style.display='none';
+    document.getElementById('successPage').style.display='block';
+    document.querySelector('.page-title-strip').style.display='none';
+    document.querySelector('.breadcrumb-wrap').style.display='none';
+
+    // Step 3 active
+    document.getElementById('step3').classList.add('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step2').classList.add('done');
+    document.getElementById('step2').innerHTML='<i class="fa-solid fa-check" style="font-size:12px"></i>';
+    document.querySelector('.step-line:last-of-type')?.classList.add('done');
+
+    launchConfetti();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  /* ═══════════════════════════════════════════
+     CONFETTI
+  ═══════════════════════════════════════════ */
+  function launchConfetti(){
+    const wrap=document.getElementById('confettiWrap');
+    const colors=['#6f2b67','#c47ed4','#e0a8f0','#fff','#f3e8f2','#8e4a86'];
+    for(let i=0;i<60;i++){
+      const piece=document.createElement('div');
+      piece.className='confetti-piece';
+      piece.style.left=Math.random()*100+'%';
+      piece.style.top='-20px';
+      piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+      piece.style.transform=`rotate(${Math.random()*360}deg)`;
+      piece.style.animationDelay=Math.random()*1.5+'s';
+      piece.style.animationDuration=(1.5+Math.random()*1.5)+'s';
+      wrap.appendChild(piece);
+      piece.addEventListener('animationend',()=>piece.remove());
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     MOBILE MENU
+  ═══════════════════════════════════════════ */
+  const menuToggle=document.getElementById('menuToggle');
+  const mobileMenu=document.getElementById('mobileMenu');
+  menuToggle?.addEventListener('click',function(){
+    mobileMenu.classList.toggle('open');
+    const icon=this.querySelector('i');
+    icon.classList.toggle('fa-bars');icon.classList.toggle('fa-xmark');
+  });
+  document.addEventListener('click',function(e){
+    if(mobileMenu&&menuToggle&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target)){
+      mobileMenu.classList.remove('open');
+      const icon=menuToggle.querySelector('i');
+      if(icon){icon.classList.add('fa-bars');icon.classList.remove('fa-xmark')}
+    }
+  });
+
+  document.getElementById('logoutBtn')?.addEventListener('click',function(e){
+    e.preventDefault();
+    Swal.fire({
+      title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+      html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>`,
+      showCancelButton:true,confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
+      confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",reverseButtons:true,
+      background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
+    }).then(r=>{if(r.isConfirmed)window.location.href='/logout'});
+  });
+
+  /* ═════════════════════════════════════════�
+
+  /* ═══════════════════════════════════════════
+     INIT
+  ═══════════════════════════════════════════ */
+  renderAddresses();
+  renderItems();
+  calcPrices();
+  </script>
+</body>
+</html>

@@ -8,6 +8,47 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
+
+/* Shop page-ல் இருக்கும் same style */
+
+.rating {margin-top: 6px;}
+.out-badge{
+  position:absolute;
+  top:0;
+  left:0;
+  background:linear-gradient(135deg,#1a1a2e,#e53935);
+  color:white;
+  font-size:.7rem;
+  font-weight:900;
+  padding:6px 16px 6px 10px;
+  z-index:4;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  clip-path:polygon(0 0,100% 0,85% 50%,100% 100%,0 100%);
+  box-shadow:2px 4px 14px rgba(229,57,53,.55);
+  text-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+
+.product-card.out-of-stock {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.product-card.out-of-stock .btn-purple {
+  background: #999 !important;
+  
+  cursor: not-allowed !important;
+}
+
+    .slider-track {
+  display: flex;
+  transition: transform 0.5s ease;
+  cursor: grab;
+}
+
+.category-item {
+  pointer-events: auto;
+}
     :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
     *{box-sizing:border-box}
     body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
@@ -38,26 +79,73 @@
     .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s}
     .icon-btn:hover{transform:scale(1.2)rotate(5deg)}
     .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
-    
 
-    .dropdown-menu { border-radius: 12px; border: none;box-shadow: 0 10px 30px rgba(111, 43, 103, 0.25);padding: 8px;}
-    .dropdown-item {border-radius: 8px;padding: 10px 14px;font-weight: 600;color: #333;transition: all 0.25s ease;position: relative;}
-    .dropdown-item:hover {background: linear-gradient(135deg, #6f2b67, #8e4a86);color: #fff;transform: translateX(5px);}
-    .dropdown-item:focus {background: linear-gradient(135deg, #6f2b67, #8e4a86);color: #fff; outline: none;}
-    .dropdown-item i {color: #6f2b67;transition: color 0.25s ease;}
-    .dropdown-item:hover i,.dropdown-item:focus i {color: #fff;}
-     #profileMenu:hover,#profileMenu:focus {background: rgba(255, 255, 255, 0.15);border-radius: 50%;padding: 6px;}
 
-    .search-wrap{display:flex;justify-content:center;padding:30px 15px;background:#fff;animation:fadeUp 1s;width:100%}
-    .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:12px 24px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 20px rgba(111,43,103,.15);transition:all .3s ;  border:1px solid #702767; }
-    .search-box:hover{box-shadow:0 10px 30px rgba(111,43,103,.25);transform:translateY(-2px)}
-    .search-box input{flex:1;border:0;background:0 0;outline:0;color:var;font-size:15px}
-    .search-box input::placeholder{color:#702767}
-    .search-box .btn{background:#702767;border:0;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:all .3s ; border:1px solid #702767;}
-    .search-box .btn:hover{transform:rotate(90deg)scale(1.1)}
+
+    .rating i {color: #f5b301;}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease;position:relative}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item:focus{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;outline:none}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i,.dropdown-item:focus i{color:#fff}
+    #profileMenu:hover,#profileMenu:focus{background:rgba(255,255,255,.15);border-radius:50%;padding:6px}
+
+    /* ========== HAMBURGER BUTTON ========== */
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+
+    /* ========== MOBILE MENU ========== */
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+
+    .search-wrap{
+      display:flex;justify-content:center;
+      padding:18px 15px;
+      background:#fff;
+      animation:fadeUp 1s;
+      width:100%;
+      border-bottom:1px solid #f0e5f5;
+    }
+    .search-box{
+      width:100%;max-width:600px;
+      background:#fff;
+      border-radius:50px;
+      padding:10px 18px;
+      display:flex;align-items:center;gap:10px;
+      box-shadow:0 3px 14px rgba(111,43,103,.10);
+      border:1.5px solid #d8cfe0;
+      transition:all .3s;
+    }
+    .search-box:focus-within{
+      border-color:#702767;
+      box-shadow:0 5px 20px rgba(111,43,103,.18);
+    }
+    /* 🔍 emoji icon — left */
+    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none}
+    /* text input */
+    .search-box input{
+      flex:1;border:0;background:0 0;outline:0;
+      color:#333;font-size:14.5px;font-family:inherit;
+      min-width:0;
+    }
+    .search-box input::placeholder{color:#aaa;font-size:14px}
+    /* ✕ cancel — right, hidden until text exists */
+    .s-cancel{
+      background:none;border:none;cursor:pointer;
+      color:#aaa;font-size:18px;line-height:1;
+      padding:0;flex-shrink:0;
+      display:none;          /* hidden by default */
+      transition:color .2s;
+    }
+    .s-cancel:hover{color:#555}
+    .s-cancel.show{display:block}   /* JS adds this class */
+
     
     .hero{background:url('/images/bookworld.jpeg') center/cover;padding:100px 15px;color:#fff;width:100%;overflow:hidden;position:relative;min-height:500px}
-    /* .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(111,43,103,.7)} */
     .hero>*{position:relative;z-index:1}
     .hero .title-small{color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:2px;font-size:12px;animation:slideLeft 1s}
     .hero h1{color:#fff;font-size:2.8rem;font-weight:800;line-height:1.1;margin-bottom:20px;animation:slideLeft 1.2s}
@@ -81,9 +169,9 @@
     .slider-wrapper{position:relative;max-width:1200px;margin:0 auto;overflow:hidden;padding:20px 80px}
     .slider-track{display:flex;transition:transform .5s ease}
     .category-item{min-width:200px;margin:0 15px;text-align:center;flex-shrink:0}
-    .category-icon{width:120px;height:120px;background:linear-gradient(135deg,#f8f4f9 0%,#f0e5f5 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 20px rgba(111,43,103,.15);transition:all .4s;border:3px solid #f0e5f5}
+    .category-icon{width:150px;height:150px;background:linear-gradient(135deg,#f8f4f9 0%,#f0e5f5 100%); object-fit:cover; border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 20px rgba(111,43,103,.15);transition:all .4s;border:5px solid #f0e5f5}
     .category-icon:hover{transform:scale(1.15)rotate(5deg);box-shadow:0 15px 40px rgba(111,43,103,.3);border-color:var(--purple)}
-    .category-icon img{width:60px;height:60px;object-fit:cover;border-radius:50%;transition:all .3s}
+    .category-icon img{width:200px;height:100%;object-fit:cover;border-radius:50%;transition:all .3s}
     .category-icon:hover img{transform:scale(1.1)}
     .category-name{font-weight:600;color:#333;font-size:14px}
     .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:var(--purple);border:none;width:45px;height:45px;border-radius:50%;box-shadow:0 4px 16px rgba(111,43,103,.3);cursor:pointer;z-index:10;font-size:22px;color:#fff;display:flex;align-items:center;justify-content:center;transition:all .3s}
@@ -125,14 +213,17 @@
     .promo1{background-image:url('/images/hoo.jpeg')}
     .promo2{background-image:url('/images/my.jpeg')}
     
-     .btn-purple{background:#6f2b67;color:#fff;border:none;font-weight:600;border-radius:50px;height:38px;font-size:13px;box-shadow:0 4px 12px rgba(111,43,103,0.25);transition:all 0.3s;animation:droplet 3s infinite;}
-    .btn-purple:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 5px 16px rgba(111,43,103,0.35);}
-    .btn-outline-purple{border:2px solid #6f2b67;color:#6f2b67;background:#fff;border-radius:50px;font-weight:600;height:38px;font-size:13px;transition:all 0.3s;animation:droplet 3s infinite 1s;box-shadow:0 3px 10px rgba(111,43,103,0.12);}
-    .btn-outline-purple:hover{background:#6f2b67;color:#fff;transform:translateY(-2px);box-shadow:0 5px 14px rgba(111,43,103,0.25);}
+    .btn-purple{background:#6f2b67;color:#fff;border:none;font-weight:600;border-radius:50px;height:38px;font-size:13px;box-shadow:0 4px 12px rgba(111,43,103,.25);transition:all .3s;animation:droplet 3s infinite}
+    .btn-purple:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 5px 16px rgba(111,43,103,.35)}
+    .btn-outline-purple{border:2px solid #6f2b67;color:#6f2b67;background:#fff;border-radius:50px;font-weight:600;height:38px;font-size:13px;transition:all .3s;animation:droplet 3s infinite 1s;box-shadow:0 3px 10px rgba(111,43,103,.12)}
+    .btn-outline-purple:hover{background:#6f2b67;color:#fff;transform:translateY(-2px);box-shadow:0 5px 14px rgba(111,43,103,.25)}
     .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
     .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
     .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
     
+    .discount-badge {position: absolute;top: 12px;right: 12px;background: linear-gradient(135deg, #ff416c, #ff4b2b);color: #fff;font-size: 13px;font-weight: 800;padding: 6px 12px;border-radius: 20px;letter-spacing: 0.5px;box-shadow: 0 4px 12px rgba(255, 75, 43, 0.4);animation: popBadge 0.4s ease;}
+
+    @keyframes popBadge {from {transform: scale(0.6);opacity: 0;}to {transform: scale(1);opacity: 1;}}
     @media(max-width:992px){.products-grid{grid-template-columns:repeat(2,1fr);gap:20px}.hero h1{font-size:2.2rem}}
     @media(max-width:768px){.main-nav{display:none}.brand .txt{font-size:18px}.logo-circle{width:50px;height:50px}.book-logo{width:28px}.search-wrap{padding:20px 15px}.search-box{padding:10px 18px;max-width:100%}.hero{padding:60px 15px;min-height:400px}.hero h1{font-size:1.8rem}.slider-wrapper{padding:20px 60px}.category-item{min-width:150px}.category-icon{width:100px;height:100px}.category-icon img{width:50px;height:50px}.slider-btn{width:40px;height:40px;font-size:20px}.slider-btn-left{left:15px}.slider-btn-right{right:15px}.products-grid{grid-template-columns:repeat(2,1fr)}.promo{flex:1 1 100%;min-height:350px}}
     @media(max-width:576px){.top-offer{font-size:12px;padding:6px}.products-grid{grid-template-columns:1fr;gap:20px}.product-card img{height:240px}.hero{padding:50px 15px;min-height:350px}.hero h1{font-size:1.6rem}.search-box input{font-size:14px}.search-box .btn{width:36px;height:36px;font-size:14px}.header-icons{gap:12px}.icon-btn{font-size:18px}.promo{flex:1 1 100%;min-height:300px}.promo-content{padding:30px}.categories-section h3{font-size:24px}.bestseller-title{font-size:24px}}
@@ -154,59 +245,87 @@
             </div>
             <div class="txt">LitHeaven</div>
           </a>
+          <!-- Desktop Nav -->
           <nav class="main-nav d-none d-lg-flex">
-            <a class="nav-link" href="#">Home</a>
-            <a class="nav-link" href="#">Shop</a>
-            <a class="nav-link" href="#">About</a>
-            <a class="nav-link" href="#">Contact</a>
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/contact">Contact</a>
           </nav>
         </div>
-        <div class="col-6 d-flex justify-content-end">
+        <div class="col-6 d-flex justify-content-end align-items-center">
           <div class="header-icons">
-            <div class="icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
-            <div class="icon-btn position-relative" title="Cart">
+           <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div class="icon-badge" id="wishlistBadge">0</div>
+            </a>
+             <a class="icon-btn position-relative" href="/cart" title="Cart">
               <i class="fa-solid fa-cart-shopping"></i>
-              <div class="icon-badge">2</div>
-            </div>
-
-<%if(!isLoggedIn){%>
-    <a href="/login" class="icon-btn">
-    <i class="fa-regular fa-user"></i>
-    </a>
-<%}else {%>  
-    <div class="dropdown">
-    <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
-      <i class="fa-regular fa-user"></i>
-    </div>
-
-    <ul class="dropdown-menu dropdown-menu-end p-2">
-      <li>
-        <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
-          <i class="fa-regular fa-id-badge"></i> Profile
-        </a>
-      </li>
-      <li>
-        <a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </a>
-      </li>
-    </ul>
-    </div>
-<% } %>
-
+              <div class="icon-badge" id="cartBadge">0</div>
+            </a>
             
+
+            <%if(!isLoggedIn){%>
+              <a href="/login" class="icon-btn">
+                <i class="fa-regular fa-user"></i>
+              </a>
+            <%}else{%>
+              <div class="dropdown">
+                <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+                  <i class="fa-regular fa-user"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end p-2">
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
+                      <i class="fa-regular fa-id-badge"></i> Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2">
+                      <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            <%}%>
+
+            <!-- Hamburger Button - Mobile only -->
+            <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <div class="search-wrap">
-    <div class="search-box">
-      <input type="text" style="color: #6f2b67;" placeholder="What are you looking for?">
-      <button class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </div>
+  <!-- Mobile Slide-down Menu -->
+  <div id="mobileMenu" class="mobile-menu d-lg-none">
+    <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+    <a class="mobile-nav-link" href="#"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a class="mobile-nav-link" href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
   </div>
+
+  <div class="search-wrap">
+  <div class="search-box">
+    <!-- 🔍 left emoji icon -->
+    <span class="s-emoji">🔍</span>
+    <!-- text input -->
+    <form action="/shop" method="GET" style="width:100%">
+  <input
+    type="text"
+    name="search"
+    id="searchInput"
+    placeholder="Search books or authors..."
+    oninput="onSearchType(this)"
+    autocomplete="off"
+  >
+</form>
+    <!-- ✕ cancel — hidden until user types -->
+    <button class="s-cancel" id="cancelBtn" onclick="cancelSearch()" title="Clear">✕</button>
+  </div>
+</div>
 
   <section class="hero">
     <div class="container-fluid">
@@ -244,135 +363,137 @@
   </div>
 
   <section class="categories-section">
-    <h3>Popular Categories in Books</h3>
-    <div class="slider-wrapper">
-      <button class="slider-btn slider-btn-left" onclick="move(-1)">‹</button>
-      <div class="slider-track" id="track">
-        <div class="category-item">
-          <div class="category-icon">
-            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=200" alt="Non-fiction">
-          </div>
-          <div class="category-name">Non-fiction</div>
-        </div>
-        <div class="category-item">
-          <div class="category-icon">
-            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=200" alt="Children's">
-          </div>
-          <div class="category-name">Children's</div>
-        </div>
-        <div class="category-item">
-          <div class="category-icon">
-            <img src="https://images.unsplash.com/photo-1529486378-1f72c3d7d257?q=80&w=200" alt="Fiction">
-          </div>
-          <div class="category-name">Fiction</div>
-        </div>
-        <div class="category-item">
-          <div class="category-icon">
-            <img src="https://images.unsplash.com/photo-1496104679561-38b3a6182010?q=80&w=200" alt="Special">
-          </div>
-          <div class="category-name">Special Interest</div>
-        </div>
-        <div class="category-item">
-          <div class="category-icon">
-            <img src="https://images.unsplash.com/photo-1476954207750-5bf8b5f3b5a9?q=80&w=200" alt="Academic">
-          </div>
-          <div class="category-name">Academic / Education</div>
-        </div>
-      </div>
-      <button class="slider-btn slider-btn-right" onclick="move(1)">›</button>
-    </div>
-  </section>
+  <h3>Popular Categories in Books</h3>
 
-  <section class="bestseller-section">
-    <div class="container-fluid">
-      <div class="bestseller-title">Best Seller</div>
-      <div class="products-grid">
-        <div class="product-card">
-          <div class="card-actions">
-            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+  <div class="slider-wrapper">
+    <button class="slider-btn slider-btn-left" onclick="move(-1)">‹</button>
+
+    <div class="slider-track" id="track">
+
+      <% featuredCategories.forEach(cat => { %>
+
+        <div class="category-item" onclick="goToCategory('<%= cat._id %>')">
+          <div class="category-icon">
+            <img src="<%= cat.image?.url %>" alt="<%= cat.name %>">
           </div>
-          <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800" alt="Book">
-          <div class="title">Cosmic journey</div>
-          <div class="author">Richard Solind</div>
-          <div class="price-row">
-            <div class="old-price">$9.99</div>
-            <div class="new-price">$5.00</div>
-          </div>
-            <button type="submit" class="btn btn-purple w-50">ADD</button>
+          <div class="category-name"><%= cat.name %></div>
         </div>
-        <div class="product-card">
+
+      <% }) %>
+
+    </div>
+
+    <button class="slider-btn slider-btn-right" onclick="move(1)">›</button>
+  </div>
+</section>
+
+<section class="bestseller-section">
+  <div class="container-fluid">
+    <div class="bestseller-title">Best Seller</div>
+    <div class="products-grid">
+
+      <% bestSellers.forEach(product => { %>
+
+        <div class="product-card <%= product.isOutOfStock ? 'out-of-stock' : '' %>">
+
           <div class="card-actions">
-            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+            <button class="action-btn">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+            <button class="action-btn">
+              <i class="fa-solid fa-cart-plus"></i>
+            </button>
           </div>
-          <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=800" alt="Book">
-          <div class="title">King of Envy</div>
-          <div class="author">Morgan Tigheus</div>
-          <div class="price-row">
-            <div class="old-price">$12.99</div>
-            <div class="new-price">$6.00</div>
+
+          <% if(product.isOutOfStock){ %>
+              <div class="out-badge">Out of Stock</div>
+          <% } %>
+
+          <!-- Product Image -->
+          <img 
+            src="<%= product.variants?.[0]?.thumbnail?.url || 'https://placehold.co/300x400' %>"
+            alt="<%= product.title %>"
+          >
+
+          <!-- Title -->
+          <div class="title">
+            <%= product.title %>
           </div>
-            <button type="submit" class="btn btn-purple w-50">ADD</button>
+
+          <!-- Author Name FIXED -->
+          <div class="author">
+            <%= product.author?.name || 'Unknown Author' %>
+          </div>
+
+          <!--  RATING — ADD HERE -->
+<div class="rating">
+
+  <% if (product.avgRating && product.avgRating > 0) { %>
+
+    <% const rating = Math.round(product.avgRating); %>
+
+    <% for (let i = 1; i <= 5; i++) { %>
+
+      <% if (i <= rating) { %>
+        <i class="fa-solid fa-star text-warning"></i>
+      <% } else { %>
+        <i class="fa-regular fa-star text-warning"></i>
+      <% } %>
+
+    <% } %>
+
+    <span class="rating-count">
+      (<%= product.avgRating.toFixed(1) %>)
+    </span>
+
+  <% } else { %>
+
+     <% for(let i = 1; i <= 5; i++){ %>
+    <i class="fa-regular fa-star"></i>
+  <% } %>
+
+  <% } %>
+
+</div>
+          <!-- Price -->
+        <div class="price-row">
+
+          <% if(product.discount > 0){ %>
+
+            <div class="old-price">
+               ₹<%= product.originalPrice %>
+            </div>
+
+            <div class="new-price">
+               ₹<%= product.offerPrice %>
+            </div>
+            <div class="discount-badge">
+               <%= product.discount %>% 
+            </div>   
+
+
+          <% } else { %>
+
+            <div class="new-price">
+               ₹<%= product.originalPrice %>
+            </div>
+
+          <% } %>
+
         </div>
-        <div class="product-card">
-          <div class="card-actions">
-            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-          </div>
-          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800" alt="Book">
-          <div class="title">The Trading</div>
-          <div class="author">Tohonn Grisach</div>
-          <div class="price-row">
-            <div class="old-price">$15.00</div>
-            <div class="new-price">$8.00</div>
-          </div>
-          <button type="submit" class="btn btn-purple w-50">ADD</button>
+
+          <!-- View Button -->
+          <a href="/product/<%= product._id %>" 
+             class="btn btn-purple w-50">
+             View
+          </a>
+
         </div>
-        <div class="product-card">
-          <div class="card-actions">
-            <button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-            <button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-          </div>
-          <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=800" alt="Book">
-          <div class="title">Onme Kours</div>
-          <div class="author">Unknown</div>
-          <div class="price-row">
-            <div class="old-price">$10.99</div>
-            <div class="new-price">$5.50</div>
-          </div>
-            <button type="submit" class="btn btn-purple w-50">ADD</button>
-</div>
-<div class="product-card">
-<div class="card-actions">
-<button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-<button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-</div>
-<img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800" alt="Book">
-<div class="title">Onyx Storm</div>
-<div class="author">Other Carong</div>
-<div class="price-row">
-<div class="old-price">$9.99</div>
-<div class="new-price">$4.99</div>
-</div>
-  <button type="submit" class="btn btn-purple w-50">ADD</button>
-</div>
-<div class="product-card">
-<div class="card-actions">
-<button class="action-btn" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
-<button class="action-btn" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-</div>
-<img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800" alt="Book">
-<div class="title">Psychology of Money</div>
-<div class="author">Morgan Housel</div>
-<div class="price-row">
-<div class="old-price">$14.99</div>
-<div class="new-price">$7.99</div>
-</div>
-  <button type="submit" class="btn btn-purple w-50">ADD</button>
-</div>
-</div>
-</div>
+
+      <% }) %>
+
+    </div>
+  </div>
 </section>
   <section class="promo-row">
     <div class="promo promo1">
@@ -390,6 +511,7 @@
       </div>
     </div>
   </section>
+
   <footer class="site-footer">
     <div class="container-fluid">
       <div class="row g-4">
@@ -417,20 +539,44 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/common.js"></script>
 
+  
   <script>
+    
+  // const track = document.getElementById('track');
+  // const items = [...track.children];
+
+  // let index = 0;
+
+  // function move(direction) {
+  //   const itemWidth = items[0].offsetWidth + 20;
+  //   const maxIndex = items.length - 1;
+
+  //   index += direction;
+
+  //   if (index < 0) index = 0;
+  //   if (index > maxIndex) index = maxIndex;
+
+  //   track.style.transform = `translateX(-${index * itemWidth}px)`;
+  // }
+
+  // function filterSubCategory(id) {
+  //   window.location.href = `/shop?subCategory=${id}`;
+  // }
+
+
+
+    // Category Slider
     const track = document.getElementById('track');
     const items = [...track.children];
     items.forEach(i => track.appendChild(i.cloneNode(true)));
-    
     let idx = 0, moving = false;
-    
     function move(dir) {
       if (moving) return;
       moving = true;
       idx += dir;
       track.style.transform = `translateX(-${idx * 230}px)`;
-      
       setTimeout(() => {
         if (idx >= 5) { track.style.transition = 'none'; idx = 0; track.style.transform = 'translateX(0)'; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
         if (idx < 0) { track.style.transition = 'none'; idx = 4; track.style.transform = `translateX(-${idx * 230}px)`; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
@@ -438,23 +584,40 @@
       }, 500);
     }
 
-    document.addEventListener('click', function(e){
-      const menu = document.querySelector('.profile-dropdown');
-      if(!menu) return;
-      const toggle = document.getElementById('profileMenu');
-      if(toggle && toggle.contains(e.target)) return;
-      const shown = document.querySelector('.dropdown-menu.show');
-      if(shown && !shown.contains(e.target)) {
-        const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
-        if(bsDropdown) bsDropdown.hide();
+    function goToCategory(id) {
+  window.location.href = `/shop?subcategory=${id}`;
+}
+
+    // ========== MOBILE MENU TOGGLE ==========
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuToggle?.addEventListener('click', function () {
+      mobileMenu.classList.toggle('open');
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
+    });
+
+    // Close menu when a nav link is clicked
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle?.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+      });
+    });
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', function (e) {
+      if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
       }
     });
 
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
+    // Scroll animation observer
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -462,58 +625,103 @@
           entry.target.style.transform = 'translateY(0)';
         }
       });
-    }, observerOptions);
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
     document.querySelectorAll('.product-card, .promo, .feature-item').forEach(el => {
       observer.observe(el);
     });
   </script>
-  
-  <script>
-  document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
-    e.preventDefault();
-    Swal.fire({
-  title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
-  html: `
-    <p style="font-size:14px;color:#555;margin-bottom:8px">
-      Are you sure you want to logout? 💜
-    </p>
-    <p style="font-size:13px;color:#888">
-      You can login again anytime.
-    </p>
-  `,
-  imageUrl: "/images/go-out-thro-removebg-preview.png",
-  imageWidth: 130,
-  imageHeight: 130,
-  imageAlt: "Logout illustration",
-  showCancelButton: true,
-  confirmButtonText: "🚪 Logout",
-  cancelButtonText: "Stay Here",
-  confirmButtonColor: "#6f2b67",
-  cancelButtonColor: "#d6c3d3",
-  reverseButtons: true,
-  background: "#fff",
-  backdrop: `
-    rgbargba(0,0,0,0.6)
-    url("/images/soft-wave.gif")
-    center top
-    no-repeat
-  `,
-   background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
 
-  backdrop: "rgba(0,0,0,0.6)",
-  showClass: {
-    popup: 'animate__animated animate__fadeInUp'
-  },
-  hideClass: {
-    popup: 'animate__animated animate__fadeOutDown'
-  }
-}).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/logout";
-      }
+  <script>
+    document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html: `
+          <p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+          <p style="font-size:13px;color:#888">You can login again anytime.</p>
+        `,
+        imageUrl: "/images/go-out-thro-removebg-preview.png",
+        imageWidth: 130,
+        imageHeight: 130,
+        imageAlt: "Logout illustration",
+        showCancelButton: true,
+        confirmButtonText: "🚪 Logout",
+        cancelButtonText: "Stay Here",
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#d6c3d3",
+        reverseButtons: true,
+        background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+        backdrop: "rgba(0,0,0,0.6)",
+        showClass: { popup: 'animate__animated animate__fadeInUp' },
+        hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/logout";
+        }
+      });
     });
+
+
+// SEARCH
+function onSearchType(inp){
+
+const btn = document.getElementById("cancelBtn")
+
+if(inp.value.length > 0){
+btn.classList.add("show")
+}else{
+btn.classList.remove("show")
+}
+
+}
+
+function cancelSearch(){
+  const inp = document.getElementById('searchInput');
+  inp.value = '';
+  document.getElementById('cancelBtn').classList.remove('show');
+  inp.focus();
+  applyFilters();
+}
+
+function getBestOffer(product, offers) {
+
+  let productOffer = null;
+  let subCategoryOffer = null;
+  let categoryOffer = null;
+
+  offers.forEach(o => {
+
+    
+    if (
+      o.type === "product" &&
+      String(o.product) === String(product._id)
+    ) {
+      productOffer = o;
+    }
+
+    if (
+      o.type === "subcategory" &&
+      String(o.subCategory) === String(product.subCategory?._id)
+    ) {
+      subCategoryOffer = o;
+    }
+
+    // CATEGORY OFFER
+    if (
+      o.type === "category" &&
+      String(o.category) === String(product.category?._id)
+    ) {
+      categoryOffer = o;
+    }
+
   });
-</script>
+
+ 
+  return productOffer || subCategoryOffer || categoryOffer || null;
+}
+
+
+  </script>
 </body>
 </html>

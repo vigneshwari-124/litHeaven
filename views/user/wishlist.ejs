@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>My Wishlist – LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+   .out-badge{
+position:absolute;
+top:0;
+left:0;
+background:linear-gradient(135deg,#1a1a2e,#e53935);
+color:white;
+font-size:.7rem;
+padding:6px 16px 6px 10px;
+font-weight:900;
+z-index:4;
+letter-spacing:.8px;
+text-transform:uppercase;
+clip-path:polygon(0 0,100% 0,85% 50%,100% 100%,0 100%);
+box-shadow:2px 4px 14px rgba(229,57,53,.55);
+text-shadow:0 1px 3px rgba(0,0,0,.3);
+border-top-left-radius:12px;   /* 🔥 முக்கியம் */
+  border-bottom-right-radius:8px; /* optional stylish */
+}
+
+.bcard.out{
+opacity:.65;
+pointer-events:none;
+}
+    :root {
+      --purple: #6f2b67;
+      --light:  #8e4a86;
+      --muted:  #6c6c6c;
+      --pur-lt: #f3e8f2;
+      --pur-mid:#c49abf;
+      --border: #b88ab4;
+      --sale:   #e8412e;
+      --ink:    #1a0f18;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "DM Sans", "Segoe UI", Roboto, Arial;
+      background: linear-gradient(135deg, #f5f0f6 0%, #e8dff0 50%, #f0e5f5 100%);
+      color: #222; overflow-x: hidden; max-width: 100vw; min-height: 100vh;
+    }
+
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulse    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes slideUp  { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes shineSweep { 0%{transform:translateX(-100%) rotate(25deg)} 100%{transform:translateX(300%) rotate(25deg)} }
+    @keyframes sparkFloat {
+      0%,100%{transform:translateY(0) scale(1);opacity:0}
+      20%{opacity:1} 60%{opacity:.7}
+      100%{transform:translateY(-28px) scale(.4);opacity:0}
+    }
+    @keyframes bubbleRipple {
+      0%   { transform:scale(0); opacity:.5; }
+      100% { transform:scale(4); opacity:0; }
+    }
+    @keyframes floatOrb1 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%     { transform: translate(18px,-22px) scale(1.08); }
+    }
+    @keyframes floatOrb2 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%     { transform: translate(-14px,16px) scale(1.05); }
+    }
+    @keyframes floatOrb3 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%     { transform: translate(10px,12px) scale(1.06); }
+    }
+
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after{width:80%}
+    .main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i{color:#fff}
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+    .breadcrumb-wrap{background:#fff;padding:13px 20px;border-bottom:1px solid #f0e5f5}
+    .breadcrumb{margin:0;font-size:13px}
+    .breadcrumb-item a{color:var(--purple);text-decoration:none;font-weight:600}
+    .breadcrumb-item.active{color:#999;font-weight:500}
+    .breadcrumb-item+.breadcrumb-item::before{color:#d0c0d0}
+    .page-title-strip{background:linear-gradient(135deg,var(--purple) 0%,var(--light) 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+    .page-title-strip::before{content:'💜';font-size:130px;position:absolute;right:-10px;top:50%;transform:translateY(-50%);opacity:.08;user-select:none;pointer-events:none}
+    .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s}
+    .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;animation:fadeUp 1s}
+    .wish-wrap{max-width:1280px;margin:0 auto;padding:36px 20px 60px;animation:fadeUp .9s}
+    .wish-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .wish-section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--purple)}
+    .wish-big-count{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--ink);line-height:1}
+    .wish-count-sub{font-size:12px;color:var(--muted)}
+    .btn-empty-wish{border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:9px 20px;border-radius:50px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px}
+    .btn-empty-wish:hover{border-color:var(--sale);color:var(--sale)}
+
+    /* ═══════════════════════════════════════════
+       GRID WRAPPER — unique frosted orb bg
+       light, NOT dark — page theme matches
+    ═══════════════════════════════════════════ */
+    .wish-grid-wrap {
+      position: relative;
+      border-radius: 24px;
+      padding: 20px;
+      /* layered radial orbs + soft base */
+      background:
+        radial-gradient(ellipse 55% 45% at 8% 12%,  rgba(196,130,210,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 92% 85%,  rgba(111,43,103,.13) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 40% at 55% 5%,   rgba(230,190,240,.20) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 35% at 10% 90%,  rgba(160,100,180,.10) 0%, transparent 60%),
+        linear-gradient(145deg, #faf4fd 0%, #f2e8f9 35%, #ede0f5 65%, #f5edfb 100%);
+      border: 1.5px solid rgba(184,138,180,.30);
+      box-shadow:
+        0 2px 0 rgba(255,255,255,.85) inset,  /* top sheen */
+        0 8px 32px rgba(111,43,103,.10),
+        0 1px 4px rgba(111,43,103,.06);
+      overflow: hidden;
+    }
+
+    /* dot grid texture */
+    .wish-grid-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 24px;
+      background-image:
+        radial-gradient(circle, rgba(111,43,103,.09) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* three animated blurry orbs */
+    .wish-grid-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle 120px at 20% 25%,  rgba(200,140,220,.22) 0%, transparent 70%),
+        radial-gradient(circle 90px  at 80% 70%,  rgba(111,43,103,.15) 0%, transparent 70%),
+        radial-gradient(circle 100px at 60% 15%,  rgba(220,170,235,.18) 0%, transparent 70%);
+      filter: blur(18px);
+      animation: floatOrb1 7s ease-in-out infinite;
+    }
+
+    /* ═══════════════════════════════
+       GRID
+    ═══════════════════════════════ */
+    .wish-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      position: relative;
+      z-index: 1;   /* above bg effects */
+    }
+
+    /* ═══════════════════════════════
+       CARD
+    ═══════════════════════════════ */
+    .wish-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      border: 2.5px solid rgba(184,138,180,.55);
+      box-shadow: 0 2px 12px rgba(111,43,103,.08);
+      overflow: visible;
+      transition: background .3s, transform .3s, border-color .3s, box-shadow .3s;
+      animation: slideUp .5s ease both;
+      isolation: isolate;
+    }
+    .wish-card-inner-clip {
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      flex: 1;
+    }
+    .wish-card:hover {
+      background: rgba(243,232,242,.95);
+      z-index: 10;
+      transform: translateY(-5px) scale(1.015);
+      border-color: var(--purple);
+      box-shadow: 0 12px 36px rgba(111,43,103,.22);
+    }
+
+    @property --angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+    @keyframes rotateBorder { to { --angle: 360deg; } }
+
+    .wish-card::before {
+      content:'';
+      position:absolute; inset:-2.5px;
+      border-radius:16px;
+      background:conic-gradient(from var(--angle,0deg),transparent 0deg,#c47ed4 60deg,#fff 90deg,#6f2b67 130deg,#e0a8f0 180deg,#fff 210deg,#c47ed4 260deg,transparent 300deg,transparent 360deg);
+      opacity:0; transition:opacity .35s; z-index:-1;
+    }
+    .wish-card:hover::before { opacity:1; animation:rotateBorder 2.4s linear infinite; }
+
+    .wish-card::after {
+      content:'';
+      position:absolute; inset:0;
+      border-radius:13px;
+      background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);
+      transform:translateX(-100%) rotate(25deg);
+      opacity:0; pointer-events:none; z-index:5;
+    }
+    .wish-card:hover::after { opacity:1; animation:shineSweep 1s cubic-bezier(.4,0,.2,1) forwards; }
+
+    .wish-card .spark {
+      position:absolute; width:5px; height:5px; border-radius:50%;
+      background:radial-gradient(circle,#fff 0%,#d87ede 60%,transparent 100%);
+      pointer-events:none; opacity:0; z-index:20;
+    }
+    .wish-card:hover .spark { animation:sparkFloat 1.2s ease forwards; }
+    .wish-card .spark:nth-child(1){top:12%;left:8%;animation-delay:.05s;width:4px;height:4px}
+    .wish-card .spark:nth-child(2){top:6%;left:50%;animation-delay:.2s;width:6px;height:6px}
+    .wish-card .spark:nth-child(3){top:18%;right:10%;animation-delay:.1s;width:4px;height:4px}
+    .wish-card .spark:nth-child(4){bottom:30%;left:5%;animation-delay:.3s;width:5px;height:5px}
+    .wish-card .spark:nth-child(5){bottom:35%;right:6%;animation-delay:.15s;width:4px;height:4px}
+    .wish-card .spark:nth-child(6){top:50%;left:2%;animation-delay:.25s;width:3px;height:3px}
+
+    /* image */
+    .wish-card-img-wrap {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      background: var(--pur-lt);
+      position: relative;
+    }
+    .wish-card-img {
+      width:100%; height:100%; object-fit:cover;
+      transition:transform .55s cubic-bezier(.4,0,.2,1), filter .4s;
+      filter:saturate(.88);
+    }
+    .wish-card:hover .wish-card-img { transform:scale(1.08); filter:saturate(1.15); }
+
+    .wish-card-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top,rgba(111,43,103,.68) 0%,rgba(111,43,103,.15) 55%,transparent 75%);
+      opacity:0; transition:opacity .35s; pointer-events:none;
+    }
+    .wish-card:hover .wish-card-overlay { opacity:1; }
+
+    .disc-corner {
+      position:absolute; top:8px; left:8px;
+      background:var(--sale); color:#fff;
+      font-size:8px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+      padding:2px 7px; border-radius:5px; z-index:3;
+    }
+    .btn-card-del {
+      position:absolute; top:8px; right:8px;
+      width:24px; height:24px; border-radius:50%;
+      background:rgba(255,255,255,.9); border:1px solid rgba(0,0,0,.07);
+      color:var(--muted); font-size:10px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all .22s; z-index:3;
+    }
+    .btn-card-del:hover { background:var(--sale); color:#fff; border-color:var(--sale); transform:scale(1.12); }
+
+    /* ADD TO CART */
+ .btn-add-cart {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background: linear-gradient(90deg, #ff003c, #8b0020);
+  color: #fff;
+
+  padding: 12px 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  border: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  transform: translateY(100%);
+  transition: all .3s ease;
+}
+
+.wish-card:hover .btn-add-cart {
+  transform: translateY(0);
+}
+
+.btn-add-cart:hover {
+  background: linear-gradient(90deg, #ff1a4d, #5a0012);
+}
+    .btn-add-cart .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      width: 40px; height: 40px;
+      margin-top: -20px; margin-left: -20px;
+      animation: bubbleRipple 0.55s linear forwards;
+      pointer-events: none;
+    }
+
+    /* card body */
+    .wish-card-body {
+      padding: 8px 10px 10px;
+      flex:1; display:flex; flex-direction:column; gap:3px;
+    }
+    .wc-genre { font-size:7.5px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:var(--pur-mid); }
+    .wc-title { font-family:'Cormorant Garamond',serif; font-size:12.5px; font-weight:700; line-height:1.25; color:var(--ink); }
+    .wc-author { font-size:9px; color:var(--muted); font-style:italic; }
+    .wc-divider { height:1px; background:linear-gradient(90deg,var(--border),transparent); margin:4px 0 3px; }
+    .wc-price-row { display:flex; align-items:baseline; gap:5px; }
+    .wc-price-new { font-size:12px; font-weight:800; color:var(--purple); font-family:'DM Sans',sans-serif; }
+    .wc-price-old { font-size:10px; color:var(--pur-mid); text-decoration:line-through; }
+    .wc-price-save { font-size:8px; color:var(--sale); font-weight:700; margin-left:auto; background:rgba(232,65,46,.08); padding:2px 4px; border-radius:4px; }
+
+    .pagination-wrap{display:flex;align-items:center;justify-content:center; align-items: center;margin-top:40px;flex-wrap:wrap;gap:14px}
+    .found-text{font-size:13px;color:#888;font-weight:600}
+    .found-text strong{color:var(--purple)}
+    .pagination-btns{display:flex;align-items:center;gap:6px}
+    .pg-btn{width:36px;height:36px;border-radius:50%;border:2px solid #e8d5e8;background:#fff;color:var(--purple);font-weight:700;font-size:14px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;font-family:inherit}
+    .pg-btn:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn.arrow{font-size:16px}
+    .pg-dots{color:#bbb;font-weight:700;letter-spacing:2px;padding:0 4px}
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+
+    @media(max-width:1280px){.wish-grid{grid-template-columns:repeat(5,1fr)}}
+    @media(max-width:1024px){.wish-grid{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:768px){
+      .main-nav{display:none}
+      .page-title-strip h2{font-size:1.5rem}
+      .wish-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+      .wish-grid-wrap{padding:12px}
+    }
+    @media(max-width:480px){
+      .wish-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+      .wish-wrap{padding:24px 12px 50px}
+    }
+    @media(max-width:360px){.wish-grid{grid-template-columns:1fr}}
+    @media(max-width:390px){
+      .brand .txt{font-size:16px}
+      .logo-circle{width:48px;height:48px}
+      .book-logo{width:26px}
+      .navbar-container{padding:0 10px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+  <header class="navbar-area">
+    <div class="navbar-container">
+      <div class="row align-items-center g-0">
+        <div class="col-6 d-flex align-items-center gap-3">
+          <a class="brand" href="/">
+            <div class="logo-circle">
+              <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+              <div class="logo-text">LitHeaven</div>
+              <div class="tagline">Your Literary Escape</div>
+            </div>
+            <div class="txt">LitHeaven</div>
+          </a>
+          <nav class="main-nav d-none d-lg-flex">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/contact">Contact</a>
+          </nav>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+          <div class="header-icons">
+            <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div class="icon-badge" id="wishlistBadge">0</div>
+            </a>
+             <a class="icon-btn position-relative" href="/cart" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge" id="cartBadge">0</div>
+            </a>
+            <div class="dropdown">
+              <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-user"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end p-2">
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+                <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+              </ul>
+            </div>
+            <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu d-lg-none">
+    <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+  </div>
+
+  <div class="breadcrumb-wrap">
+    <nav><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+      <li class="breadcrumb-item active">My Wishlist</li>
+    </ol></nav>
+  </div>
+
+  <div class="page-title-strip">
+    <h2>💜 My Wishlist</h2>
+    <p>Books you love — saved for later</p>
+  </div>
+
+  <div class="wish-wrap">
+    <div class="wish-topbar" id="wishTopbar">
+      <div>
+        <div class="wish-section-label">My Wishlist</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-top:4px">
+          <span class="wish-big-count" id="wishCountDisplay">7</span>
+          <span class="wish-count-sub">books saved</span>
+        </div>
+      </div>
+      <button class="btn-empty-wish" onclick="confirmEmptyWish()">
+        <i class="fa-regular fa-trash-can"></i> Empty Wishlist
+      </button>
+    </div>
+
+    <!-- ⬇ ONLY CHANGE: wrapped wish-grid in wish-grid-wrap -->
+    <div class="wish-grid-wrap" id="wishGridWrap">
+      <div class="wish-grid" id="wishGrid"></div>
+    </div>
+
+    <div id="emptyWishlist" style="display:none;text-align:center;padding:80px 20px">
+
+<img src="/images/transparent_wishlist.png"
+       style="width:120px;margin-bottom:20px;opacity:0.85">
+  <h4 style="color:#6f2b67;font-weight:800">
+    Your Wishlist is Empty 💔
+  </h4>
+
+  <p style="color:#777;margin-top:8px">
+    Looks like you haven't added anything yet
+  </p>
+
+  <a href="/shop" class="btn btn-dark mt-3">
+    Go to Shop
+  </a>
+
+</div>
+
+    <div class="pagination-wrap">
+      <div id="pagination" class="pagination-btns"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5>Get In Touch</h5>
+          <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+          <p><small>support@litheaven.com</small></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop Books</a></li>
+            <li><a href="/about">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h5>LitHeaven</h5>
+          <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+        </div>
+      </div>
+      <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.btn-add-cart')
+      if (!btn) return
+      const rect = btn.getBoundingClientRect()
+      const bubble = document.createElement('span')
+      bubble.classList.add('bubble')
+      bubble.style.left = (e.clientX - rect.left) + 'px'
+      bubble.style.top  = (e.clientY - rect.top)  + 'px'
+      btn.appendChild(bubble)
+      bubble.addEventListener('animationend', () => bubble.remove())
+    })
+
+async function loadWishlist(page=1) {
+  const res  = await fetch(`/wishlist-data?page=${page}`)
+  const data = await res.json()
+
+  const grid      = document.getElementById("wishGrid")
+  const empty     = document.getElementById("emptyWishlist")
+  const countEl   = document.getElementById("wishCountDisplay")
+    
+
+  // 🔥 NEW
+  const gridWrap  = document.getElementById("wishGridWrap")
+  const topbar    = document.getElementById("wishTopbar")
+
+  const badge = document.getElementById("wishlistBadge")
+
+if (badge) {
+  if (data.totalItems > 0) {
+    badge.style.display = "flex"
+    badge.textContent = data.totalItems
+  } else {
+    badge.style.display = "none"
+  }
+}
+  grid.innerHTML = ""
+
+  
+  if (!data.items || data.items.length === 0) {
+    empty.style.display = "block"
+
+    
+    gridWrap.style.display = "none"
+    topbar.style.display   = "none"
+
+     document.getElementById("pagination").style.display = "none"
+    if (countEl) countEl.textContent = "0"
+    return
+  }
+
+  // ✅ HAS ITEMS
+  empty.style.display = "none"
+
+  // 🔥 SHOW AGAIN
+  gridWrap.style.display = "block"
+  topbar.style.display   = "flex"
+
+  document.getElementById("pagination").style.display = "flex"
+
+  if (countEl) countEl.textContent = data.totalItems
+
+  data.items.forEach((item, index) => {
+    const product    = item.productId
+    const variant    = product.variants.find(
+      v => v.language._id.toString() === item.languageId._id.toString()
+    )
+
+    const format     = variant?.formats.find(f => f.format === item.format)
+
+    const image      = variant?.thumbnail?.url || "/images/default.jpg"
+    const title      = product.title
+    const price      = format?.price || 0
+    const isOut      = item.stock === 0
+    const author     = product.author?.name || "Unknown"
+    const language   = variant?.language?.languageName || "N/A"
+    const formatType = item.format || "N/A"
+
+    const card = `
+      <div class="wish-card ${isOut ? 'out' : ''}" id="wcard-${item._id}">
+        <div class="wish-card-inner-clip">
+          <div class="wish-card-img-wrap">
+            <img src="${image}" class="wish-card-img">
+            <button class="btn-card-del" onclick="removeWish('${item._id}')">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <button class="btn-add-cart"
+               onclick="moveToCart('${product._id}', '${item.languageId._id}', '${item.format}', '${item._id}')"
+               ${isOut ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}
+               >
+               <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </button>
+          </div>
+
+          <div class="wish-card-body">
+            <div class="wc-genre">${language} • ${formatType}</div>
+            <div class="wc-title">${title}</div>
+            <div class="wc-author">${author}</div>
+
+            <div class="wc-price-row">
+              <span class="wc-price-new">₹${price}</span>
+            </div>
+            ${isOut ? `
+               <span class="out-badge">Out of Stock</span>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `
+
+    grid.innerHTML += card
+  })
+
+   renderPagination(data.totalPages, data.currentPage)
+}
+
+async function removeWish(id) {
+  await fetch(`/remove-wishlist/${id}`, { method: "DELETE" })
+
+  document.getElementById("wcard-" + id)?.remove()
+
+  // 🔥 RELOAD DATA (BEST WAY)
+  loadWishlist(1)
+}
+
+async function confirmEmptyWish() {
+
+  const confirmDelete = confirm("Are you sure you want to clear wishlist?")
+
+  if (!confirmDelete) return
+
+  await fetch("/clear-wishlist", {
+    method: "DELETE"
+  })
+
+document.getElementById("wishGrid").innerHTML = ""
+document.getElementById("emptyWishlist").style.display = "block"
+
+document.getElementById("wishGridWrap").style.display = "none"
+document.getElementById("wishTopbar").style.display = "none"
+}
+   
+function confirmEmptyWish() {
+  Swal.fire({
+    title: "Clear Wishlist?",
+    text: "All items will be removed 💔",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, clear it",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#6f2b67"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+
+      await fetch("/clear-wishlist", {
+        method: "DELETE"
+      })
+
+      // 🔥 CLEAR GRID
+      document.getElementById("wishGrid").innerHTML = ""
+
+      // ✅ SHOW EMPTY MESSAGE
+      document.getElementById("emptyWishlist").style.display = "block"
+
+      // 🔥 HIDE EVERYTHING ELSE
+      document.getElementById("wishGridWrap").style.display = "none"
+      document.getElementById("wishTopbar").style.display = "none"
+      document.getElementById("pagination").innerHTML = ""
+
+      // 🔥 RESET COUNT
+      const countEl = document.getElementById("wishCountDisplay")
+      if (countEl) countEl.textContent = "0"
+
+      Swal.fire("Cleared!", "Your wishlist is empty.", "success")
+    }
+  })
+}
+
+function renderPagination(totalPages, currentPage) {
+  const pagination = document.getElementById("pagination")
+  pagination.innerHTML = ""
+
+  // 🔥 ALWAYS show PREV
+  pagination.innerHTML += `
+    <button class="pg-btn ${currentPage === 1 ? 'disabled' : ''}"
+      onclick="${currentPage > 1 ? `loadWishlist(${currentPage - 1})` : ''}">
+      ‹
+    </button>
+  `
+
+  // 🔢 Pages
+  for (let i = 1; i <= totalPages; i++) {
+    pagination.innerHTML += `
+      <button class="pg-btn ${i === currentPage ? 'active' : ''}"
+        onclick="loadWishlist(${i})">
+        ${i}
+      </button>
+    `
+  }
+
+  // 🔥 ALWAYS show NEXT
+  pagination.innerHTML += `
+    <button class="pg-btn ${currentPage === totalPages ? 'disabled' : ''}"
+      onclick="${currentPage < totalPages ? `loadWishlist(${currentPage + 1})` : ''}">
+      ›
+    </button>
+  `
+}
+    window.addEventListener("DOMContentLoaded", ()=>{
+    loadWishlist(1),
+    loadCartCount() 
+    })
+
+
+async function moveToCart(productId, languageId, format, wishlistId) {
+
+
+  const res = await fetch("/move-to-cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      productId,
+      languageId,
+      format,
+      wishlistId
+    })
+  })
+
+  const data = await res.json()
+
+  await Swal.fire({
+    icon: data.status === "added" ? "success" :
+          data.status === "already" ? "info" : "error",
+    title: data.message,
+    timer: 1500,
+    showConfirmButton: false
+  })
+
+  document.getElementById("wcard-" + wishlistId)?.remove()
+
+  loadCartCount() 
+  
+  loadWishlist(1)
+}
+
+async function loadCartCount() {
+  try {
+    const res = await fetch("/get-cart")
+    const data = await res.json()
+
+    const badge = document.getElementById("cartBadge")
+
+    if (!badge) return
+
+    const count = data.items?.length || 0
+
+    if (count > 0) {
+      badge.style.display = "flex"
+      badge.textContent = count
+    } else {
+      badge.style.display = "none"
+    }
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+    
+    const menuToggle = document.getElementById('menuToggle')
+    const mobileMenu = document.getElementById('mobileMenu')
+    menuToggle?.addEventListener('click', function () {
+      mobileMenu.classList.toggle('open')
+      const icon = this.querySelector('i')
+      icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-xmark')
+    })
+    document.addEventListener('click', function (e) {
+      if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.remove('open')
+        const icon = menuToggle.querySelector('i')
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark') }
+      }
+    })
+    document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+      e.preventDefault()
+      Swal.fire({
+        title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+        showCancelButton:true, confirmButtonText:"🚪 Logout", cancelButtonText:"Stay Here",
+        confirmButtonColor:"#6f2b67", cancelButtonColor:"#d6c3d3", reverseButtons:true,
+        background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
+      }).then(r => { if (r.isConfirmed) window.location.href = "/logout" })
+    })
+  </script>
+</body>
+</html>

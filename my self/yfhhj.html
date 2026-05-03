@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>LitHeaven – Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box}
+    body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;background:0 0;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after,.main-nav .nav-link.active-link::after{width:80%}
+    .main-nav .nav-link:hover,.main-nav .nav-link.active-link{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none;background:none;border:none;padding:0}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease;position:relative}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item:focus{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;outline:none}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i,.dropdown-item:focus i{color:#fff}
+    #profileMenu:hover,#profileMenu:focus{background:rgba(255,255,255,.15);border-radius:50%;padding:6px}
+
+    .search-wrap{display:flex;justify-content:center;padding:18px 15px;background:#fff;animation:fadeUp 1s;width:100%;border-bottom:1px solid #f0e5f5}
+    .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:10px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px rgba(111,43,103,.10);border:1.5px solid #d8cfe0;transition:all .3s}
+    .search-box:focus-within{border-color:#702767;box-shadow:0 5px 20px rgba(111,43,103,.18)}
+    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none}
+    .search-box input{flex:1;border:0;background:0 0;outline:0;color:#333;font-size:14.5px;font-family:inherit;min-width:0}
+    .search-box input::placeholder{color:#aaa;font-size:14px}
+    .s-cancel{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0;flex-shrink:0;display:none;transition:color .2s}
+    .s-cancel:hover{color:#555}
+    .s-cancel.show{display:block}
+
+    .shop-wrapper{display:flex;min-height:80vh}
+
+    .sidebar{width:265px;flex-shrink:0;background:#fff;border-right:1px solid #e8dff0;padding:20px 16px;position:sticky;top:0;height:calc(100vh);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+    .filter-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .filter-hdr h5{font-weight:700;color:var(--purple);margin:0;font-size:.95rem}
+    .clear-all-btn{font-size:.73rem;color:var(--purple);background:none;border:1px solid var(--purple);border-radius:50px;cursor:pointer;font-weight:600;padding:3px 10px;transition:all .2s}
+    .clear-all-btn:hover{background:var(--purple);color:#fff}
+    .active-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:4px}
+    .atag{display:inline-flex;align-items:center;gap:4px;background:#f3e8ff;color:var(--purple);padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
+    .atag button{background:none;border:none;cursor:pointer;color:var(--purple);font-size:.8rem;line-height:1;padding:0 0 0 3px}
+
+    .fsec{border-top:1px solid #ebe3f0;padding:10px 0 2px}
+    .fsec-title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:.82rem;color:#333;padding-bottom:6px;user-select:none}
+    .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa; pointer-events:none;  }
+    .fsec-title.open .farr{transform:rotate(180deg)}
+    .fsec-body{display:none;flex-direction:column;gap:1px;padding-bottom:4px}
+    .fsec-body.open{display:flex}
+    .cat-parent{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:.81rem;font-weight:600;color:#444;transition:background .15s;user-select:none;margin-bottom:2px}
+    .cat-parent:hover{background:#f3e8ff;color:var(--purple)}
+    .cat-parent .cp-arr{font-size:.58rem;color:#bbb;transition:transform .2s; pointer-events:none; }
+    .cat-parent.open .cp-arr{transform:rotate(90deg);color:var(--purple)}
+    .sub-opts{display:none;flex-direction:column;gap:1px;padding-left:8px;border-left:2px solid #ebe3f0;margin:2px 0 4px 8px}
+    .sub-opts.open{display:flex}
+    .foption{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;cursor:pointer;font-size:.79rem;color:#555;transition:background .15s}
+    .foption:hover{background:#f3e8ff;color:var(--purple)}
+    .foption input[type=checkbox]{accent-color:var(--purple);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+
+    .price-slider-wrap{padding:4px 2px 2px}
+    .price-range-labels{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:600;color:#555;margin-bottom:10px}
+    .price-range-labels .money-emoji{font-size:1.1rem;letter-spacing:2px}
+    .price-range-labels .range-val{color:var(--purple);font-weight:700;font-size:.85rem}
+    .price-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:50px;outline:none;cursor:pointer;background:linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%);transition:background .15s}
+    .price-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 2px 8px rgba(111,43,103,.4);transition:transform .2s}
+    .price-slider::-webkit-slider-thumb:hover{transform:scale(1.15)}
+    .price-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(111,43,103,.4)}
+    .price-apply-btn{width:100%;margin-top:12px;padding:9px;background:#22c55e;color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85rem;font-weight:700;letter-spacing:.5px;font-family:inherit;transition:all .2s;box-shadow:0 3px 10px rgba(34,197,94,.3)}
+    .price-apply-btn:hover{background:#16a34a;transform:translateY(-1px)}
+    .apply-all-btn{width:100%;margin-top:14px;padding:10px;background:var(--purple);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:700;letter-spacing:.5px;transition:all .2s;box-shadow:0 4px 12px rgba(111,43,103,.2)}
+    .apply-all-btn:hover{background:var(--light);transform:translateY(-1px)}
+
+    .main-area{flex:1;padding:22px 20px 40px}
+    .breadcrumb-row{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#aaa;margin-bottom:12px}
+    .breadcrumb-row a{color:#aaa;text-decoration:none;transition:color .2s}
+    .breadcrumb-row a:hover{color:var(--purple)}
+    .breadcrumb-row .cur{color:#555;font-weight:600}
+    .shop-h1{font-size:1.9rem;font-weight:800;color:#1a0a28;margin-bottom:14px}
+
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;padding:10px 14px;border-radius:14px;box-shadow:0 4px 16px rgba(111,43,103,.1);margin-bottom:18px;border:1px solid #ebe3f0}
+    .tb-chip{padding:6px 15px;border:1.5px solid #ddd;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all .2s;white-space:nowrap;font-family:inherit}
+    .tb-chip:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
+    .tb-chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .tb-spacer{flex:1}
+    .tb-count{font-size:.8rem;color:#999;white-space:nowrap}
+    .tb-count strong{color:#222;font-weight:700}
+
+    /* ══ CUSTOM SORT DROPDOWN ══ */
+    .sort-wrap{position:relative;min-width:190px}
+    .sort-btn{
+      width:100%;padding:7px 16px;
+      border:1.5px solid #ddd;border-radius:50px;
+      font-family:inherit;font-size:.8rem;font-weight:600;
+      cursor:pointer;background:#fff;color:#555;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      transition:all .22s;outline:none;
+      box-shadow:0 2px 8px rgba(111,43,103,.06);
+    }
+    .sort-btn:hover,.sort-btn.open{
+      border-color:var(--purple);color:var(--purple);
+      background:#faf5fb;
+      box-shadow:0 4px 14px rgba(111,43,103,.15);
+    }
+    .sort-arr{font-size:.6rem;transition:transform .22s;color:#bbb;flex-shrink:0}
+    .sort-btn.open .sort-arr{transform:rotate(180deg);color:var(--purple)}
+    .sort-menu{
+      display:none;
+      position:absolute;top:calc(100% + 8px);left:0;right:0;
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 12px 36px rgba(111,43,103,.2);
+      border:1.5px solid #ece3f5;
+      overflow:hidden;
+      z-index:500;
+      animation:fadeUp .15s ease;
+    }
+    .sort-menu.open{display:block}
+    .sort-opt{
+      padding:11px 16px;
+      font-size:.82rem;font-weight:600;
+      color:#555;cursor:pointer;
+      display:flex;align-items:center;gap:10px;
+      transition:all .18s;
+      border-bottom:1px solid #f7f0fb;
+    }
+    .sort-opt:last-child{border-bottom:none}
+    .sort-opt:hover{background:linear-gradient(90deg,#f3e8ff,#fdf5ff);color:var(--purple);padding-left:22px}
+    .sort-opt.selected{background:#f0e3f8;color:var(--purple);font-weight:700}
+    .sort-opt .s-ico{font-size:.88rem;width:20px;text-align:center;flex-shrink:0}
+
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px}
+
+    .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s}
+    .bcard:hover{transform:translateY(-6px);box-shadow:0 16px 38px rgba(111,43,103,.2);border-color:var(--purple)}
+    .disc-badge{position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-size:.67rem;font-weight:700;padding:3px 9px;border-radius:50px;z-index:2}
+    .wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
+    .wish-btn:hover{transform:scale(1.2)}
+    .bcard-ph{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+    .bcard-body{padding:12px 13px 13px}
+    .bcard-title{font-size:.79rem;font-weight:700;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#222}
+    .bcard-author{font-size:.71rem;color:#999;margin-bottom:4px}
+    .bcard-stars{color:#f59e0b;font-size:.73rem}
+    .bcard-norev{font-size:.67rem;color:#bbb}
+    .bcard-prices{display:flex;align-items:center;gap:6px;margin-top:5px}
+    .bcard-new{color:var(--purple);font-weight:800;font-size:.88rem}
+    .bcard-old{color:#ccc;text-decoration:line-through;font-size:.72rem}
+    .bcard-add{width:100%;margin-top:8px;padding:7px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+    .bcard-add:hover{background:var(--light)}
+
+    .no-res{text-align:center;padding:5rem 2rem;color:#aaa}
+    .no-res .nr-ico{font-size:3rem;margin-bottom:1rem}
+    .no-res h4{font-size:1.1rem;color:#777;font-weight:700}
+
+    .pg-wrap{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:26px;flex-wrap:wrap}
+    .pg-btn{width:36px;height:36px;border:1.5px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:600;display:flex;align-items:center;justify-content:center;transition:all .2s;color:#666;font-family:inherit}
+    .pg-btn:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
+    .pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn:disabled{opacity:.3;cursor:default;pointer-events:none}
+
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+    .site-footer li{margin-bottom:6px}
+
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+
+    .filter-fab{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;border:none;padding:13px 30px;border-radius:50px;font-size:.92rem;font-weight:700;font-family:inherit;cursor:pointer;z-index:1050;align-items:center;gap:9px;box-shadow:0 6px 24px rgba(111,43,103,.45);white-space:nowrap;transition:all .25s}
+    .filter-fab:hover{background:var(--light);transform:translateX(-50%) translateY(-2px)}
+    .filter-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1060;backdrop-filter:blur(2px)}
+    .filter-overlay.show{display:block}
+    .filter-drawer{position:fixed;left:0;top:0;bottom:0;width:290px;max-width:88vw;background:#fff;z-index:1070;overflow-y:auto;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:0}
+    .filter-drawer.open{transform:translateX(0)}
+    .filter-drawer::-webkit-scrollbar{width:4px}
+    .filter-drawer::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+    .drawer-header{background:var(--purple);color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
+    .drawer-header h5{margin:0;font-weight:700;font-size:.98rem}
+    .drawer-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .drawer-close:hover{background:rgba(255,255,255,.35)}
+    .drawer-body{padding:16px}
+
+    @media(max-width:900px){.sidebar{width:220px}}
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .filter-fab{display:flex}
+      .main-area{padding-bottom:90px}
+      .books-grid{grid-template-columns:repeat(2,1fr)}
+      .shop-h1{font-size:1.5rem}
+    }
+    @media(max-width:480px){.books-grid{grid-template-columns:1fr}.toolbar{gap:7px}}
+  </style>
+</head>
+<body>
+
+<div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="row align-items-center g-0">
+      <div class="col-6 d-flex align-items-center gap-3">
+        <a class="brand" href="/home">
+          <div class="logo-circle">
+            <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+            <div class="logo-text">LitHeaven</div>
+            <div class="tagline">Your Literary Escape</div>
+          </div>
+          <div class="txt">LitHeaven</div>
+        </a>
+        <nav class="main-nav d-none d-lg-flex">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link active-link" href="/shop">Shop</a>
+          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/contact">Contact</a>
+        </nav>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <div class="header-icons">
+          <a href="/wishlist" class="icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+          <a href="/cart" class="icon-btn position-relative" title="Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <div class="icon-badge" id="cartBadge">0</div>
+          </a>
+          <%if(!isLoggedIn){%>
+            <a href="/login" class="icon-btn" title="Login"><i class="fa-regular fa-user"></i></a>
+          <%}else{%>
+          <div class="dropdown">
+            <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end p-2">
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+              <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+          </div>
+          <%}%>
+
+          <!-- menu bar -->
+          <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- mobile view -->
+
+<div id="mobileMenu" class="mobile-menu d-lg-none">
+  <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+  <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+  <a class="mobile-nav-link" href="#"><i class="fa-solid fa-circle-info"></i> About</a>
+  <a class="mobile-nav-link" href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
+</div>
+
+<!-- search -->
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="s-emoji">🔍</span>
+    <input type="text" id="searchInput" placeholder="What are you looking for?" oninput="onSearchType(this)" autocomplete="off">
+    <button class="s-cancel" id="cancelBtn" onclick="cancelSearch()" title="Clear">✕</button>
+  </div>
+</div>
+
+<!-- Mobile FILTER OVERLAY + DRAWER -->
+
+<div class="filter-overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+
+<div class="filter-drawer" id="filterDrawer">
+  <div class="drawer-header">
+    <h5>🔧 Filter By</h5>
+    <button class="drawer-close" onclick="closeFilterDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="filter-hdr">
+      <h5 style="display:none">Filter By</h5>
+      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+    </div>
+    <div class="active-tags" id="activeTagsDrawer"></div>
+<aside>
+ <div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Categories</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% categories.forEach(cat => { %>
+
+    <div class="cat-parent" onclick="toggleSub(this,'sub-<%=cat._id%>')">
+      <span><%= cat.name %></span>
+      <span class="cp-arr">▶</span>
+    </div>
+
+    <div class="sub-opts" id="sub-<%=cat._id%>">
+
+      <% cat.subCategories.forEach(sub => { %>
+
+        <label class="foption">
+          <input
+            type="checkbox"
+            data-f="category"
+            value="<%=sub._id%>"
+            onchange="renderTags()"
+          >
+          <%= sub.name %>
+        </label>
+
+      <% }) %>
+
+    </div>
+
+  <% }) %>
+
+  </div>
+</div>
+
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Author</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% authors.forEach(author => { %>
+
+    <label class="foption">
+      <input
+        type="checkbox"
+        data-f="author"
+        value="<%=author._id%>"
+        onchange="renderTags()"
+      >
+      <%= author.name %>
+    </label>
+
+  <% }) %>
+
+  </div>
+</div>
+
+  <div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Language</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% languages.forEach(lang => { %>
+
+  <label class="foption">
+  <input
+    type="checkbox"
+    data-f="language"
+    value="<%= lang._id %>"
+    onchange="renderTags()"
+  >
+ <%= lang.languageName %>
+</label>
+
+  <% }) %>
+
+  </div>
+</div>
+
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Price (₹)</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+    <div class="price-slider-wrap">
+
+      <div class="price-range-labels">
+        <span class="money-emoji">💵💵</span>
+
+        <span id="priceLabel"
+              class="range-val"
+              data-min="<%= minPrice || 0 %>"
+              data-max="<%= maxPrice || 3000 %>">
+
+          ₹<%= minPrice || 0 %> – ₹<%= (maxPrice || 3000).toLocaleString("en-IN") %>
+
+        </span>
+      </div>
+
+      <input
+        type="range"
+        id="priceSlider"
+        class="price-slider"
+        min="<%= minPrice || 0 %>"
+        max="<%= maxPrice || 3000 %>"
+        step="50"
+        value="<%= maxPrice || 3000 %>"
+        data-max="<%= maxPrice || 3000 %>"
+        oninput="onSlider(this)"
+        onchange="renderTags()"
+      >
+
+      <button class="price-apply-btn" onclick="syncSliderAndApply('priceSliderDrawer')">
+        Apply
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+
+  <div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Format</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+    <label class="foption">
+      <input type="checkbox" data-f="format" value="Paper Back" onchange="renderTags()">
+      Paper Back
+    </label>
+
+    <label class="foption">
+      <input type="checkbox" data-f="format" value="Hard Cover" onchange="renderTags()">
+      Hard Cover
+    </label>
+
+  </div>
+</div>
+
+    <button class="apply-all-btn" onclick="applyFilters();closeFilterDrawer()">APPLY FILTERS</button>
+
+</aside>
+  </div>
+</div>
+
+<button class="filter-fab" id="filterFab" onclick="openFilterDrawer()">
+  <i class="fa-solid fa-sliders"></i> Filter &amp; Sort
+</button>
+
+
+
+<!-- Normal View -->
+
+<div class="shop-wrapper">
+  <aside class="sidebar">
+    <div class="filter-hdr">
+      <h5>Filter By</h5>
+      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+    </div>
+    <div class="active-tags" id="activeTags"></div>
+
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Categories</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% categories.forEach(cat => { %>
+
+    <div class="cat-parent" onclick="toggleSub(this,'dsub-<%=cat._id%>')">
+      <span><%= cat.name %></span>
+      <span class="cp-arr">▶</span>
+    </div>
+
+    <div class="sub-opts" id="dsub-<%=cat._id%>">
+
+      <% cat.subCategories.forEach(sub => { %>
+
+        <label class="foption">
+          <input
+            type="checkbox"
+            data-f="category"
+            value="<%=sub._id%>"
+            onchange="renderTags()"
+          >
+          <%= sub.name %>
+        </label>
+
+      <% }) %>
+
+    </div>
+
+  <% }) %>
+
+  </div>
+</div>
+
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Author</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% authors.forEach(author => { %>
+
+    <label class="foption">
+      <input
+        type="checkbox"
+        data-f="author"
+        value="<%=author._id%>"
+        onchange="renderTags()"
+      >
+      <%= author.name %>
+    </label>
+
+  <% }) %>
+
+  </div>
+</div>
+
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Language</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+  <% languages.forEach(lang => { %>
+
+   <label class="foption">
+  <input
+    type="checkbox"
+    data-f="language"
+    value="<%= lang._id %>"
+    onchange="renderTags()"
+  >
+<%= lang.languageName %>
+</label>
+  <% }) %>
+
+  </div>
+</div>
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Price (₹)</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+    <div class="price-slider-wrap">
+
+      <div class="price-range-labels">
+        <span class="money-emoji">💵💵</span>
+
+        <span id="priceLabel"
+              class="range-val"
+              data-min="<%= minPrice || 0 %>"
+              data-max="<%= maxPrice || 3000 %>">
+
+          ₹<%= minPrice || 0 %> – ₹<%= (maxPrice || 3000).toLocaleString("en-IN") %>
+
+        </span>
+      </div>
+
+      <input
+        type="range"
+        id="priceSlider"
+        class="price-slider"
+        min="<%= minPrice || 0 %>"
+        max="<%= maxPrice || 3000 %>"
+        step="50"
+        value="<%= maxPrice || 3000 %>"
+        data-max="<%= maxPrice || 3000 %>"
+        oninput="onSlider(this)"
+        onchange="renderTags()"
+      >
+
+      <button class="price-apply-btn" onclick="syncSliderAndApply('priceSlider')">
+        Apply
+      </button>
+
+    </div>
+  </div>
+</div>
+<div class="fsec">
+  <div class="fsec-title open" onclick="toggleFsec(this)">
+    <span>Format</span>
+    <span class="farr">▼</span>
+  </div>
+
+  <div class="fsec-body open">
+
+    <label class="foption">
+      <input type="checkbox" data-f="format" value="Paper Back" onchange="renderTags()">
+      Paper Back
+    </label>
+
+    <label class="foption">
+      <input type="checkbox" data-f="format" value="Hard Cover" onchange="renderTags()">
+      Hard Cover
+    </label>
+
+  </div>
+</div>
+    <button class="apply-all-btn" onclick="applyFilters()">APPLY FILTERS</button>
+  </aside>
+
+  <main class="main-area">
+    <div class="breadcrumb-row">
+      <a href="/">home</a><span>›</span><span class="cur">shop</span>
+    </div>
+    <div class="shop-h1">Shop</div>
+
+    <!-- toolbar -->
+     
+    <div class="toolbar">
+      <button class="tb-chip" id="chip-ratings" onclick="toggleChip('ratings')">⭐ Ratings</button>
+      <button class="tb-chip active" id="chip-new" onclick="toggleChip('new')">🆕 New</button>
+
+      <!-- ══ CUSTOM SORT DROPDOWN ══ -->
+      <div class="sort-wrap" id="sortWrap">
+        <button class="sort-btn" id="sortBtn" onclick="toggleSortMenu(event)" type="button">
+          <span id="sortLabel">Sort by</span>
+          <span class="sort-arr">▼</span>
+        </button>
+        <div class="sort-menu" id="sortMenu">
+          <div class="sort-opt selected" data-val="" onclick="selectSort(this,'Sort by')">
+            <span class="s-ico">📋</span> Sort by
+          </div>
+          <div class="sort-opt" data-val="price-asc" onclick="selectSort(this,'Price: Low → High')">
+            <span class="s-ico">⬆️</span> Price: Low → High
+          </div>
+          <div class="sort-opt" data-val="price-desc" onclick="selectSort(this,'Price: High → Low')">
+            <span class="s-ico">⬇️</span> Price: High → Low
+          </div>
+          <div class="sort-opt" data-val="az" onclick="selectSort(this,'Name: A → Z')">
+            <span class="s-ico">🔤</span> Name: A → Z
+          </div>
+          <div class="sort-opt" data-val="za" onclick="selectSort(this,'Name: Z → A')">
+            <span class="s-ico">🔡</span> Name: Z → A
+          </div>
+        </div>
+      </div>
+
+<span class="tb-count">
+Found <strong id="totalCount"><%= totalCount %></strong> items
+</span>
+
+    <div class="books-grid" id="booksGrid"></div>
+
+    
+    <div class="no-res" id="noRes" style="display:none">
+      <div class="nr-ico">📭</div>
+      <h4>No books found</h4>
+      <p style="font-size:.85rem">Try adjusting your filters or search term.</p>
+    </div>
+    <div class="pg-wrap" id="pgWrap"></div>
+  </main>
+</div>
+
+<!-- Footer -->
+
+<footer class="site-footer">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5>Get In Touch</h5>
+        <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+        <p><small>support@litheaven.com</small></p>
+        <p><small>+98765 43210</small></p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/">Home</a></li>
+          <li><a href="/shop">Shop Books</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Account</h5>
+        <ul class="list-unstyled">
+          <li><a href="/profile">Settings</a></li>
+          <li><a href="/orders">Orders</a></li>
+          <li><a href="/address">Address</a></li>
+          <li><a href="/wallet">Wallet</a></li>
+          <li><a href="#" id="footerLogout">Log out</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 text-md-end">
+        <h5>LitHeaven ⭐</h5>
+        <p><small>Litheaven is an online bookstore where you can easily explore and buy your favorite books.</small></p>
+        <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+      </div>
+    </div>
+    <div class="text-center mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.2)">
+      <small>© 2025 LITHEAVEN. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+
+// ══ PAGE LOAD: URL params இருந்தா checkboxes restore பண்ணு ══
+(function restoreFromURL(){
+  const params = new URLSearchParams(window.location.search);
+
+  const cats  = params.get('category') ? params.get('category').split(',') : [];
+  const auths = params.get('author')   ? params.get('author').split(',')   : [];
+  const langs = params.get('language') ? params.get('language').split(',') : [];
+  const fmts  = params.get('format')   ? params.get('format').split(',')   : [];
+  const price = params.get('price');
+
+  [...cats,...auths,...langs,...fmts].forEach(val=>{
+    document.querySelectorAll(`[data-f][value="${val}"]`).forEach(el=>{
+      el.checked = true;
+     
+      const subOpts = el.closest('.sub-opts');
+      if(subOpts){ subOpts.classList.add('open'); }
+      const catParent = subOpts?.previousElementSibling;
+      if(catParent?.classList.contains('cat-parent')) catParent.classList.add('open');
+    });
+  });
+
+
+  // price
+
+
+  if(price){
+    document.querySelectorAll('.price-slider').forEach(sl=>{
+      sl.value = price;
+      onSlider(sl);
+    });
+    sliderMax = parseInt(price);
+  }
+
+  renderTags(); 
+})();
+
+
+let cartCount = 0;
+let currentSort = '';
+
+// ══ PRICE SLIDER sidebar ══
+let sliderMax = parseInt(document.getElementById("priceSlider").value);
+
+function onSlider(el){
+
+  sliderMax = parseInt(el.value);
+
+  const label = document.getElementById("priceLabel");
+
+  label.textContent = `₹0 – ₹${sliderMax.toLocaleString("en-IN")}`;
+
+  const max = parseInt(el.dataset.max);
+
+  const pct = (sliderMax / max) * 100;
+
+  el.style.background =
+  `linear-gradient(to right,
+  #6f2b67 0%,
+  #6f2b67 ${pct}%,
+  #e2d6ef ${pct}%,
+  #e2d6ef 100%)`;
+}
+
+function syncSliderAndApply(sliderId){
+  const sl = document.getElementById(sliderId);
+  sliderMax = parseInt(sl.value);
+  applyFilters();
+}
+
+// ══ PRICE SLIDER drawer ══
+function onSliderDrawer(el){
+  sliderMax = parseInt(el.value);
+  document.getElementById('priceLabelDrawer').textContent = `0 – ₹${sliderMax.toLocaleString('en-IN')}`;
+  const pct = (sliderMax/3000)*100;
+  el.style.background = `linear-gradient(to right,#6f2b67 0%,#6f2b67 ${pct}%,#e2d6ef ${pct}%,#e2d6ef 100%)`;
+}
+
+(function initSlider(){
+  document.getElementById('priceSlider').style.background = 'linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%)';
+  document.getElementById('priceSliderDrawer').style.background = 'linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%)';
+})();
+
+// ══ CUSTOM SORT DROPDOWN ══
+function toggleSortMenu(e){
+  e.stopPropagation();
+  document.getElementById('sortBtn').classList.toggle('open');
+  document.getElementById('sortMenu').classList.toggle('open');
+}
+function selectSort(el, label){
+  currentSort = el.dataset.val;
+  document.getElementById('sortLabel').textContent = label;
+  document.getElementById('sortBtn').classList.remove('open');
+  document.getElementById('sortMenu').classList.remove('open');
+  document.querySelectorAll('.sort-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  applyFilters();
+}
+document.addEventListener('click', function(e){
+  const wrap = document.getElementById('sortWrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('sortBtn')?.classList.remove('open');
+    document.getElementById('sortMenu')?.classList.remove('open');
+  }
+});
+
+// ══ FILTER DRAWER ══
+function openFilterDrawer(){
+  document.getElementById('filterDrawer').classList.add('open');
+  document.getElementById('filterOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeFilterDrawer(){
+  document.getElementById('filterDrawer').classList.remove('open');
+  document.getElementById('filterOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ══ SEARCH ══
+function onSearchType(inp){
+  document.getElementById('cancelBtn').classList.toggle('show', inp.value.length > 0);
+}
+function cancelSearch(){
+  const inp = document.getElementById('searchInput');
+  inp.value = '';
+  document.getElementById('cancelBtn').classList.remove('show');
+  inp.focus();
+}
+
+// ══ TAGS ══
+function renderTags(){
+  
+  const all = [...document.querySelectorAll('[data-f]:checked')].map(el=>{
+    const label = el.closest('label');
+    const name  = label ? label.textContent.trim() : el.value;
+    return {val: el.value, name};
+  });
+
+  // deduplicate by value
+  const seen = new Set();
+  const unique = all.filter(o=>{ if(seen.has(o.val)) return false; seen.add(o.val); return true; });
+  const html = unique.map(o=>`<span class="atag">${o.name}<button onclick="removeTag('${o.val}')">✕</button></span>`).join('');
+  document.getElementById('activeTags').innerHTML = html;
+  document.getElementById('activeTagsDrawer').innerHTML = html;
+}
+function removeTag(val){
+  document.querySelectorAll(`[data-f][value="${val}"]`).forEach(el=>el.checked=false);
+  renderTags();
+  applyFilters();
+  
+}
+
+
+// ══ CLEAR ALL ══
+
+function clearAll(){
+  document.querySelectorAll('[data-f]').forEach(e=>e.checked=false);
+  document.getElementById('activeTags').innerHTML='';
+  document.getElementById('activeTagsDrawer').innerHTML='';
+  currentSort='';
+  document.getElementById('sortLabel').textContent='Sort by';
+  document.querySelectorAll('.sort-opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('.sort-opt[data-val=""]')?.classList.add('selected');
+  cancelSearch();
+  window.location.href = '/shop';
+}
+
+
+// ══ ACCORDION ══
+function toggleFsec(el){ el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
+function toggleSub(el,id){ el.classList.toggle('open'); document.getElementById(id).classList.toggle('open'); }
+
+// ══ CHIP ══
+function toggleChip(name){
+  ['popular','ratings','new'].forEach(c=>document.getElementById('chip-'+c)?.classList.remove('active'));
+  document.getElementById('chip-'+name)?.classList.add('active');
+  applyFilters();
+}
+
+// ══ WISH / CART ══
+function toggleWish(btn){ btn.classList.toggle('wishlisted'); btn.textContent=btn.classList.contains('wishlisted')?'❤️':'🤍'; }
+function addToCart(id){
+  cartCount++;
+  document.getElementById('cartBadge').textContent=cartCount;
+  const b=ALL_BOOKS.find(x=>x.id===id);
+  Swal.fire({toast:true,position:'top-end',icon:'success',title:'Added to cart! 🛒',
+    html:`<small style="color:#555">${b.title.substring(0,40)}…</small>`,
+    showConfirmButton:false,timer:2200,timerProgressBar:true,background:'#fff'});
+}
+function viewBook(id){ window.location.href='/product/'+id; }
+
+// ══ LOGOUT ══
+function doLogout(e){
+  e.preventDefault();
+  Swal.fire({
+    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+    imageUrl:"/images/go-out-thro-removebg-preview.png",imageWidth:130,imageHeight:130,imageAlt:"Logout illustration",
+    showCancelButton:true,confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
+    confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",reverseButtons:true,
+    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",backdrop:"rgba(0,0,0,0.6)",
+    showClass:{popup:'animate__animated animate__fadeInUp'},hideClass:{popup:'animate__animated animate__fadeOutDown'}
+  }).then(r=>{ if(r.isConfirmed) window.location.href="/logout"; });
+}
+document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+document.getElementById('footerLogout')?.addEventListener('click', doLogout);
+
+// ══ HAMBURGER ══
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+menuToggle?.addEventListener('click', function(){
+  mobileMenu.classList.toggle('open');
+  const icon=this.querySelector('i');
+  icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-xmark');
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link=>{
+  link.addEventListener('click',()=>{
+    mobileMenu.classList.remove('open');
+    const icon=menuToggle?.querySelector('i');
+    if(icon){icon.classList.add('fa-bars');icon.classList.remove('fa-xmark');}
+  });
+});
+document.addEventListener('click',function(e){
+  if(mobileMenu&&menuToggle&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target)){
+    mobileMenu.classList.remove('open');
+    const icon=menuToggle.querySelector('i');
+    if(icon){icon.classList.add('fa-bars');icon.classList.remove('fa-xmark');}
+  }
+});
+
+// ══ SCROLL OBSERVER ══
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.style.opacity='1';entry.target.style.transform='translateY(0)';}
+  });
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.product-card,.promo,.feature-item').forEach(el=>observer.observe(el));
+
+
+function applyFilters(){
+  renderTags(); 
+
+  const categories =
+  [...document.querySelectorAll('[data-f="category"]:checked')]
+  .map(el=>el.value)
+
+  const authors =
+  [...document.querySelectorAll('[data-f="author"]:checked')]
+  .map(el=>el.value)
+
+  const languages =
+  [...document.querySelectorAll('[data-f="language"]:checked')]
+  .map(el=>el.value)
+
+  const formats =
+  [...document.querySelectorAll('[data-f="format"]:checked')]
+  .map(el=>el.value)
+
+  const params = new URLSearchParams()
+
+  if(categories.length)
+  params.append("category", categories.join(","))
+
+  if(authors.length)
+  params.append("author", authors.join(","))
+
+  if(languages.length)
+  params.append("language", languages.join(","))
+
+  if(formats.length)
+  params.append("format", formats.join(","))
+
+  iif(sliderMax)
+params.append("price", sliderMax)
+
+
+if(currentSort)
+params.append("sort", currentSort)
+
+
+  window.location.href="/shop?"+params.toString()
+}
+</script>
+</body>
+</html>

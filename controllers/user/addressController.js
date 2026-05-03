@@ -1,6 +1,7 @@
 const User=require('../../models/User')
 const Address=require('../../models/Address')
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getAddresses=async(req,res)=>{
     try {
@@ -26,8 +27,7 @@ const getAddresses=async(req,res)=>{
 
 }
 
-
-///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const addAddress=async(req,res)=>{
   try{
@@ -94,7 +94,8 @@ const addAddress=async(req,res)=>{
 
   }
 }
-///////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const editAddress = async (req, res) => {
   try {
@@ -165,7 +166,7 @@ const editAddress = async (req, res) => {
   }
 };
 
-///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const deleteAddress = async (req, res) => {
   try {
@@ -212,15 +213,65 @@ const deleteAddress = async (req, res) => {
   }
 };
 
-//////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const getAddressesAPI = async (req, res) => {
+  try {
+    const userId = req.session.userId;
 
+    const addresses = await Address.find({ userId });
 
+    res.json({
+      success: true,
+      addresses
+    });
 
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+};
+
+const setPrimaryAddress = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const addressId = req.params.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not logged in'
+      });
+    }
+
+    
+    await Address.updateMany({ userId }, { isPrimary: false });
+
+   
+    await Address.findOneAndUpdate(
+      { _id: addressId, userId },
+      { isPrimary: true }
+    );
+
+    return res.json({
+      success: true,
+      message: 'Primary address updated'
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong'
+    });
+  }
+};
+
+////////////////////////////////////////////////////////////////////
 module.exports={
     getAddresses,
     addAddress,
     editAddress,
     deleteAddress,
- 
+    getAddressesAPI,
+    setPrimaryAddress 
 }

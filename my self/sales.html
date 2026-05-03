@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    html,body{max-width:100%;overflow-y:auto;scroll-behavior:smooth;}
+
+    /* ── Sidebar ── */
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+
+    /* ── Main ── */
+    .main-content{margin-left:250px;padding:20px;min-height:100vh;}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+    /* ── Filter Card ── */
+    .filter-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:20px 25px;margin-bottom:25px;}
+    .filter-card-title{font-size:14px;font-weight:700;color:#6f2b67;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
+    .filter-grid{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;}
+    .filter-group{display:flex;flex-direction:column;gap:6px;}
+    .filter-label{font-size:12px;font-weight:600;color:#6f2b67;}
+    .filter-input{background:rgba(111,43,103,0.08);border:1px solid #6f2b67;border-radius:8px;padding:8px 13px;color:#6f2b67;font-size:13px;outline:none;min-width:140px;}
+    .filter-input:focus{box-shadow:0 0 0 3px rgba(111,43,103,0.15);}
+    .filter-input option{color:#333;}
+
+    .btn{border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:0.25s;white-space:nowrap;}
+    .btn-primary{background:#6f2b67;color:#fff;}
+    .btn-primary:hover{background:#5a2252;transform:translateY(-1px);box-shadow:0 4px 14px rgba(111,43,103,0.4);}
+    .btn-outline{background:transparent;border:1px solid #6f2b67;color:#6f2b67;}
+    .btn-outline:hover{background:rgba(111,43,103,0.08);}
+    .btn-green{background:#1a7a4a;color:#fff;}
+    .btn-green:hover{background:#155f3a;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,122,74,0.35);}
+    .btn-red{background:#c0392b;color:#fff;}
+    .btn-red:hover{background:#96281b;transform:translateY(-1px);box-shadow:0 4px 14px rgba(192,57,43,0.35);}
+
+    /* ── Summary Cards ── */
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:25px;}
+    .summary-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:20px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;}
+    .summary-card::after{content:'';position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;background:rgba(111,43,103,0.06);}
+    .summary-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .summary-icon.purple{background:rgba(111,43,103,0.12);color:#6f2b67;}
+    .summary-icon.green {background:rgba(40,167,69,0.12); color:#28a745;}
+    .summary-icon.blue  {background:rgba(13,110,253,0.12); color:#0d6efd;}
+    .summary-icon.orange{background:rgba(253,126,20,0.12); color:#fd7e14;}
+    .summary-text{}
+    .summary-value{font-size:22px;font-weight:800;color:#333;line-height:1.1;}
+    .summary-label{font-size:12px;color:#888;margin-top:3px;font-weight:500;}
+    .summary-sub{font-size:11px;color:#28a745;font-weight:600;margin-top:2px;}
+
+    /* ── Table Card ── */
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;overflow:hidden;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:14px;}
+    .table-title{font-size:17px;font-weight:700;color:#6f2b67;}
+    .table-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    .table-search-wrapper{display:flex;align-items:center;gap:8px;background:rgba(111,43,103,.08);border:1px solid #6f2b67;border-radius:20px;padding:6px 14px;}
+    .table-search-wrapper i{color:#6f2b67;font-size:13px;}
+    .table-search{border:none;outline:none;background:transparent;width:180px;font-size:13px;color:#6f2b67;}
+    .table-search::placeholder{color:rgba(111,43,103,0.45);}
+
+    .table-wrapper{width:100%;overflow-x:auto;}
+    .table-wrapper::-webkit-scrollbar{height:5px;}
+    .table-wrapper::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+
+    .report-table{width:100%;border-collapse:collapse;min-width:900px;}
+    .report-table th{background:rgba(111,43,103,0.1);padding:12px 14px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;white-space:nowrap;}
+    .report-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.15);color:#444;vertical-align:middle;}
+    .report-table tr:hover td{background:rgba(111,43,103,0.04);}
+    .report-table tfoot td{background:rgba(111,43,103,0.08);font-weight:700;color:#6f2b67;border-top:2px solid #6f2b67;}
+
+    /* Order status badges */
+    .badge{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block;}
+    .badge-delivered {background:rgba(40,167,69,0.14);color:#1e7e34;}
+    .badge-shipped   {background:rgba(13,110,253,0.14);color:#0a53be;}
+    .badge-processing{background:rgba(255,193,7,0.2);  color:#856404;}
+    .badge-cancelled {background:rgba(220,53,69,0.13); color:#b02a37;}
+    .badge-returned  {background:rgba(108,117,125,0.15);color:#495057;}
+    .badge-pending   {background:rgba(253,126,20,0.14);color:#c96000;}
+
+    /* Discount / coupon pill */
+    .disc-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;background:rgba(111,43,103,0.1);color:#6f2b67;font-weight:600;}
+
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:22px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.2s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
+    .page-btn:disabled{opacity:0.35;cursor:default;}
+
+    .empty-row td{text-align:center;padding:50px;color:#8e4a86;font-size:14px;font-weight:600;}
+
+    /* Loading shimmer */
+    .shimmer{animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,rgba(111,43,103,0.05) 25%,rgba(111,43,103,0.12) 50%,rgba(111,43,103,0.05) 75%);background-size:400% 100%;}
+    @keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+    .swal2-container{z-index:9999!important;}
+
+    @media(max-width:1100px){.summary-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;padding:15px;}
+      .summary-grid{grid-template-columns:1fr 1fr;}
+      .top-bar{flex-direction:column;gap:10px;}
+      .filter-grid{flex-direction:column;}
+      .filter-input{min-width:100%;}
+      .table-actions{flex-wrap:wrap;}
+    }
+    @media(max-width:480px){
+      .summary-grid{grid-template-columns:1fr;}
+      .main-content{padding:10px;}
+    }
+  </style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- ═══════════════════════════ SIDEBAR ══════════════════════════════ -->
+<div class="sidebar" id="sidebar">
+  <div style="text-align:center;padding:10px 0;">
+    <div class="logo-circle">
+      <i class="fas fa-book-open book-logo"></i>
+      <div class="logo-text">LitHeaven</div>
+    </div>
+    <div class="tagline">Admin Portal</div>
+  </div>
+  <a href="/admin/dashboard"   class="menu-item"><div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div></a>
+  <a href="/admin/order"       class="menu-item"><div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div></a>
+  <div class="menu-item" onclick="toggleMenu('catMenu')">
+    <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu" id="catMenu">
+    <a href="/admin/category">Category</a>
+    <a href="/admin/sub-category">Sub-Category</a>
+  </div>
+  <a href="/admin/product" class="menu-item"><div class="menu-left"><i class="fas fa-box"></i> Products</div></a>
+  <a href="/admin/coupon"  class="menu-item"><div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div></a>
+  <div class="menu-item" onclick="toggleMenu('offerMenu')">
+    <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu" id="offerMenu">
+    <a href="/admin/categoryOff">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
+  </div>
+  <a href="/admin/author"      class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
+  <a href="/admin/admin"       class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+  <a href="/admin/customer"    class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
+  <a href="/admin/salesReport" class="menu-item active"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
+  <div class="menu-item" onclick="toggleMenu('settMenu')">
+    <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu" id="settMenu">
+    <a href="/admin/appSetting">App Settings</a>
+    <a href="/admin/language">Language</a>
+  </div>
+  <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+</div>
+
+<!-- ═══════════════════════════ MAIN CONTENT ══════════════════════════════ -->
+<div class="main-content">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <h1 class="page-title"><i class="fas fa-chart-bar" style="font-size:22px;margin-right:10px;"></i>Sales Report</h1>
+    <div class="user-info">
+      <div>
+        <div style="font-weight:600;font-size:14px;">App Admin</div>
+        <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+      </div>
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+    </div>
+  </div>
+
+  <!-- Filter Card -->
+  <div class="filter-card">
+    <div class="filter-card-title"><i class="fas fa-filter"></i> Filter Report</div>
+    <div class="filter-grid">
+
+      <div class="filter-group">
+        <label class="filter-label">Quick Filter</label>
+        <select class="filter-input" id="quickFilter" onchange="applyQuickFilter()">
+          <option value="">-- Select --</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+          <option value="year">This Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+
+      <div class="filter-group" id="customRange" style="display:none;flex-direction:row;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="filter-group">
+          <label class="filter-label">Start Date</label>
+          <input type="date" class="filter-input" id="startDate">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">End Date</label>
+          <input type="date" class="filter-input" id="endDate">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Order Status</label>
+        <select class="filter-input" id="orderStatus">
+          <option value="all">All Status</option>
+          <option value="delivered">Delivered</option>
+          <option value="shipped">Shipped</option>
+          <option value="processing">Processing</option>
+          <option value="pending">Pending</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="returned">Returned</option>
+        </select>
+      </div>
+
+      <div class="filter-group" style="align-self:flex-end;">
+        <button class="btn btn-primary" onclick="fetchReport()">
+          <i class="fas fa-search"></i> Generate Report
+        </button>
+      </div>
+      <div class="filter-group" style="align-self:flex-end;">
+        <button class="btn btn-outline" onclick="resetFilters()">
+          <i class="fas fa-undo"></i> Reset
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon purple"><i class="fas fa-shopping-bag"></i></div>
+      <div class="summary-text">
+        <div class="summary-value" id="sumOrders">—</div>
+        <div class="summary-label">Total Orders</div>
+        <div class="summary-sub" id="sumOrdersSub"></div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon green"><i class="fas fa-rupee-sign"></i></div>
+      <div class="summary-text">
+        <div class="summary-value" id="sumRevenue">—</div>
+        <div class="summary-label">Total Revenue</div>
+        <div class="summary-sub" id="sumRevenueSub"></div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon blue"><i class="fas fa-ticket-alt"></i></div>
+      <div class="summary-text">
+        <div class="summary-value" id="sumDiscount">—</div>
+        <div class="summary-label">Total Discount</div>
+        <div class="summary-sub" id="sumDiscountSub"></div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon orange"><i class="fas fa-undo-alt"></i></div>
+      <div class="summary-text">
+        <div class="summary-value" id="sumReturns">—</div>
+        <div class="summary-label">Returns / Cancelled</div>
+        <div class="summary-sub" id="sumReturnsSub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title"><i class="fas fa-list" style="margin-right:8px;"></i>Order Details</div>
+      <div class="table-actions">
+        <div class="table-search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" class="table-search" placeholder="Search order / customer..." id="searchInput" onkeyup="clientSearch()">
+        </div>
+        <button class="btn btn-red" onclick="downloadPDF()">
+          <i class="fas fa-file-pdf"></i> PDF
+        </button>
+        <button class="btn btn-green" onclick="downloadExcel()">
+          <i class="fas fa-file-excel"></i> Excel
+        </button>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>S.NO</th>
+            <th>ORDER ID</th>
+            <th>DATE</th>
+            <th>CUSTOMER</th>
+            <th>PRODUCT</th>
+            <th>QTY</th>
+            <th>GROSS AMT</th>
+            <th>DISCOUNT</th>
+            <th>COUPON</th>
+            <th>NET AMT</th>
+            <th>PAYMENT</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="reportTbody">
+          <tr class="empty-row"><td colspan="12"><i class="fas fa-chart-line" style="font-size:30px;margin-bottom:10px;display:block;opacity:0.3;"></i>Generate a report using the filters above</td></tr>
+        </tbody>
+        <tfoot id="reportTfoot" style="display:none;">
+          <tr>
+            <td colspan="6" style="text-align:right;">TOTAL</td>
+            <td id="footGross">—</td>
+            <td id="footDisc">—</td>
+            <td>—</td>
+            <td id="footNet">—</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+</div><!-- end main-content -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  /* ══════════════════════════════════════════════
+     STATE
+  ══════════════════════════════════════════════ */
+  let currentPage = 1;
+  let totalPages  = 1;
+  let allRows     = [];   // full result for client-side search + export
+  let filteredRows = [];
+
+  /* ══════════════════════════════════════════════
+     QUICK FILTER → fill date inputs
+  ══════════════════════════════════════════════ */
+  function applyQuickFilter() {
+    const val = document.getElementById('quickFilter').value;
+    const customDiv = document.getElementById('customRange');
+    customDiv.style.display = val === 'custom' ? 'flex' : 'none';
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let s = null, e = null;
+
+    if (val === 'today') {
+      s = e = toISO(today);
+    } else if (val === 'yesterday') {
+      const y = new Date(today); y.setDate(y.getDate() - 1);
+      s = e = toISO(y);
+    } else if (val === 'week') {
+      const mon = new Date(today);
+      mon.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+      s = toISO(mon); e = toISO(today);
+    } else if (val === 'month') {
+      s = toISO(new Date(today.getFullYear(), today.getMonth(), 1));
+      e = toISO(today);
+    } else if (val === 'year') {
+      s = toISO(new Date(today.getFullYear(), 0, 1));
+      e = toISO(today);
+    }
+
+    if (s) {
+      document.getElementById('startDate').value = s;
+      document.getElementById('endDate').value   = e;
+    }
+  }
+
+  function toISO(d) {
+    return d.toISOString().split('T')[0];
+  }
+
+  /* ══════════════════════════════════════════════
+     FETCH REPORT
+  ══════════════════════════════════════════════ */
+  async function fetchReport() {
+    const startDate   = document.getElementById('startDate').value;
+    const endDate     = document.getElementById('endDate').value;
+    const orderStatus = document.getElementById('orderStatus').value;
+
+    if (!startDate || !endDate) {
+      Swal.fire({ toast:true, position:'top-end', icon:'warning', title:'Please select a date range', timer:2000, showConfirmButton:false });
+      return;
+    }
+
+    currentPage = 1;
+    showLoading();
+
+    try {
+      const res  = await fetch(`/admin/salesReport-data?startDate=${startDate}&endDate=${endDate}&status=${orderStatus}&page=${currentPage}&limit=10`);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || 'Server error');
+
+      allRows      = data.orders || [];
+      filteredRows = [...allRows];
+      totalPages   = data.totalPages || 1;
+
+      updateSummaryCards(data.summary || {});
+      renderTable(filteredRows);
+      renderPagination(totalPages);
+
+    } catch (err) {
+      Swal.fire({ toast:true, position:'top-end', icon:'error', title: err.message, timer:2500, showConfirmButton:false });
+      clearTable();
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     SUMMARY CARDS
+  ══════════════════════════════════════════════ */
+  function updateSummaryCards(s) {
+    document.getElementById('sumOrders').textContent    = s.totalOrders     ?? '0';
+    document.getElementById('sumRevenue').textContent   = s.totalRevenue    ? '₹' + fmt(s.totalRevenue)   : '₹0';
+    document.getElementById('sumDiscount').textContent  = s.totalDiscount   ? '₹' + fmt(s.totalDiscount)  : '₹0';
+    document.getElementById('sumReturns').textContent   = s.returnsCount    ?? '0';
+
+    document.getElementById('sumOrdersSub').textContent   = s.deliveredCount   ? `${s.deliveredCount} delivered`   : '';
+    document.getElementById('sumRevenueSub').textContent  = s.avgOrderValue    ? `Avg ₹${fmt(s.avgOrderValue)}`    : '';
+    document.getElementById('sumDiscountSub').textContent = s.couponCount      ? `${s.couponCount} coupons used`   : '';
+    document.getElementById('sumReturnsSub').textContent  = s.cancelledCount   ? `${s.cancelledCount} cancelled`   : '';
+  }
+
+  function fmt(n) {
+    return Number(n).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  }
+
+  /* ══════════════════════════════════════════════
+     RENDER TABLE
+  ══════════════════════════════════════════════ */
+  function renderTable(rows) {
+    const tbody = document.getElementById('reportTbody');
+    const tfoot = document.getElementById('reportTfoot');
+    tbody.innerHTML = '';
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="12">No orders found for the selected filters</td></tr>`;
+      tfoot.style.display = 'none';
+      return;
+    }
+
+    let totalGross = 0, totalDisc = 0, totalNet = 0;
+
+    rows.forEach((o, i) => {
+      const gross    = o.grossAmount   || o.totalAmount || 0;
+      const disc     = o.discountAmount || 0;
+      const coupon   = o.couponDiscount || 0;
+      const net      = o.netAmount      || (gross - disc - coupon);
+      totalGross += gross; totalDisc += (disc + coupon); totalNet += net;
+
+      const statusCls = {
+        delivered:'badge-delivered', shipped:'badge-shipped', processing:'badge-processing',
+        pending:'badge-pending', cancelled:'badge-cancelled', returned:'badge-returned'
+      }[o.status?.toLowerCase()] || 'badge-pending';
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${(currentPage - 1) * 10 + i + 1}</td>
+          <td style="font-family:monospace;font-size:12px;color:#6f2b67;font-weight:600;">#${o.orderId || o._id?.toString().slice(-8).toUpperCase()}</td>
+          <td>${fmtDate(o.createdAt || o.orderDate)}</td>
+          <td>${o.customerName || o.customer || '-'}</td>
+          <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.productName || '-'}">${o.productName || '-'}</td>
+          <td style="text-align:center;">${o.quantity || 1}</td>
+          <td>₹${fmt(gross)}</td>
+          <td>${disc > 0 ? '<span class="disc-pill">-₹' + fmt(disc) + '</span>' : '—'}</td>
+          <td>${coupon > 0 ? '<span class="disc-pill" style="background:rgba(13,110,253,0.1);color:#0d6efd;">-₹' + fmt(coupon) + '</span>' : '—'}</td>
+          <td style="font-weight:700;color:#1a7a4a;">₹${fmt(net)}</td>
+          <td style="font-size:12px;">${o.paymentMethod || '-'}</td>
+          <td><span class="badge ${statusCls}">${cap(o.status)}</span></td>
+        </tr>`;
+    });
+
+    // Footer totals
+    document.getElementById('footGross').textContent = '₹' + fmt(totalGross);
+    document.getElementById('footDisc').textContent  = '₹' + fmt(totalDisc);
+    document.getElementById('footNet').textContent   = '₹' + fmt(totalNet);
+    tfoot.style.display = '';
+  }
+
+  function fmtDate(str) {
+    if (!str) return '-';
+    const d = new Date(str);
+    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+  }
+
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '-'; }
+
+  /* ══════════════════════════════════════════════
+     CLIENT-SIDE SEARCH
+  ══════════════════════════════════════════════ */
+  function clientSearch() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    filteredRows = q
+      ? allRows.filter(o =>
+          (o.orderId || '').toLowerCase().includes(q) ||
+          (o._id     || '').toString().toLowerCase().includes(q) ||
+          (o.customerName || '').toLowerCase().includes(q) ||
+          (o.productName  || '').toLowerCase().includes(q)
+        )
+      : [...allRows];
+    currentPage = 1;
+    renderTable(filteredRows);
+    renderPagination(Math.ceil(filteredRows.length / 10));
+  }
+
+  /* ══════════════════════════════════════════════
+     PAGINATION (client-side slice for search)
+  ══════════════════════════════════════════════ */
+  function renderPagination(total) {
+    totalPages = total;
+    const c = document.getElementById('pagination');
+    c.innerHTML = '';
+    if (total <= 1) return;
+    c.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;
+    for (let i = 1; i <= total; i++)
+      c.innerHTML += `<button class="page-btn ${i===currentPage?'active':''}" onclick="changePage(${i})">${i}</button>`;
+    c.innerHTML += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===total?'disabled':''}>→</button>`;
+  }
+
+  function changePage(p) {
+    if (p < 1 || p > totalPages) return;
+    currentPage = p;
+    const perPage = 10;
+    const slice   = filteredRows.slice((p-1)*perPage, p*perPage);
+    renderTable(slice);
+    renderPagination(totalPages);
+  }
+
+  /* ══════════════════════════════════════════════
+     LOADING / CLEAR
+  ══════════════════════════════════════════════ */
+  function showLoading() {
+    document.getElementById('reportTbody').innerHTML = `
+      <tr><td colspan="12">
+        <div style="padding:40px;text-align:center;color:#8e4a86;">
+          <i class="fas fa-spinner fa-spin" style="font-size:28px;margin-bottom:10px;display:block;"></i>
+          Loading report...
+        </div>
+      </td></tr>`;
+    document.getElementById('reportTfoot').style.display = 'none';
+    document.getElementById('pagination').innerHTML = '';
+  }
+
+  function clearTable() {
+    document.getElementById('reportTbody').innerHTML = `<tr class="empty-row"><td colspan="12">No data to display</td></tr>`;
+    document.getElementById('reportTfoot').style.display = 'none';
+    document.getElementById('pagination').innerHTML = '';
+  }
+
+  /* ══════════════════════════════════════════════
+     RESET
+  ══════════════════════════════════════════════ */
+  function resetFilters() {
+    document.getElementById('quickFilter').value  = '';
+    document.getElementById('startDate').value    = '';
+    document.getElementById('endDate').value      = '';
+    document.getElementById('orderStatus').value  = 'all';
+    document.getElementById('searchInput').value  = '';
+    document.getElementById('customRange').style.display = 'none';
+    allRows = []; filteredRows = [];
+    clearTable();
+    ['sumOrders','sumRevenue','sumDiscount','sumReturns'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    ['sumOrdersSub','sumRevenueSub','sumDiscountSub','sumReturnsSub'].forEach(id => {
+      document.getElementById(id).textContent = '';
+    });
+    document.getElementById('pagination').innerHTML = '';
+  }
+
+  /* ══════════════════════════════════════════════
+     EXPORT — PDF
+  ══════════════════════════════════════════════ */
+  function downloadPDF() {
+    if (!filteredRows.length) {
+      Swal.fire({ toast:true, position:'top-end', icon:'warning', title:'No data to export', timer:2000, showConfirmButton:false });
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
+
+    // Header
+    doc.setFillColor(111, 43, 103);
+    doc.rect(0, 0, 297, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14); doc.setFont(undefined, 'bold');
+    doc.text('LitHeaven — Sales Report', 14, 13);
+    doc.setFontSize(9); doc.setFont(undefined, 'normal');
+    const start = document.getElementById('startDate').value;
+    const end   = document.getElementById('endDate').value;
+    doc.text(`Period: ${start || '—'} to ${end || '—'}   Generated: ${new Date().toLocaleString('en-IN')}`, 180, 13);
+
+    // Summary row
+    doc.setTextColor(111, 43, 103);
+    doc.setFontSize(9); doc.setFont(undefined, 'bold');
+    const sumY = 26;
+    doc.text(`Total Orders: ${document.getElementById('sumOrders').textContent}`, 14, sumY);
+    doc.text(`Revenue: ${document.getElementById('sumRevenue').textContent}`, 70, sumY);
+    doc.text(`Discounts: ${document.getElementById('sumDiscount').textContent}`, 130, sumY);
+    doc.text(`Returns/Cancelled: ${document.getElementById('sumReturns').textContent}`, 190, sumY);
+
+    // Table
+    const head = [['S.No','Order ID','Date','Customer','Product','Qty','Gross Amt','Discount','Coupon','Net Amt','Payment','Status']];
+    const body = filteredRows.map((o, i) => {
+      const gross  = o.grossAmount   || o.totalAmount || 0;
+      const disc   = o.discountAmount || 0;
+      const coupon = o.couponDiscount  || 0;
+      const net    = o.netAmount       || (gross - disc - coupon);
+      return [
+        i + 1,
+        '#' + (o.orderId || o._id?.toString().slice(-8).toUpperCase()),
+        fmtDate(o.createdAt || o.orderDate),
+        o.customerName || '-',
+        (o.productName || '-').substring(0, 30),
+        o.quantity || 1,
+        '₹' + fmt(gross),
+        disc   > 0 ? '-₹' + fmt(disc)   : '—',
+        coupon > 0 ? '-₹' + fmt(coupon) : '—',
+        '₹' + fmt(net),
+        o.paymentMethod || '-',
+        cap(o.status)
+      ];
+    });
+
+    doc.autoTable({
+      head, body,
+      startY: 32,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: [111, 43, 103], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 244, 255] },
+      footStyles: { fillColor: [230, 220, 240], textColor: [111, 43, 103], fontStyle: 'bold' },
+      foot: [['', '', '', '', '', 'TOTAL',
+        '₹' + fmt(filteredRows.reduce((a, o) => a + (o.grossAmount || o.totalAmount || 0), 0)),
+        '', '',
+        '₹' + fmt(filteredRows.reduce((a, o) => a + (o.netAmount || 0), 0)),
+        '', ''
+      ]]
+    });
+
+    doc.save(`LitHeaven_SalesReport_${start}_${end}.pdf`);
+  }
+
+  /* ══════════════════════════════════════════════
+     EXPORT — EXCEL
+  ══════════════════════════════════════════════ */
+  function downloadExcel() {
+    if (!filteredRows.length) {
+      Swal.fire({ toast:true, position:'top-end', icon:'warning', title:'No data to export', timer:2000, showConfirmButton:false });
+      return;
+    }
+    const start = document.getElementById('startDate').value;
+    const end   = document.getElementById('endDate').value;
+
+    const wsData = [
+      ['LitHeaven - Sales Report'],
+      [`Period: ${start} to ${end}`],
+      [`Generated: ${new Date().toLocaleString('en-IN')}`],
+      [],
+      ['S.No','Order ID','Date','Customer','Product','Qty','Gross Amount','Discount','Coupon Discount','Net Amount','Payment Method','Status']
+    ];
+
+    filteredRows.forEach((o, i) => {
+      const gross  = o.grossAmount   || o.totalAmount || 0;
+      const disc   = o.discountAmount || 0;
+      const coupon = o.couponDiscount  || 0;
+      const net    = o.netAmount       || (gross - disc - coupon);
+      wsData.push([
+        i + 1,
+        '#' + (o.orderId || o._id?.toString().slice(-8).toUpperCase()),
+        fmtDate(o.createdAt || o.orderDate),
+        o.customerName || '-',
+        o.productName  || '-',
+        o.quantity || 1,
+        gross, disc, coupon, net,
+        o.paymentMethod || '-',
+        cap(o.status)
+      ]);
+    });
+
+    // Totals row
+    wsData.push([]);
+    wsData.push(['', '', '', '', '', 'TOTAL',
+      filteredRows.reduce((a, o) => a + (o.grossAmount || o.totalAmount || 0), 0),
+      filteredRows.reduce((a, o) => a + (o.discountAmount || 0), 0),
+      filteredRows.reduce((a, o) => a + (o.couponDiscount || 0), 0),
+      filteredRows.reduce((a, o) => a + (o.netAmount || 0), 0),
+      '', ''
+    ]);
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Column widths
+    ws['!cols'] = [5,15,12,20,30,5,14,12,16,14,15,12].map(w => ({ wch: w }));
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Sales Report');
+    XLSX.writeFile(wb, `LitHeaven_SalesReport_${start}_${end}.xlsx`);
+  }
+
+  /* ══════════════════════════════════════════════
+     SIDEBAR + LOGOUT
+  ══════════════════════════════════════════════ */
+  function toggleMenu(id) { document.getElementById(id).classList.toggle('show'); }
+
+  document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to logout?')) return;
+    try {
+      const res  = await fetch('/admin/logout', { method:'POST', headers:{'Content-Type':'application/json'} });
+      const data = await res.json();
+      if (res.ok) window.location.href = data.redirect;
+    } catch (err) { console.error(err); }
+  });
+</script>
+</body>
+</html>

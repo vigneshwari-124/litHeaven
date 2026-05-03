@@ -1,6 +1,6 @@
 const User=require('../../models/User')
 const Otp=require('../../models/Otp_temp')
-const sendOtpMail=require('../../public/utils/sendMail')
+const sendOtpMail=require('../../utils/sendMail')
 const cloudinary=require('../../config/cloudinary')
 const Address=require('../../models/Address')
 const bcrypt=require('bcrypt')

@@ -1,4 +1,7 @@
 const adminAuth = (req, res, next) => {
+
+   console.log("SESSION CHECK:", req.session)
+   
   if (req.session && req.session.isAdmin === true) {
     return next()
   }

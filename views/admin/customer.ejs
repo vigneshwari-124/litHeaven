@@ -9,7 +9,7 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
-    
+    html, body{ max-width:100%;  overflow-y:auto;scroll-behavior:smooth;}
     .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
     .sidebar::-webkit-scrollbar{width:5px;}
     .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
@@ -32,14 +32,12 @@
     .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
     .logout-btn:hover{background:#5a2252;}
     
-    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
+    .main-content{ margin-left:250px; padding:20px;transition:0.3s;width:auto;  min-height:100vh;}
+
     
-    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
-    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
-    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:14px;}
-    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;}
     
-    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
     .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
     
     .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
@@ -48,7 +46,7 @@
     .filter-row{display:flex;gap:15px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
     .filter-select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:8px;padding:8px 15px;color:#6f2b67;font-size:13px;outline:none;cursor:pointer;}
     
-    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-card{ max-width:100%;background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px; overflow:hidden;}
     .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
     .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
     .table-search{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:20px;padding:8px 15px;width:100%;max-width:300px;outline:none;color:#6f2b67;font-size:13px;}
@@ -58,8 +56,9 @@
     .table-search-wrapper i{color:#6f2b67;font-size:14px;}
     .table-search{border:none;outline:none;background:transparent;width:220px;font-size:13px;color:#6f2b67;}
 
-    .table-wrapper{height:480px; overflow-y:auto; overflow-x:auto; margin-bottom: 20px;  scroll-behavior: smooth;}
-    .customers-table{width:100%;border-collapse:collapse;min-width:900px;table-layout: fixed; }
+    .table-wrapper{ width:100%; overflow-x:auto;  }
+    .table-wrapper::-webkit-scrollbar{display: none;}
+    .customers-table{width:100%;border-collapse:collapse;  table-layout:auto; }
     .customers-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
     .customers-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
     .customers-table tr:hover{background:rgba(111,43,103,0.05);}
@@ -128,12 +127,11 @@
       .sidebar{transform:translateX(-100%);}
       .sidebar.active{transform:translateX(0);}
       .main-content{margin-left:0;width:100%;padding:15px;}
-      .top-bar{flex-direction:column;}
-      .search-box{max-width:100%;}
-      .customers-table{min-width:750px;}
-      .info-cards-grid{grid-template-columns:1fr;}
-      .modal-body{padding:15px;}
-      .user-profile-header{flex-direction:column;text-align:center;}
+      .top-bar{flex-direction:column; gap:10px;text-align:center;}
+      .customers-table{min-width:700px;}
+      .filter-row{flex-direction:column;align-items:stretch;}
+      .filter-select{width:100%; }
+      .table-search-wrapper{width:100%;}
     }
     
     @media(max-width:480px){
@@ -150,7 +148,7 @@
     <i class="fas fa-bars"></i>
   </button>
 
-  <div class="sidebar" id="sidebar">
+ <div class="sidebar" id="sidebar">
     <div style="text-align:center;padding:10px 0;">
       <div class="logo-circle">
         <i class="fas fa-book-open book-logo"></i>
@@ -159,10 +157,10 @@
       <div class="tagline">Admin Portal</div>
     </div>
     
-    <a href="/admin/dashboard" class="menu-item">
+    <a href="/admin/dashboard" class="menu-item active">
       <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/order" class="menu-item">
       <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
     </a>
     
@@ -171,14 +169,14 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="catMenu">
-      <a href="#">Category</a>
-      <a href="#">Sub-Category</a>
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
     </div>
     
-    <a href="#" class="menu-item">
+    <a href="/admin/product" class="menu-item">
       <div class="menu-left"><i class="fas fa-box"></i> Products</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/coupon" class="menu-item">
       <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
     </a>
     
@@ -187,23 +185,24 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="offerMenu">
-      <a href="#">Category Offers</a>
-      <a href="#">Sub-Category Offers</a>
+      <a href="/admin/categoryOff">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
     </div>
     
-    <a href="#" class="menu-item">
+    <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/admin" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
     </a>
-    <a href="#" class="menu-item active">
+    <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
-    <a href="#" class="menu-item">
+    <!-- <a href="/admin/rating" class="menu-item">
       <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
-    </a>
-    <a href="#" class="menu-item">
+    </a> -->
+    <a href="/admin/salesReport" class="menu-item">
       <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
     </a>
     
@@ -212,19 +211,16 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="#">App Settings</a>
-      <a href="#">User Settings</a>
+      <a href="/admin/appSetting">App Settings</a>
+      <a href="/admin/language">Language</a>
     </div>
     
-    <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+    <button  id="adminLogoutBtn"  class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
   </div>
 
   <div class="main-content">
     <div class="top-bar">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search anything...">
-      </div>
+      <h1 class="page-title">Customers</h1>
       <div class="user-info">
         <div>
           <div style="font-weight:600;font-size:14px;">App Admin</div>
@@ -232,10 +228,6 @@
         </div>
         <div class="user-avatar"><i class="fas fa-user"></i></div>
       </div>
-    </div>
-    
-    <div class="page-header">
-      <h1 class="page-title">Customers</h1>
     </div>
     
    
@@ -300,11 +292,11 @@
             <i class="fas fa-user"></i>
           </div>
           <div class="profile-info-large">
-            <h3 id="userFullName">Rajesh Kumar</h3>
+            <h3 id="userFullName"></h3>
             <div class="profile-meta-large">
-              <span><i class="fas fa-envelope"></i> <span id="userEmail">rajesh.kumar@gmail.com</span></span>
-              <span><i class="fas fa-phone"></i> <span id="userPhone">+91 98765 43210</span></span>
-              <span><i class="fas fa-calendar"></i> Joined: <span id="userJoined">Jan 15, 2024</span></span>
+              <span><i class="fas fa-envelope"></i> <span id="userEmail"></span></span>
+              <span><i class="fas fa-phone"></i> <span id="userPhone"></span></span>
+              <span><i class="fas fa-calendar"></i> Joined: <span id="userJoined"></span></span>
             </div>
           </div>
         </div>
@@ -368,18 +360,14 @@
                     <th>AMOUNT</th>
                   </tr>
                 </thead>
-                <div class="tab-content" id="ordersTab">
-                <div class="info-card" style="margin-top:0;">
-                <h3 class="card-title">Order History</h3>
-
-                <div style=" text-align:center; padding:30px 10px;color:#8e4a86;font-size:14px;font-weight:600;">
-                <i class="fas fa-box-open" style="font-size:26px;margin-bottom:10px;"></i>
-                <div>No orders placed yet</div>
-                </div>
-
-                </div>
-                </div>
-                    
+                <tbody>
+                  <tr>
+                    <td colspan="5" style="text-align:center; padding:30px 10px;color:#8e4a86;font-size:14px;font-weight:600;">
+                      <i class="fas fa-box-open" style="font-size:26px;margin-bottom:10px;display:block;"></i>
+                      <div>No orders placed yet</div>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -388,7 +376,6 @@
       </div>
     </div>
   </div>
-
   <script>
 
 const searchInput = document.getElementById('searchInput')

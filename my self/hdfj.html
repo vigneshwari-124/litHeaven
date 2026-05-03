@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products - LitHeaven</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden}
+.sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:.3s}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px}
+.logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,.5);padding:15px}
+.book-logo{font-size:35px;color:#fff;margin-bottom:8px}
+.logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px}
+.tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px}
+.menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer}
+.menu-item:hover,.menu-item.active{background:rgba(111,43,103,.1);border-left-color:#6f2b67;color:#5a2252}
+.menu-item i{width:20px;font-size:16px}
+.menu-left{display:flex;align-items:center;gap:12px}
+.submenu{max-height:0;overflow:hidden;transition:.3s}
+.submenu.show{max-height:200px}
+.submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:.3s}
+.submenu a:hover{background:rgba(111,43,103,.05);color:#5a2252}
+.logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px)}
+.logout-btn:hover{background:#5a2252}
+.main-content{margin-left:250px;padding:20px;width:calc(100% - 250px)}
+.top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center}
+.user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto}
+.user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.page-title{font-size:28px;font-weight:700;color:#6f2b67}
+.filter-row{display:flex;gap:10px;margin-bottom:15px;align-items:center;font-size:13px;flex-wrap:wrap}
+.filter-row select{background:rgba(111,43,103,.1);border:1px solid #6f2b67;color:#6f2b67;padding:8px 15px;border-radius:8px;outline:none;cursor:pointer;font-size:13px}
+.add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 25px;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(111,43,103,.4);display:flex;align-items:center;gap:8px;font-size:13px}
+.add-btn:hover{background:#8a3a7f}
+.table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px}
+.table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px}
+.table-title{font-size:18px;font-weight:700;color:#6f2b67}
+.table-wrapper{height:480px;overflow-y:auto;overflow-x:auto}
+.products-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.products-table th{background:rgba(111,43,103,.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67}
+.products-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,.2);color:rgba(111,43,103,.8);vertical-align:middle}
+.products-table tr:hover{background:rgba(111,43,103,.05)}
+/* Status badge */
+.status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:90px;height:28px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:0 12px}
+.badge-published{background:rgba(40,167,69,.15);color:#28a745;border:1px solid rgba(40,167,69,.3)}
+.badge-unpublished{background:rgba(220,53,69,.15);color:#dc3545;border:1px solid rgba(220,53,69,.3)}
+/* Toggle */
+.toggle-wrap{display:flex;align-items:center;gap:8px}
+.toggle{position:relative;width:52px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;border-radius:26px;background:#dc3545;cursor:pointer;transition:.35s}
+.toggle-slider:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.35s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle input:checked+.toggle-slider{background:#28a745}
+.toggle input:checked+.toggle-slider:before{transform:translateX(26px)}
+.pub-label{font-size:11px;font-weight:700;letter-spacing:.4px;min-width:72px}
+.pub-label.unpub{color:#dc3545}
+.pub-label.pub{color:#28a745}
+/* Action */
+.action-cell{text-align:center;white-space:nowrap}
+.icon-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:17px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;transition:.3s;border-radius:6px}
+.icon-btn:hover{background:rgba(111,43,103,.1);color:#5a2252;transform:scale(1.1)}
+/* Pagination */
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}
+.page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:.3s}
+.page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff}
+.mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px}
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(111,43,103,.15);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal.show{display:flex}
+.modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;max-width:600px;width:100%;max-height:90vh;overflow:hidden;position:relative;margin:auto;box-shadow:0 10px 40px rgba(111,43,103,.3)}
+.modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.modal-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.close-modal{background:rgba(255,255,255,.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:.3s}
+.close-modal:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+.modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px)}
+.modal-body::-webkit-scrollbar{width:8px}
+.modal-body::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:10px}
+.form-group{margin-bottom:20px}
+.form-label{display:block;font-size:13px;font-weight:600;color:#6f2b67;margin-bottom:8px}
+.form-input{width:100%;padding:10px 15px;border:1px solid #6f2b67;border-radius:8px;background:rgba(111,43,103,.05);color:#333;font-size:14px;outline:none;transition:.3s}
+.form-input:focus{border-color:#8e4a86;background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,.1)}
+.form-textarea{resize:vertical;min-height:100px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:20px;border-top:1px solid rgba(111,43,103,.2)}
+.btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;border:none}
+.btn-cancel{background:rgba(111,43,103,.1);color:#6f2b67}
+.btn-cancel:hover{background:rgba(111,43,103,.2)}
+.btn-save{background:#6f2b67;color:#fff}
+.btn-save:hover{background:#5a2252}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+/* Lang checkboxes */
+.lang-checkbox{display:flex;align-items:center;gap:8px;padding:10px;border:2px solid #d4d4d4;border-radius:8px;cursor:pointer;transition:.3s}
+.lang-checkbox:hover{border-color:#6f2b67;background:rgba(111,43,103,.05)}
+.lang-checkbox.selected{border-color:#6f2b67;background:rgba(111,43,103,.1)}
+.lang-checkbox input{width:18px;height:18px;cursor:pointer;accent-color:#6f2b67}
+.lang-checkbox label{font-size:13px;font-weight:600;color:#6f2b67;cursor:pointer;flex:1}
+.language-selection{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+/* Variants list */
+.variants-list{background:rgba(111,43,103,.05);border:1px solid #6f2b67;border-radius:8px;padding:15px;margin-bottom:15px;max-height:400px;overflow-y:auto}
+.language-group{margin-bottom:15px;border:1px solid rgba(111,43,103,.2);border-radius:10px;overflow:hidden;background:#fff}
+.language-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:12px 15px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.language-content{padding:12px}
+.variant-item{background:rgba(111,43,103,.02);border:1px solid rgba(111,43,103,.15);border-radius:8px;padding:10px;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+.variant-item:last-child{margin-bottom:0}
+.variant-thumbnail{width:70px;height:70px;border-radius:6px;border:2px solid rgba(111,43,103,.3);overflow:hidden;flex-shrink:0;background:rgba(111,43,103,.05);display:flex;align-items:center;justify-content:center}
+.variant-thumbnail img{width:100%;height:100%;object-fit:cover}
+.variant-thumbnail i{font-size:24px;color:rgba(111,43,103,.3)}
+.variant-info{flex:1;min-width:0}
+.variant-format{font-size:14px;font-weight:700;color:#6f2b67;margin-bottom:4px}
+.variant-details{font-size:12px;color:rgba(111,43,103,.7);display:flex;flex-wrap:wrap;gap:12px}
+.variant-detail-item{display:flex;align-items:center;gap:4px}
+.variant-detail-item i{font-size:11px}
+.variant-actions{display:flex;gap:6px;flex-shrink:0}
+.variant-btn{padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:.3s;display:inline-flex;align-items:center;gap:4px}
+.variant-delete{background:rgba(220,53,69,.1);color:#dc3545;border:1px solid #dc3545}
+.variant-delete:hover{background:#dc3545;color:#fff}
+/* Lang section */
+.lang-section{display:none;background:rgba(111,43,103,.05);border:1px solid #6f2b67;border-radius:8px;padding:15px;margin-top:15px}
+.lang-section h3{color:#6f2b67;font-size:16px;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #6f2b67}
+.image-upload-grid{display:grid;grid-template-columns:1fr 2fr;gap:15px;margin-bottom:15px}
+.thumb-upload{width:100%;height:120px;border:2px dashed #6f2b67;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(111,43,103,.05);transition:.3s;position:relative;overflow:hidden}
+.thumb-upload:hover{border-color:#5a2252;background:rgba(111,43,103,.1)}
+.thumb-upload i{font-size:30px;color:#6f2b67}
+.thumb-upload .upload-text{font-size:11px;color:#6f2b67;margin-top:8px}
+.thumb-upload img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.sub-images-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sub-image-box{width:100%;height:80px;border:2px dashed #6f2b67;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(111,43,103,.05);transition:.3s;position:relative;overflow:hidden}
+.sub-image-box:hover{border-color:#5a2252;background:rgba(111,43,103,.1)}
+.sub-image-box i{font-size:20px;color:#6f2b67}
+.sub-image-box img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.format-checkboxes{display:flex;gap:20px;margin-bottom:15px}
+.format-checkbox{display:flex;align-items:center;gap:8px}
+.format-checkbox input{width:18px;height:18px;cursor:pointer;accent-color:#6f2b67}
+.format-checkbox label{font-size:13px;font-weight:600;color:#6f2b67;cursor:pointer}
+.format-fields{display:none;border:1px solid rgba(111,43,103,.3);border-radius:8px;padding:15px;margin-bottom:15px;background:rgba(111,43,103,.02)}
+.format-fields h4{font-size:14px;font-weight:700;color:#6f2b67;margin-bottom:12px}
+/* Crop modal */
+.crop-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:3000;align-items:center;justify-content:center;padding:20px}
+.crop-modal.show{display:flex}
+.crop-container{background:#fff;border:3px solid #6f2b67;border-radius:20px;max-width:450px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(111,43,103,.6);animation:zoomIn .3s ease}
+@keyframes zoomIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.crop-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}
+.crop-body{padding:20px}
+.crop-image-wrapper{max-width:100%;height:280px;background:#f5f3ff;border:2px solid #6f2b67;border-radius:12px;overflow:hidden;margin-bottom:15px}
+#cropImage{max-width:100%;display:block}
+.crop-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:15px;border-top:2px solid rgba(111,43,103,.2)}
+.btn-crop-cancel{background:rgba(220,53,69,.1);color:#dc3545;border:2px solid #dc3545;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;transition:.3s}
+.btn-crop-cancel:hover{background:#dc3545;color:#fff}
+.btn-crop-done{background:#6f2b67;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;transition:.3s}
+.btn-crop-done:hover{background:#5a2252;transform:translateY(-2px)}
+/* Detail modal */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+.detail-item{background:rgba(111,43,103,.04);border:1px solid rgba(111,43,103,.15);border-radius:8px;padding:12px}
+.d-label{font-size:11px;font-weight:600;color:rgba(111,43,103,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.d-value{font-size:14px;font-weight:600;color:#5a2252}
+.detail-variants h4{font-size:13px;font-weight:700;color:#6f2b67;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(111,43,103,.2)}
+.dv-lang-group{margin-bottom:12px}
+.dv-lang-title{font-size:11px;font-weight:700;color:#fff;background:#6f2b67;padding:4px 10px;border-radius:5px;display:inline-block;margin-bottom:6px;text-transform:uppercase}
+.dv-row{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(111,43,103,.04);border-radius:6px;border:1px solid rgba(111,43,103,.1);margin-bottom:4px;font-size:12px;color:#5a2252}
+@media(max-width:768px){
+  .mobile-toggle{display:flex;align-items:center;justify-content:center}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.active{transform:translateX(0)}
+  .main-content{margin-left:0;width:100%;padding:15px}
+  .top-bar{flex-direction:column;align-items:flex-start}
+  .products-table{min-width:900px}
+  .modal-body{padding:15px}
+  .form-row{grid-template-columns:1fr}
+  .language-selection{grid-template-columns:repeat(2,1fr)}
+  .image-upload-grid{grid-template-columns:1fr}
+  .variant-item{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:480px){
+  .main-content{padding:10px}
+  .language-selection{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+  <div style="text-align:center;padding:10px 0">
+    <div class="logo-circle">
+      <i class="fas fa-book-open book-logo"></i>
+      <div class="logo-text">LitHeaven</div>
+    </div>
+    <div class="tagline">Admin Portal</div>
+  </div>
+  <a href="/admin/dashboard" class="menu-item"><div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div></a>
+  <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div></a>
+  <div class="menu-item" onclick="toggleMenu('catMenu')"><div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div><i class="fas fa-chevron-down"></i></div>
+  <div class="submenu" id="catMenu">
+    <a href="/admin/category">Category</a>
+    <a href="/admin/sub-category">Sub-Category</a>
+  </div>
+  <a href="/admin/product" class="menu-item active"><div class="menu-left"><i class="fas fa-box"></i> Products</div></a>
+  <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div></a>
+  <div class="menu-item" onclick="toggleMenu('offerMenu')"><div class="menu-left"><i class="fas fa-tags"></i> Offers</div><i class="fas fa-chevron-down"></i></div>
+  <div class="submenu" id="offerMenu">
+    <a href="#">Category Offers</a>
+    <a href="#">Sub-Category Offers</a>
+  </div>
+  <a href="/admin/author" class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
+  <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+  <a href="/admin/customer" class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
+  <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-star"></i> Ratings</div></a>
+  <a href="#" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
+  <div class="menu-item" onclick="toggleMenu('settMenu')"><div class="menu-left"><i class="fas fa-cog"></i> Settings</div><i class="fas fa-chevron-down"></i></div>
+  <div class="submenu" id="settMenu">
+    <a href="#">App Settings</a>
+    <a href="#">User Settings</a>
+  </div>
+  <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+</div>
+
+<div class="main-content">
+  <div class="top-bar">
+    <h1 class="page-title">Products</h1>
+    <div class="user-info" onclick="document.getElementById('profileModal').classList.add('show')">
+      <div>
+        <div style="font-weight:600;font-size:14px">App Admin</div>
+        <div style="font-size:11px;opacity:.7">admin@litheaven.com</div>
+      </div>
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <select id="statusFilter">
+      <option value="all">All Status</option>
+      <option value="published">Published</option>
+      <option value="unpublished">Unpublished</option>
+    </select>
+    <select id="limitSelect">
+      <option value="7">Show 7 entries</option>
+      <option value="15">Show 15 entries</option>
+      <option value="25">Show 25 entries</option>
+    </select>
+    <button class="add-btn" onclick="openAddModal()" style="margin-left:auto"><i class="fas fa-plus"></i> ADD PRODUCT</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title">Product List</div>
+      <div style="position:relative;flex:1;max-width:350px;margin-left:auto">
+        <i class="fas fa-search" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#6f2b67;font-size:14px"></i>
+        <input type="text" id="searchInput" class="form-input" placeholder="Search products..." style="padding-left:40px;width:100%;border-radius:20px">
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th style="width:5%">S.NO</th>
+            <th style="width:19%">BOOK NAME</th>
+            <th style="width:8%">STOCK</th>
+            <th style="width:7%">SOLD</th>
+            <th style="width:12%">CATEGORY</th>
+            <th style="width:12%">AUTHOR</th>
+            <th style="width:12%">STATUS</th>
+            <th style="width:17%">PUBLISH/UNPUBLISH</th>
+            <th style="width:8%">ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <tr>
+            <td>1</td>
+            <td><strong>A Burning</strong></td>
+            <td>282</td>
+            <td>20</td>
+            <td>Fiction</td>
+            <td>Robert Brown</td>
+            <td><span class="status-badge badge-published">PUBLISHED</span></td>
+            <td>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" checked onchange="togglePublish(this)">
+                  <span class="toggle-slider"></span>
+                </label>
+               
+              </div>
+            </td>
+            <td class="action-cell">
+              <button class="icon-btn" onclick="viewProduct(-1)" title="View"><i class="fas fa-eye"></i></button>
+              <button class="icon-btn" onclick="editProduct('1')" title="Edit"><i class="fas fa-edit"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT PRODUCT MODAL -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-box"></i> <span id="modalTitle">Add Product</span></h2>
+      <button class="close-modal" onclick="closeModal('productModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="productForm">
+        <div class="form-group">
+          <label class="form-label">Product Title *</label>
+          <input type="text" class="form-input" id="productTitle" placeholder="Enter product title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Product Description *</label>
+          <textarea class="form-input form-textarea" id="productDescription" placeholder="Enter product description"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select class="form-input" id="productCategory">
+              <option value="">Select Category</option>
+              <option value="Fiction">Fiction</option>
+              <option value="Non-Fiction">Non-Fiction</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sub-Category *</label>
+            <select class="form-input" id="productSubCategory"><option value="">Select Sub-Category</option></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author *</label>
+          <select class="form-input" id="productAuthor">
+            <option value="">Select Author</option>
+            <option value="1">Robert Brown</option>
+            <option value="2">Jane Smith</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Product Variants</label>
+          <div class="variants-list" id="variantsList">
+            <p style="text-align:center;color:rgba(111,43,103,.5);font-size:13px">No variants added yet</p>
+          </div>
+          <button type="button" class="add-btn" onclick="openVariantForm()" style="width:100%;justify-content:center">
+            <i class="fas fa-plus"></i> ADD VARIANT
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('productModal')">Cancel</button>
+          <button type="submit" class="btn btn-save">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- VARIANT MODAL -->
+<div class="modal" id="variantModal">
+  <div class="modal-content" style="max-width:900px">
+    <div class="modal-header">
+      <h2><i class="fas fa-language"></i> Add Variants</h2>
+      <button class="close-modal" onclick="closeModal('variantModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="variantForm">
+        <div class="form-group">
+          <label class="form-label">Select Languages *</label>
+          <div class="language-selection" id="langSelection"></div>
+        </div>
+        <div id="langSections"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('variantModal')">Cancel</button>
+          <button type="submit" class="btn btn-save">Save Variants</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CROP MODAL -->
+<div class="crop-modal" id="cropModal">
+  <div class="crop-container">
+    <div class="crop-header">
+      <h3><i class="fas fa-crop-alt"></i> Crop Image</h3>
+      <button class="close-modal" onclick="closeCropModal()">×</button>
+    </div>
+    <div class="crop-body">
+      <div class="crop-image-wrapper"><img id="cropImage" src="" alt="Crop"></div>
+      <div class="crop-footer">
+        <button class="btn-crop-cancel" onclick="closeCropModal()"><i class="fas fa-times"></i> Cancel</button>
+        <button class="btn-crop-done" onclick="applyCrop()"><i class="fas fa-check"></i> Apply Crop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal" id="detailModal">
+  <div class="modal-content" style="max-width:650px">
+    <div class="modal-header">
+      <h2><i class="fas fa-eye"></i> Product Details</h2>
+      <button class="close-modal" onclick="closeModal('detailModal')">×</button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal">
+  <div class="modal-content" style="max-width:400px;text-align:center">
+    <div class="modal-header">
+      <h2><i class="fas fa-user-circle"></i> Profile</h2>
+      <button class="close-modal" onclick="document.getElementById('profileModal').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,.1);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;box-shadow:0 0 20px rgba(111,43,103,.3)">
+        <i class="fas fa-user" style="font-size:50px;color:#6f2b67"></i>
+      </div>
+      <div style="font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px">App Admin</div>
+      <div style="font-size:14px;color:rgba(111,43,103,.7);margin-bottom:20px">admin@litheaven.com</div>
+      <button class="btn btn-save" style="width:100%" onclick="document.getElementById('profileModal').classList.remove('show')">UPDATE PROFILE</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="cropFileInput" style="display:none" accept="image/*">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+<script>
+const LANGS=['tamil','english','hindi','malayalam','telugu'];
+let editingProductId=null,productVariants=[],languageImageData={},cropper=null,currentCropTarget=null;
+let savedProducts=[];
+
+const Toast=Swal.mixin({toast:true,position:'top-end',showConfirmButton:false,timer:2500,timerProgressBar:true});
+
+// ── Build language UI dynamically ──────────────────────────────────────────
+// (function buildLangUI(){
+//   const sel=document.getElementById('langSelection');
+//   const sec=document.getElementById('langSections');
+//   LANGS.forEach(lang=>{
+//     const cap=lang[0].toUpperCase()+lang.slice(1);
+//     sel.innerHTML+=`<div class="lang-checkbox" id="lc_${lang}" onclick="toggleLanguage('${lang}')">
+//       <input type="checkbox" id="lang_${lang}" value="${lang}">
+//       <label for="lang_${lang}">${cap}</label></div>`;
+//     sec.innerHTML+=`<div class="lang-section" id="${lang}Section">
+//       <h3><i class="fas fa-language"></i> ${cap} Book Details</h3>
+//       <div class="form-group">
+//         <label class="form-label">Product Images *</label>
+//         <div class="image-upload-grid">
+//           <div>
+//             <label style="font-size:11px;margin-bottom:5px;display:block">Thumbnail</label>
+//             <div class="thumb-upload" id="${lang}_thumb" onclick="openImageCrop('${lang}','thumb')">
+//               <i class="fas fa-image"></i><div class="upload-text">Add Thumbnail</div></div>
+//           </div>
+//           <div>
+//             <label style="font-size:11px;margin-bottom:5px;display:block">Sub Images</label>
+//             <div class="sub-images-grid">
+//               ${[0,1,2].map(i=>`<div class="sub-image-box" id="${lang}_sub_${i}" onclick="openImageCrop('${lang}','sub',${i})"><i class="fas fa-plus"></i></div>`).join('')}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <div class="form-group">
+//         <label class="form-label">Book Format *</label>
+//         <div class="format-checkboxes">
+//           <div class="format-checkbox"><input type="checkbox" id="${lang}_paperback" onchange="toggleFormatFields('${lang}','paperback')"><label for="${lang}_paperback">Paper Back</label></div>
+//           <div class="format-checkbox"><input type="checkbox" id="${lang}_hardcover" onchange="toggleFormatFields('${lang}','hardcover')"><label for="${lang}_hardcover">Hard Cover</label></div>
+//         </div>
+//       </div>
+//       ${['paperback','hardcover'].map(fmt=>`
+//       <div class="format-fields" id="${lang}_${fmt}Fields">
+//         <h4>${fmt==='paperback'?'Paper Back':'Hard Cover'}</h4>
+//         <div class="form-row">
+//           <div class="form-group"><label class="form-label">Price *</label><input type="number" class="form-input" id="${lang}_${fmt}_price" placeholder="Enter price"></div>
+//           <div class="form-group"><label class="form-label">Stock *</label><input type="number" class="form-input" id="${lang}_${fmt}_stock" placeholder="Enter stock"></div>
+//         </div>
+//         <div class="form-group"><label class="form-label">Status</label>
+//           <select class="form-input" id="${lang}_${fmt}_status">
+//             <option value="published">Published</option><option value="unpublished">Unpublished</option>
+//           </select>
+//         </div>
+//       </div>`).join('')}
+//     </div>`;
+//   });
+// })();
+
+// // ── Sidebar & modal helpers ────────────────────────────────────────────────
+// function toggleMenu(id){document.getElementById(id).classList.toggle('show')}
+
+// function closeModal(id){
+//   document.getElementById(id).classList.remove('show');
+//   if(id==='variantModal')resetVariantForm();
+// }
+
+// function openAddModal(){
+//   editingProductId=null;productVariants=[];languageImageData={};
+//   document.getElementById('modalTitle').textContent='Add Product';
+//   document.getElementById('productForm').reset();
+//   updateVariantsList();
+//   document.getElementById('productModal').classList.add('show');
+// }
+
+// function editProduct(id){
+//   editingProductId=id;
+//   document.getElementById('modalTitle').textContent='Edit Product';
+//   document.getElementById('productModal').classList.add('show');
+// }
+
+// function openVariantForm(){document.getElementById('variantModal').classList.add('show')}
+
+// // ── Toggle publish/unpublish in table ─────────────────────────────────────
+// function togglePublish(cb){
+//   const wrap=cb.closest('.toggle-wrap');
+//   const label=wrap.querySelector('.pub-label');
+//   const row=cb.closest('tr');
+//   const badge=row.querySelector('.status-badge');
+//   if(cb.checked){
+//     // ON = Published
+//     label.textContent='UNPUBLISH';
+//     label.className='pub-label pub';
+//     badge.textContent='PUBLISHED';
+//     badge.className='status-badge badge-published';
+//   } else {
+//     // OFF = Unpublished
+//     label.textContent='PUBLISH';
+//     label.className='pub-label unpub';
+//     badge.textContent='UNPUBLISHED';
+//     badge.className='status-badge badge-unpublished';
+//   }
+// }
+
+// // ── Language toggle ────────────────────────────────────────────────────────
+// function toggleLanguage(lang){
+//   const cb=document.getElementById(`lang_${lang}`);
+//   const sec=document.getElementById(`${lang}Section`);
+//   const box=document.getElementById(`lc_${lang}`);
+//   if(cb.checked){box.classList.add('selected');sec.style.display='block'}
+//   else{box.classList.remove('selected');sec.style.display='none'}
+// }
+
+// function toggleFormatFields(lang,fmt){
+//   document.getElementById(`${lang}_${fmt}Fields`).style.display=
+//     document.getElementById(`${lang}_${fmt}`).checked?'block':'none';
+// }
+
+// // ── Image crop ────────────────────────────────────────────────────────────
+// function openImageCrop(language,type,index=null){
+//   currentCropTarget={language,type,index};
+//   const fi=document.getElementById('cropFileInput');
+//   fi.value='';fi.click();
+//   fi.onchange=function(e){
+//     const file=e.target.files[0];if(!file)return;
+//     const reader=new FileReader();
+//     reader.onload=function(ev){
+//       const ci=document.getElementById('cropImage');
+//       ci.src=ev.target.result;
+//       document.getElementById('cropModal').classList.add('show');
+//       if(cropper)cropper.destroy();
+//       cropper=new Cropper(ci,{
+//         aspectRatio:type==='thumb'?3/4:1,viewMode:2,dragMode:'move',
+//         autoCropArea:.8,restore:false,guides:true,center:true,highlight:true,
+//         cropBoxMovable:true,cropBoxResizable:true,toggleDragModeOnDblclick:false,
+//         background:true,responsive:true,checkOrientation:false,
+//         scalable:true,zoomable:true,modal:true,rotatable:false
+//       });
+//     };
+//     reader.readAsDataURL(file);
+//   };
+// }
+
+// function closeCropModal(){
+//   document.getElementById('cropModal').classList.remove('show');
+//   if(cropper){cropper.destroy();cropper=null}
+//   currentCropTarget=null;
+// }
+
+// function applyCrop(){
+//   if(!cropper||!currentCropTarget)return;
+//   const canvas=cropper.getCroppedCanvas({
+//     width:currentCropTarget.type==='thumb'?400:600,
+//     height:currentCropTarget.type==='thumb'?533:600,
+//     imageSmoothingQuality:'high'
+//   });
+//   const data=canvas.toDataURL('image/jpeg',.9);
+//   const{language,type,index}=currentCropTarget;
+//   if(!languageImageData[language])languageImageData[language]={};
+//   if(type==='thumb'){
+//     languageImageData[language].thumbnail=data;
+//     document.getElementById(`${language}_thumb`).innerHTML=`<img src="${data}">`;
+//   } else {
+//     if(!languageImageData[language].subImages)languageImageData[language].subImages=[];
+//     languageImageData[language].subImages[index]=data;
+//     document.getElementById(`${language}_sub_${index}`).innerHTML=`<img src="${data}">`;
+//   }
+//   closeCropModal();
+//   Toast.fire({icon:'success',title:'Image cropped successfully!'});
+// }
+
+// // ── Variant form submit ───────────────────────────────────────────────────
+// document.getElementById('variantForm').addEventListener('submit',function(e){
+//   e.preventDefault();
+//   const selected=LANGS.filter(l=>document.getElementById(`lang_${l}`).checked);
+//   if(!selected.length){Toast.fire({icon:'error',title:'Please select at least one language'});return}
+//   const all=[];
+//   for(const lang of selected){
+//     const pb=document.getElementById(`${lang}_paperback`).checked;
+//     const hc=document.getElementById(`${lang}_hardcover`).checked;
+//     if(!pb&&!hc){Toast.fire({icon:'error',title:`Please select format for ${lang}`});return}
+//     const thumb=languageImageData[lang]?.thumbnail||null;
+//     const subs=languageImageData[lang]?.subImages||[];
+//     for(const fmt of['paperback','hardcover']){
+//       if((fmt==='paperback'&&pb)||(fmt==='hardcover'&&hc)){
+//         const price=document.getElementById(`${lang}_${fmt}_price`).value;
+//         const stock=document.getElementById(`${lang}_${fmt}_stock`).value;
+//         if(!price||!stock){Toast.fire({icon:'error',title:`Fill ${fmt} details for ${lang}`});return}
+//         all.push({language:lang,format:fmt,price,stock,
+//           status:document.getElementById(`${lang}_${fmt}_status`).value,
+//           thumbnail:thumb,subImages:subs});
+//       }
+//     }
+//   }
+//   productVariants=productVariants.filter(v=>!selected.includes(v.language));
+//   productVariants.push(...all);
+//   updateVariantsList();
+//   closeModal('variantModal');
+//   Toast.fire({icon:'success',title:`${all.length} variant(s) added!`});
+// });
+
+// function updateVariantsList(){
+//   const list=document.getElementById('variantsList');
+//   if(!productVariants.length){
+//     list.innerHTML='<p style="text-align:center;color:rgba(111,43,103,.5);font-size:13px">No variants added yet</p>';return;
+//   }
+//   const grouped={};
+//   productVariants.forEach((v,i)=>{v.index=i;if(!grouped[v.language])grouped[v.language]=[];grouped[v.language].push(v)});
+//   list.innerHTML=Object.keys(grouped).map(lang=>{
+//     const cap=lang[0].toUpperCase()+lang.slice(1);
+//     return`<div class="language-group">
+//       <div class="language-header"><i class="fas fa-language"></i><span>${cap}</span></div>
+//       <div class="language-content">${grouped[lang].map(v=>`
+//         <div class="variant-item">
+//           <div class="variant-thumbnail">${v.thumbnail?`<img src="${v.thumbnail}">`:'<i class="fas fa-image"></i>'}</div>
+//           <div class="variant-info">
+//             <div class="variant-format">${v.format==='paperback'?'Paper Back':'Hard Cover'}</div>
+//             <div class="variant-details">
+//               <div class="variant-detail-item"><i class="fas fa-rupee-sign"></i><span>₹${v.price}</span></div>
+//               <div class="variant-detail-item"><i class="fas fa-boxes"></i><span>Stock: ${v.stock}</span></div>
+//               <div class="variant-detail-item"><i class="fas fa-${v.status==='published'?'check-circle':'times-circle'}"></i><span>${v.status}</span></div>
+//             </div>
+//           </div>
+//           <div class="variant-actions">
+//             <button class="variant-btn variant-delete" onclick="deleteVariant(${v.index})"><i class="fas fa-trash"></i></button>
+//           </div>
+//         </div>`).join('')}
+//       </div>
+//     </div>`;
+//   }).join('');
+// }
+
+// function deleteVariant(index){
+//   Swal.fire({title:'Delete Variant?',text:'Are you sure?',icon:'warning',showCancelButton:true,
+//     confirmButtonColor:'#6f2b67',cancelButtonColor:'#aaa',confirmButtonText:'Yes, Delete'})
+//   .then(r=>{if(r.isConfirmed){productVariants.splice(index,1);updateVariantsList();Toast.fire({icon:'success',title:'Variant deleted'})}});
+// }
+
+// function resetVariantForm(){
+//   document.getElementById('variantForm').reset();
+//   LANGS.forEach(lang=>{
+//     document.getElementById(`lc_${lang}`).classList.remove('selected');
+//     document.getElementById(`${lang}Section`).style.display='none';
+//     ['paperback','hardcover'].forEach(fmt=>{
+//       document.getElementById(`${lang}_${fmt}Fields`).style.display='none';
+//     });
+//     document.getElementById(`${lang}_thumb`).innerHTML='<i class="fas fa-image"></i><div class="upload-text">Add Thumbnail</div>';
+//     [0,1,2].forEach(i=>{document.getElementById(`${lang}_sub_${i}`).innerHTML='<i class="fas fa-plus"></i>'});
+//   });
+// }
+
+// // ── Product form submit → add row ─────────────────────────────────────────
+// document.getElementById('productForm').addEventListener('submit',function(e){
+//   e.preventDefault();
+//   if(!productVariants.length){Toast.fire({icon:'error',title:'Add at least one variant'});return}
+//   const d={
+//     title:document.getElementById('productTitle').value.trim(),
+//     description:document.getElementById('productDescription').value.trim(),
+//     category:document.getElementById('productCategory').value,
+//     subCategory:document.getElementById('productSubCategory').value,
+//     author:document.getElementById('productAuthor').value,
+//     variants:[...productVariants]
+//   };
+//   if(!d.title||!d.description||!d.category||!d.subCategory||!d.author){
+//     Toast.fire({icon:'error',title:'Fill all required fields'});return;
+//   }
+//   const rowIdx=savedProducts.length;
+//   savedProducts.push(d);
+//   const tbody=document.getElementById('productTableBody');
+//   const authorOpt=document.getElementById('productAuthor');
+//   const authorName=authorOpt.options[authorOpt.selectedIndex].text;
+//   const totalStock=d.variants.reduce((s,v)=>s+(+v.stock),0);
+//   const tr=document.createElement('tr');
+//   tr.innerHTML=`
+//     <td>${tbody.rows.length+1}</td>
+//     <td><strong>${d.title}</strong></td>
+//     <td>${totalStock}</td>
+//     <td>0</td>
+//     <td>${d.category}</td>
+//     <td>${authorName}</td>
+//     <td><span class="status-badge badge-published">PUBLISHED</span></td>
+//     <td>
+//       <div class="toggle-wrap">
+//         <label class="toggle">
+//           <input type="checkbox" checked onchange="togglePublish(this)">
+//           <span class="toggle-slider"></span>
+//         </label>
+//         <span class="pub-label pub">UNPUBLISH</span>
+//       </div>
+//     </td>
+//     <td class="action-cell">
+//       <button class="icon-btn" onclick="viewProduct(${rowIdx})" title="View"><i class="fas fa-eye"></i></button>
+//       <button class="icon-btn" onclick="editProduct(${rowIdx})" title="Edit"><i class="fas fa-edit"></i></button>
+//     </td>`;
+//   tbody.appendChild(tr);
+//   Toast.fire({icon:'success',title:'Product saved successfully!'}).then(()=>closeModal('productModal'));
+// });
+
+// // ── View product detail ───────────────────────────────────────────────────
+// function viewProduct(idx){
+//   let html='';
+//   if(idx<0||savedProducts[idx]===undefined){
+//     html=`<div class="detail-grid">
+//       <div class="detail-item"><div class="d-label">Title</div><div class="d-value">A Burning</div></div>
+//       <div class="detail-item"><div class="d-label">Category</div><div class="d-value">Fiction</div></div>
+//       <div class="detail-item"><div class="d-label">Author</div><div class="d-value">Robert Brown</div></div>
+//       <div class="detail-item"><div class="d-label">Total Stock</div><div class="d-value">282</div></div>
+//     </div>
+//     <div class="detail-item" style="margin-bottom:15px">
+//       <div class="d-label">Description</div>
+//       <div class="d-value" style="font-weight:400;font-size:13px;line-height:1.6">Sample product description for A Burning book.</div>
+//     </div>
+//     <div class="detail-variants"><h4><i class="fas fa-layer-group"></i> Variants</h4>
+//       <p style="color:rgba(111,43,103,.5);font-size:13px;text-align:center">Variant details not available for this record.</p>
+//     </div>`;
+//   } else {
+//     const p=savedProducts[idx];
+//     const grouped={};
+//     p.variants.forEach(v=>{if(!grouped[v.language])grouped[v.language]=[];grouped[v.language].push(v)});
+//     const authorOpt=document.getElementById('productAuthor');
+//     let authorName=p.author;
+//     Array.from(authorOpt.options).forEach(o=>{if(o.value===p.author)authorName=o.text});
+//     html=`<div class="detail-grid">
+//       <div class="detail-item"><div class="d-label">Title</div><div class="d-value">${p.title}</div></div>
+//       <div class="detail-item"><div class="d-label">Category</div><div class="d-value">${p.category}</div></div>
+//       <div class="detail-item"><div class="d-label">Sub-Category</div><div class="d-value">${p.subCategory}</div></div>
+//       <div class="detail-item"><div class="d-label">Author</div><div class="d-value">${authorName}</div></div>
+//     </div>
+//     <div class="detail-item" style="margin-bottom:15px">
+//       <div class="d-label">Description</div>
+//       <div class="d-value" style="font-weight:400;font-size:13px;line-height:1.6">${p.description}</div>
+//     </div>
+//     <div class="detail-variants">
+//       <h4><i class="fas fa-layer-group"></i> Variants (${p.variants.length})</h4>
+//       ${Object.keys(grouped).map(lang=>{
+//         const cap=lang[0].toUpperCase()+lang.slice(1);
+//         return`<div class="dv-lang-group">
+//           <div class="dv-lang-title">${cap}</div>
+//           ${grouped[lang].map(v=>`
+//             <div class="dv-row">
+//               ${v.thumbnail
+//                 ?`<img src="${v.thumbnail}" style="width:40px;height:55px;object-fit:cover;border-radius:4px;border:1px solid #ddd">`
+//                 :`<i class="fas fa-book" style="font-size:22px;color:#8a3a7f;width:40px;text-align:center"></i>`}
+//               <div style="flex:1">
+//                 <div style="font-weight:700;font-size:13px">${v.format==='paperback'?'Paper Back':'Hard Cover'}</div>
+//                 <div style="color:#8a3a7f;margin-top:3px;font-size:12px">
+//                   ₹${v.price} &nbsp;|&nbsp; Stock: ${v.stock} &nbsp;|&nbsp;
+//                   <span style="color:${v.status==='published'?'#28a745':'#dc3545'};font-weight:600">${v.status}</span>
+//                 </div>
+//               </div>
+//             </div>`).join('')}
+//         </div>`;
+//       }).join('')}
+//     </div>`;
+//   }
+//   document.getElementById('detailModalBody').innerHTML=html;
+//   document.getElementById('detailModal').classList.add('show');
+// }
+
+// ── Logout ────────────────────────────────────────────────────────────────
+document.getElementById('adminLogoutBtn').addEventListener('click',()=>{
+  Swal.fire({
+    title:"Are you sure?",
+    text:"You will be logged out from admin panel",
+    icon:"warning",
+    showCancelButton:true,
+    confirmButtonColor:"#6f2b67",
+    cancelButtonColor:"#aaa",
+    confirmButtonText:"Yes, Logout"
+  })
+  .then(async r=>{
+    if(r.isConfirmed){
+      try{
+        const res = await fetch('/admin/logout',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'}
+        });
+
+        const data = await res.json();
+
+        if(!res.ok){
+          Swal.fire("Error",data.message,"error");
+          return;
+        }
+
+        Swal.fire({
+          icon:"success",
+          title:"Logged out",
+          timer:1200,
+          showConfirmButton:false
+        })
+        .then(()=>window.location.href=data.redirect);
+
+      }catch(err){
+        console.log(err);
+        Swal.fire("Error","Something went wrong","error")
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>LitHeaven – Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box}
+    body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;background:0 0;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after,.main-nav .nav-link.active-link::after{width:80%}
+    .main-nav .nav-link:hover,.main-nav .nav-link.active-link{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none;background:none;border:none;padding:0}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease;position:relative}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item:focus{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;outline:none}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i,.dropdown-item:focus i{color:#fff}
+
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%;position:relative;z-index:500}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+    .mobile-nav-link.active-link{background:rgba(255,255,255,.15)}
+
+    .search-wrap{display:flex;justify-content:center;padding:18px 15px;background:#fff;animation:fadeUp 1s;width:100%;border-bottom:1px solid #f0e5f5}
+    .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:10px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px rgba(111,43,103,.10);border:1.5px solid #d8cfe0;transition:all .3s}
+    .search-box:focus-within{border-color:#702767;box-shadow:0 5px 20px rgba(111,43,103,.18)}
+    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none}
+    .search-box input{flex:1;border:0;background:0 0;outline:0;color:#333;font-size:14.5px;font-family:inherit;min-width:0}
+    .search-box input::placeholder{color:#aaa;font-size:14px}
+    .s-cancel{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0;flex-shrink:0;display:none;transition:color .2s}
+    .s-cancel:hover{color:#555}
+    .s-cancel.show{display:block}
+
+    .shop-wrapper{display:flex;min-height:80vh}
+
+    /* SIDEBAR */
+    .sidebar{width:265px;flex-shrink:0;background:#fff;border-right:1px solid #e8dff0;padding:20px 16px;position:sticky;top:0;height:calc(100vh);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+    .filter-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .filter-hdr h5{font-weight:700;color:var(--purple);margin:0;font-size:.95rem}
+    .clear-all-btn{font-size:.73rem;color:var(--purple);background:none;border:1px solid var(--purple);border-radius:50px;cursor:pointer;font-weight:600;padding:3px 10px;transition:all .2s;text-decoration:none}
+    .clear-all-btn:hover{background:var(--purple);color:#fff}
+    .active-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:4px}
+    .atag{display:inline-flex;align-items:center;gap:4px;background:#f3e8ff;color:var(--purple);padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
+
+    .fsec{border-top:1px solid #ebe3f0;padding:10px 0 2px}
+    .fsec-title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:.82rem;color:#333;padding-bottom:6px;user-select:none}
+    .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa}
+    .fsec-title.open .farr{transform:rotate(180deg)}
+    .fsec-body{display:none;flex-direction:column;gap:1px;padding-bottom:4px}
+    .fsec-body.open{display:flex}
+
+    .cat-parent{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:.81rem;font-weight:600;color:#444;transition:background .15s;user-select:none;margin-bottom:2px}
+    .cat-parent:hover{background:#f3e8ff;color:var(--purple)}
+    .cat-parent .cp-arr{font-size:.58rem;color:#bbb;transition:transform .2s}
+    .cat-parent.open .cp-arr{transform:rotate(90deg);color:var(--purple)}
+    .sub-opts{display:none;flex-direction:column;gap:1px;padding-left:8px;border-left:2px solid #ebe3f0;margin:2px 0 4px 8px}
+    .sub-opts.open{display:flex}
+    .foption{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;cursor:pointer;font-size:.79rem;color:#555;transition:background .15s}
+    .foption:hover{background:#f3e8ff;color:var(--purple)}
+    .foption input[type=checkbox]{accent-color:var(--purple);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+
+    .price-slider-wrap{padding:4px 2px 2px}
+    .price-range-labels{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:600;color:#555;margin-bottom:10px}
+    .price-range-labels .money-emoji{font-size:1.1rem;letter-spacing:2px}
+    .price-range-labels .range-val{color:var(--purple);font-weight:700;font-size:.85rem}
+    .price-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:50px;outline:none;cursor:pointer;transition:background .15s}
+    .price-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 2px 8px rgba(111,43,103,.4);transition:transform .2s}
+    .price-slider::-webkit-slider-thumb:hover{transform:scale(1.15)}
+    .price-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(111,43,103,.4)}
+    .price-apply-btn{width:100%;margin-top:12px;padding:9px;background:#22c55e;color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85rem;font-weight:700;letter-spacing:.5px;font-family:inherit;transition:all .2s;box-shadow:0 3px 10px rgba(34,197,94,.3)}
+    .price-apply-btn:hover{background:#16a34a;transform:translateY(-1px)}
+    .apply-all-btn{width:100%;margin-top:14px;padding:10px;background:var(--purple);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:700;letter-spacing:.5px;transition:all .2s;box-shadow:0 4px 12px rgba(111,43,103,.2)}
+    .apply-all-btn:hover{background:var(--light);transform:translateY(-1px)}
+
+    .main-area{flex:1;padding:22px 20px 40px}
+    .breadcrumb-row{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#aaa;margin-bottom:12px}
+    .breadcrumb-row a{color:#aaa;text-decoration:none;transition:color .2s}
+    .breadcrumb-row a:hover{color:var(--purple)}
+    .breadcrumb-row .cur{color:#555;font-weight:600}
+    .shop-h1{font-size:1.9rem;font-weight:800;color:#1a0a28;margin-bottom:14px}
+
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;padding:10px 14px;border-radius:14px;box-shadow:0 4px 16px rgba(111,43,103,.1);margin-bottom:18px;border:1px solid #ebe3f0}
+    .tb-sort{padding:6px 14px;border:1.5px solid #ddd;border-radius:50px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;outline:none;transition:all .2s;min-width:185px}
+    .tb-sort:focus{border-color:var(--light)}
+    .tb-spacer{flex:1}
+    .tb-count{font-size:.8rem;color:#999;white-space:nowrap}
+    .tb-count strong{color:#222;font-weight:700}
+
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px}
+
+    .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s}
+    .bcard:hover{transform:translateY(-6px);box-shadow:0 16px 38px rgba(111,43,103,.2);border-color:var(--purple)}
+    .wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
+    .wish-btn:hover{transform:scale(1.2)}
+    .bcard-img-wrap{width:100%;height:200px;overflow:hidden;position:relative;background:none}
+    .bcard-img-wrap img{width:100%;height:100%;object-fit:fill;display:block}
+    .bcard-img-placeholder{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:#f5f0f6}
+    .bcard-body{padding:11px 12px 13px}
+    .bcard-title{font-size:.79rem;font-weight:700;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#222;text-transform:capitalize}
+    .bcard-author{font-size:.71rem;color:#999;margin-bottom:4px;text-transform:capitalize}
+    .bcard-format{font-size:.68rem;color:#b08fb0;margin-bottom:3px}
+    .bcard-prices{display:flex;align-items:center;gap:6px;margin-top:5px}
+    .bcard-new{color:var(--purple);font-weight:800;font-size:.88rem}
+    .bcard-add{width:100%;margin-top:8px;padding:7px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+    .bcard-add:hover{background:var(--light);color:#fff}
+
+    .no-res{text-align:center;padding:5rem 2rem;color:#aaa}
+    .no-res .nr-ico{font-size:3rem;margin-bottom:1rem}
+    .no-res h4{font-size:1.1rem;color:#777;font-weight:700}
+
+    /* PAGINATION */
+    .pg-wrap{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:26px;flex-wrap:wrap}
+    .pg-btn{min-width:36px;height:36px;border:1.5px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;color:#666;font-family:inherit;padding:0 8px;text-decoration:none}
+    .pg-btn:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
+    .pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple);pointer-events:none}
+    .pg-btn.disabled{opacity:.35;cursor:default;pointer-events:none}
+    .pg-dots{display:inline-flex;align-items:center;justify-content:center;width:28px;color:#bbb;font-size:.9rem}
+
+    /* FOOTER */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1}
+    .site-footer li{margin-bottom:6px}
+
+    /* MOBILE FILTER FAB + DRAWER */
+    .filter-fab{display:none;position:fixed;bottom:24px;right:20px;z-index:1200;background:var(--purple);color:#fff;border:none;border-radius:50px;padding:13px 22px;font-size:.88rem;font-weight:700;cursor:pointer;box-shadow:0 6px 22px rgba(111,43,103,.45);align-items:center;gap:8px;font-family:inherit;transition:transform .2s,box-shadow .2s}
+    .filter-fab:hover{transform:translateY(-2px)}
+    .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1300;opacity:0;transition:opacity .3s}
+    .drawer-backdrop.open{display:block;opacity:1}
+    .filter-drawer{position:fixed;left:0;top:0;bottom:0;width:min(300px,88vw);background:#fff;z-index:1400;overflow-y:auto;transform:translateX(-100%);transition:transform .32s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.18)}
+    .filter-drawer.open{transform:translateX(0)}
+    .drawer-close-row{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 10px;border-bottom:1px solid #ede0f0;position:sticky;top:0;background:#fff;z-index:1}
+    .drawer-close-row h5{margin:0;font-weight:700;color:var(--purple);font-size:.95rem}
+    .drawer-close-btn{background:none;border:none;font-size:1.3rem;cursor:pointer;color:#aaa;line-height:1;padding:4px}
+    .drawer-close-btn:hover{color:#333}
+
+    @media(max-width:900px){.sidebar{width:220px}}
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .filter-fab{display:flex}
+      .books-grid{grid-template-columns:repeat(2,1fr)}
+      .shop-h1{font-size:1.5rem}
+    }
+    @media(max-width:480px){.books-grid{grid-template-columns:1fr}.toolbar{gap:7px}}
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+<!-- NAVBAR -->
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="row align-items-center g-0">
+      <div class="col-6 d-flex align-items-center gap-3">
+        <a class="brand" href="/home">
+          <div class="logo-circle">
+            <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+            <div class="logo-text">LitHeaven</div>
+            <div class="tagline">Your Literary Escape</div>
+          </div>
+          <div class="txt">LitHeaven</div>
+        </a>
+        <nav class="main-nav d-none d-lg-flex">
+          <a class="nav-link" href="/home">Home</a>
+          <a class="nav-link active-link" href="/shop">Shop</a>
+          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/contact">Contact</a>
+        </nav>
+      </div>
+      <div class="col-6 d-flex justify-content-end align-items-center">
+        <div class="header-icons">
+          <a href="/wishlist" class="icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+          <a href="/cart" class="icon-btn position-relative" title="Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <div class="icon-badge" id="cartBadge">0</div>
+          </a>
+          <% if(!isLoggedIn){ %>
+            <a href="/login" class="icon-btn" title="Login"><i class="fa-regular fa-user"></i></a>
+          <% } else { %>
+          <div class="dropdown">
+            <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end p-2">
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+              <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+          </div>
+          <% } %>
+          <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="mobile-menu d-lg-none">
+  <a class="mobile-nav-link" href="/home"><i class="fa-solid fa-house"></i> Home</a>
+  <a class="mobile-nav-link active-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+  <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+  <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+</div>
+
+<!-- SEARCH BAR — submits the filter form -->
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="s-emoji">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by title, author, category…"
+           value="<%= search %>"
+           oninput="onSearchType(this)"
+           onkeydown="if(event.key==='Enter'){submitFilters()}"
+           autocomplete="off">
+    <button class="s-cancel <%= search ? 'show' : '' %>" id="cancelBtn"
+            onclick="cancelSearch()" title="Clear">✕</button>
+  </div>
+</div>
+
+
+<!-- SHOP LAYOUT -->
+<div class="shop-wrapper">
+
+  <!-- ═══ SIDEBAR (desktop) ═══ -->
+  <aside class="sidebar" id="desktopSidebar">
+    <div class="filter-hdr">
+      <h5>Filter By</h5>
+      <a href="/shop" class="clear-all-btn">Clear all</a>
+    </div>
+
+    <!-- Active filter tags -->
+    <div class="active-tags">
+
+  <% (selectedCategories || []).forEach(id => { 
+       const cat = [...parentCategories, ...subCategories]
+         .find(c => c._id.toString() === id);
+       if(cat) { %>
+    <span class="atag"><%= cat.name %></span>
+  <% } }) %>
+
+  <% (selectedAuthors || []).forEach(id => {
+       const a = allAuthors.find(a => a._id.toString() === id);
+       if(a) { %>
+    <span class="atag"><%= a.name %></span>
+  <% } }) %>
+
+  <% (selectedLanguages || []).forEach(id => {
+       const l = allLanguages.find(l => l._id.toString() === id);
+       if(l) { %>
+    <span class="atag"><%= l.languageName %></span>
+  <% } }) %>
+
+  <% (selectedFormats || []).forEach(f => { %>
+    <span class="atag"><%= f %></span>
+  <% }) %>
+
+</div>
+    <form id="filterForm" action="/shop" method="GET">
+      <input type="hidden" name="page" value="1">
+      <input type="hidden" name="search" id="hiddenSearch" value="<%= search %>">
+
+      <!-- CATEGORIES -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Categories</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% parentCategories.forEach(parent => {
+               const children = subCategories.filter(s => s.parentCategory && s.parentCategory.toString() === parent._id.toString());
+               const subId    = "sub-" + parent._id;
+               const anyChildSelected = children.some(c => selectedCategories.includes(c._id.toString()));
+               const parentSelected   = selectedCategories.includes(parent._id.toString());
+          %>
+          <div class="cat-parent <%= (anyChildSelected || parentSelected) ? 'open' : '' %>"
+               onclick="toggleSub(this,'<%= subId %>')">
+            <span><%= parent.name %></span>
+            <span class="cp-arr">▶</span>
+          </div>
+          <div class="sub-opts <%= (anyChildSelected || parentSelected) ? 'open' : '' %>" id="<%= subId %>">
+            <!-- Parent itself as selectable option -->
+            <label class="foption">
+              <input type="checkbox" name="category" value="<%= parent._id %>"
+                     onchange="submitFilters()"
+                     <%= parentSelected ? 'checked' : '' %>>
+              All <%= parent.name %>
+            </label>
+            <% children.forEach(child => { %>
+            <label class="foption">
+              <input type="checkbox" name="category" value="<%= child._id %>"
+                     onchange="submitFilters()"
+                     <%= selectedCategories.includes(child._id.toString()) ? 'checked' : '' %>>
+              <%= child.name %>
+            </label>
+            <% }) %>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- AUTHOR -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Author</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% allAuthors.forEach(a => { %>
+          <label class="foption">
+            <input type="checkbox" name="author" value="<%= a._id %>"
+                   onchange="submitFilters()"
+                   <%= selectedAuthors.includes(a._id.toString()) ? 'checked' : '' %>>
+            <%= a.name %>
+          </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- LANGUAGE -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Language</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% allLanguages.forEach(l => { %>
+          <label class="foption">
+            <input type="checkbox" name="language" value="<%= l._id %>"
+                   onchange="submitFilters()"
+                   <%= selectedLanguages.includes(l._id.toString()) ? 'checked' : '' %>>
+            <%= l.languageName %>
+          </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- PRICE SLIDER -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Price (₹)</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <div class="price-slider-wrap">
+            <div class="price-range-labels">
+              <span class="money-emoji">💵💵</span>
+              <span id="priceLabel" class="range-val">0 – ₹<span id="priceLabelVal"><%= maxPrice >= 99999 ? '3,000' : maxPrice.toLocaleString('en-IN') %></span></span>
+            </div>
+            <input type="range" name="maxPrice" id="priceSlider" class="price-slider"
+                   min="0" max="3000" step="50"
+                   value="<%= maxPrice >= 99999 ? 3000 : maxPrice %>"
+                   oninput="onSlider(this)">
+            <button type="submit" class="price-apply-btn">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMAT -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Format</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <label class="foption">
+            <input type="checkbox" name="format" value="paperback" onchange="submitFilters()"
+                   <%= selectedFormats.includes('paperback') ? 'checked' : '' %>> Paperback
+          </label>
+          <label class="foption">
+            <input type="checkbox" name="format" value="hardcover" onchange="submitFilters()"
+                   <%= selectedFormats.includes('hardcover') ? 'checked' : '' %>> Hardcover
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="apply-all-btn">APPLY FILTERS</button>
+    </form>
+  </aside>
+
+  <!-- ═══ MAIN AREA ═══ -->
+  <main class="main-area">
+    <div class="breadcrumb-row">
+      <a href="/home">home</a><span>›</span><span class="cur">shop</span>
+    </div>
+    <div class="shop-h1">Shop</div>
+
+    <!-- TOOLBAR -->
+    <form id="sortForm" action="/shop" method="GET">
+      <!-- carry over all active filters as hidden inputs -->
+      <input type="hidden" name="search"   value="<%= search %>">
+      <input type="hidden" name="maxPrice" value="<%= maxPrice >= 99999 ? 3000 : maxPrice %>">
+      <input type="hidden" name="page"     value="1">
+      <% selectedCategories.forEach(id => { %><input type="hidden" name="category" value="<%= id %>"><% }) %>
+      <% selectedLanguages.forEach(id  => { %><input type="hidden" name="language" value="<%= id %>"><% }) %>
+      <% selectedAuthors.forEach(id    => { %><input type="hidden" name="author"   value="<%= id %>"><% }) %>
+      <% selectedFormats.forEach(f     => { %><input type="hidden" name="format"   value="<%= f  %>"><% }) %>
+
+      <div class="toolbar">
+        <select class="tb-sort" name="sort" onchange="this.form.submit()">
+          <option value="latest"      <%= sortVal === 'latest'      ? 'selected' : '' %>>Sort by: Latest</option>
+          <option value="price-asc"   <%= sortVal === 'price-asc'   ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="price-desc"  <%= sortVal === 'price-desc'  ? 'selected' : '' %>>Price: High to Low</option>
+          <option value="az"          <%= sortVal === 'az'          ? 'selected' : '' %>>Name: A → Z</option>
+          <option value="za"          <%= sortVal === 'za'          ? 'selected' : '' %>>Name: Z → A</option>
+        </select>
+        <div class="tb-spacer"></div>
+        <span class="tb-count">Found <strong><%= total %></strong> items</span>
+      </div>
+    </form>
+
+    <!-- BOOKS GRID -->
+    <% if(products.length > 0) { %>
+    <div class="books-grid">
+      <% products.forEach(book => {
+           const imgUrl = book.thumbnail && book.thumbnail.url ? book.thumbnail.url : null;
+           const fmt    = book.allFormats && book.allFormats.length ? book.allFormats[0] : '';
+      %>
+      <div class="bcard" onclick="window.location.href='/product/<%= book._id %>'">
+        <button class="wish-btn" onclick="event.stopPropagation();toggleWish(this)">🤍</button>
+
+        <div class="bcard-img-wrap">
+          <% if(imgUrl) { %>
+            <img src="<%= imgUrl %>" alt="<%= book.title %>" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="bcard-img-placeholder" style="display:none">📚</div>
+          <% } else { %>
+            <div class="bcard-img-placeholder">📚</div>
+          <% } %>
+        </div>
+
+        <div class="bcard-body">
+          <div class="bcard-title"><%= book.title %></div>
+          <div class="bcard-author"><%= book.authorName %></div>
+          <% if(fmt) { %>
+          <div class="bcard-format"><i class="fa-regular fa-bookmark"></i> <%= fmt %></div>
+          <% } %>
+          <div class="bcard-prices">
+            <span class="bcard-new">₹<%= book.minPrice %></span>
+          </div>
+          <a class="bcard-add" href="/product/<%= book._id %>" onclick="event.stopPropagation()">
+            <i class="fa-solid fa-eye"></i> View Product
+          </a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <!-- ═══ PAGINATION ═══ -->
+    <% if(totalPages >= 1) { %>
+    <%
+      // Build base query string (everything except page)
+      const qs = new URLSearchParams();
+      if(search)  qs.set('search', search);
+      if(sortVal && sortVal !== 'latest') qs.set('sort', sortVal);
+      if(maxPrice < 99999) qs.set('maxPrice', maxPrice);
+      selectedCategories.forEach(id => qs.append('category', id));
+      selectedLanguages.forEach(id  => qs.append('language', id));
+      selectedAuthors.forEach(id    => qs.append('author',   id));
+      selectedFormats.forEach(f     => qs.append('format',   f));
+      const baseQS = qs.toString() ? '&' + qs.toString() : '';
+    %>
+    <nav class="pg-wrap" aria-label="Pagination">
+      <!-- Prev arrow -->
+      <% if(currentPage > 1) { %>
+        <a href="/shop?page=<%= currentPage - 1 %><%= baseQS %>" class="pg-btn" aria-label="Previous">&#8249;</a>
+      <% } else { %>
+        <span class="pg-btn disabled" aria-disabled="true">&#8249;</span>
+      <% } %>
+
+      <!-- Page numbers -->
+      <%
+        const showPages = [];
+        if(totalPages <= 7) {
+          for(let i = 1; i <= totalPages; i++) showPages.push(i);
+        } else {
+          showPages.push(1);
+          if(currentPage > 3) showPages.push('...');
+          const start = Math.max(2, currentPage - 1);
+          const end   = Math.min(totalPages - 1, currentPage + 1);
+          for(let i = start; i <= end; i++) showPages.push(i);
+          if(currentPage < totalPages - 2) showPages.push('...');
+          showPages.push(totalPages);
+        }
+      %>
+      <% showPages.forEach(p => { %>
+        <% if(p === '...') { %>
+          <span class="pg-dots">…</span>
+        <% } else { %>
+          <a href="/shop?page=<%= p %><%= baseQS %>"
+             class="pg-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a>
+        <% } %>
+      <% }) %>
+
+      <!-- Next arrow -->
+      <% if(currentPage < totalPages) { %>
+        <a href="/shop?page=<%= currentPage + 1 %><%= baseQS %>" class="pg-btn" aria-label="Next">&#8250;</a>
+      <% } else { %>
+        <span class="pg-btn disabled" aria-disabled="true">&#8250;</span>
+      <% } %>
+    </nav>
+    <% } %>
+
+    <% } else { %>
+    <div class="no-res">
+      <div class="nr-ico">📭</div>
+      <h4>No books found</h4>
+      <p style="font-size:.85rem">Try adjusting your filters or search term.</p>
+    </div>
+    <% } %>
+  </main>
+</div>
+
+<!-- MOBILE FILTER FAB -->
+<button class="filter-fab" id="filterFab" onclick="openDrawer()">
+  <i class="fa-solid fa-sliders"></i> Filter
+</button>
+
+<!-- DRAWER BACKDROP -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+
+<!-- FILTER DRAWER (mobile) — mirrors desktop form -->
+<div class="filter-drawer" id="filterDrawer">
+  <div class="drawer-close-row">
+    <h5>Filter By</h5>
+    <button class="drawer-close-btn" onclick="closeDrawer()">✕</button>
+  </div>
+  <div style="padding:12px 16px 100px">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+      <a href="/shop" class="clear-all-btn">Clear all</a>
+    </div>
+
+    <form id="drawerFilterForm" action="/shop" method="GET">
+      <input type="hidden" name="page" value="1">
+      <input type="hidden" name="search" value="<%= search %>">
+
+      <!-- CATEGORIES -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Categories</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% parentCategories.forEach(parent => {
+               const children  = subCategories.filter(s => s.parentCategory && s.parentCategory.toString() === parent._id.toString());
+               const subId     = "d-sub-" + parent._id;
+               const anyChildS = children.some(c => selectedCategories.includes(c._id.toString()));
+               const parentS   = selectedCategories.includes(parent._id.toString());
+          %>
+          <div class="cat-parent <%= (anyChildS || parentS) ? 'open' : '' %>"
+               onclick="toggleSub(this,'<%= subId %>')">
+            <span><%= parent.name %></span><span class="cp-arr">▶</span>
+          </div>
+          <div class="sub-opts <%= (anyChildS || parentS) ? 'open' : '' %>" id="<%= subId %>">
+            <label class="foption">
+              <input type="checkbox" name="category" value="<%= parent._id %>"
+                     <%= parentS ? 'checked' : '' %>> All <%= parent.name %>
+            </label>
+            <% children.forEach(child => { %>
+            <label class="foption">
+              <input type="checkbox" name="category" value="<%= child._id %>"
+                     <%= selectedCategories.includes(child._id.toString()) ? 'checked' : '' %>>
+              <%= child.name %>
+            </label>
+            <% }) %>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- AUTHOR -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Author</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% allAuthors.forEach(a => { %>
+          <label class="foption">
+            <input type="checkbox" name="author" value="<%= a._id %>"
+                   <%= selectedAuthors.includes(a._id.toString()) ? 'checked' : '' %>>
+            <%= a.name %>
+          </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- LANGUAGE -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Language</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% allLanguages.forEach(l => { %>
+          <label class="foption">
+            <input type="checkbox" name="language" value="<%= l._id %>"
+                   <%= selectedLanguages.includes(l._id.toString()) ? 'checked' : '' %>>
+            <%= l.languageName %>
+          </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- PRICE SLIDER -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Price (₹)</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <div class="price-slider-wrap">
+            <div class="price-range-labels">
+              <span class="money-emoji">💵💵</span>
+              <span id="drawerPriceLabel" class="range-val">0 – ₹<span id="drawerPriceLabelVal"><%= maxPrice >= 99999 ? '3,000' : maxPrice.toLocaleString('en-IN') %></span></span>
+            </div>
+            <input type="range" name="maxPrice" id="drawerPriceSlider" class="price-slider"
+                   min="0" max="3000" step="50"
+                   value="<%= maxPrice >= 99999 ? 3000 : maxPrice %>"
+                   oninput="onDrawerSlider(this)">
+            <button type="submit" class="price-apply-btn">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMAT -->
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Format</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <label class="foption">
+            <input type="checkbox" name="format" value="paperback"
+                   <%= selectedFormats.includes('paperback') ? 'checked' : '' %>> Paperback
+          </label>
+          <label class="foption">
+            <input type="checkbox" name="format" value="hardcover"
+                   <%= selectedFormats.includes('hardcover') ? 'checked' : '' %>> Hardcover
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="apply-all-btn" onclick="closeDrawer()">APPLY FILTERS</button>
+    </form>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5>Get In Touch</h5>
+        <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+        <p><small>support@litheaven.com</small></p>
+        <p><small>+98765 43210</small></p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/home">Home</a></li>
+          <li><a href="/shop">Shop Books</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Account</h5>
+        <ul class="list-unstyled">
+          <li><a href="/profile">Settings</a></li>
+          <li><a href="/orders">Orders</a></li>
+          <li><a href="/address">Address</a></li>
+          <li><a href="/wallet">Wallet</a></li>
+          <li><a href="#" id="footerLogout">Log out</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 text-md-end">
+        <h5>LitHeaven ⭐</h5>
+        <p><small>Litheaven is an online bookstore where you can easily explore and buy your favorite books.</small></p>
+      </div>
+    </div>
+    <div class="text-center mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.2)">
+      <small>© 2025 LITHEAVEN. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+/* ── MOBILE MENU TOGGLE ── */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+menuToggle?.addEventListener('click', function () {
+  mobileMenu.classList.toggle('open');
+  const icon = this.querySelector('i');
+  icon.classList.toggle('fa-bars');
+  icon.classList.toggle('fa-xmark');
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    const icon = menuToggle?.querySelector('i');
+    if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+  });
+});
+document.addEventListener('click', function (e) {
+  if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+    mobileMenu.classList.remove('open');
+    const icon = menuToggle.querySelector('i');
+    if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+  }
+});
+
+/* ── SIDEBAR ACCORDION ── */
+function toggleFsec(el) { el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
+function toggleSub(el, id) { el.classList.toggle('open'); document.getElementById(id).classList.toggle('open'); }
+
+/* ── SEARCH ── */
+function onSearchType(inp) {
+  document.getElementById('cancelBtn').classList.toggle('show', inp.value.length > 0);
+}
+function cancelSearch() {
+  const inp = document.getElementById('searchInput');
+  inp.value = '';
+  document.getElementById('cancelBtn').classList.remove('show');
+  document.getElementById('hiddenSearch').value = '';
+  document.getElementById('filterForm').submit();
+}
+
+/* Submit filter form with current search value */
+function submitFilters() {
+  document.getElementById('hiddenSearch').value = document.getElementById('searchInput').value;
+  document.getElementById('filterForm').submit();
+}
+
+/* ── PRICE SLIDER desktop ── */
+function onSlider(el) {
+  const val = parseInt(el.value);
+  const pct = (val / 3000) * 100;
+  const grad = `linear-gradient(to right,#6f2b67 0%,#6f2b67 ${pct}%,#e2d6ef ${pct}%,#e2d6ef 100%)`;
+  el.style.background = grad;
+  document.getElementById('priceLabelVal').textContent = val.toLocaleString('en-IN');
+  /* sync drawer */
+  const ds = document.getElementById('drawerPriceSlider');
+  if (ds) { ds.value = val; ds.style.background = grad; }
+  const dl = document.getElementById('drawerPriceLabelVal');
+  if (dl) dl.textContent = val.toLocaleString('en-IN');
+}
+
+/* ── PRICE SLIDER drawer ── */
+function onDrawerSlider(el) {
+  const val = parseInt(el.value);
+  const pct = (val / 3000) * 100;
+  const grad = `linear-gradient(to right,#6f2b67 0%,#6f2b67 ${pct}%,#e2d6ef ${pct}%,#e2d6ef 100%)`;
+  el.style.background = grad;
+  document.getElementById('drawerPriceLabelVal').textContent = val.toLocaleString('en-IN');
+  const ds = document.getElementById('priceSlider');
+  if (ds) { ds.value = val; ds.style.background = grad; }
+  const dl = document.getElementById('priceLabelVal');
+  if (dl) dl.textContent = val.toLocaleString('en-IN');
+}
+
+/* Init slider backgrounds on load */
+(function () {
+  ['priceSlider', 'drawerPriceSlider'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const pct  = (parseInt(el.value) / 3000) * 100;
+    el.style.background = `linear-gradient(to right,#6f2b67 0%,#6f2b67 ${pct}%,#e2d6ef ${pct}%,#e2d6ef 100%)`;
+  });
+})();
+
+/* ── WISHLIST toggle (UI only) ── */
+function toggleWish(btn) {
+  btn.classList.toggle('wishlisted');
+  btn.textContent = btn.classList.contains('wishlisted') ? '❤️' : '🤍';
+}
+
+/* ── MOBILE DRAWER ── */
+function openDrawer() {
+  document.getElementById('filterDrawer').classList.add('open');
+  document.getElementById('drawerBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('filterDrawer').classList.remove('open');
+  document.getElementById('drawerBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── LOGOUT ── */
+function doLogout(e) {
+  e.preventDefault();
+  Swal.fire({
+    title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html: '<p style="font-size:14px;color:#555">Are you sure you want to logout? 💜</p>',
+    showCancelButton: true, confirmButtonText: "🚪 Logout", cancelButtonText: "Stay Here",
+    confirmButtonColor: "#6f2b67", cancelButtonColor: "#d6c3d3", reverseButtons: true,
+    background: "linear-gradient(135deg,#f6eef6,#efe3f0)", backdrop: "rgba(0,0,0,0.6)"
+  }).then(r => { if (r.isConfirmed) window.location.href = "/logout"; });
+}
+document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+document.getElementById('footerLogout')?.addEventListener('click', doLogout);
+
+</script>
+</body>
+</html>

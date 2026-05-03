@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>LitHeaven - My Wallet</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+:root{--purple:#6f2b67;--light:#8e4a86}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Roboto,Arial;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#6f2b67;overflow-x:hidden;max-width:100vw}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAVBAR ── */
+header.navbar-area{background:var(--purple);color:#fff;padding:12px 0}
+.navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff}
+.logo-circle{width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;animation:float 3s ease-in-out infinite;position:relative}
+.book-logo{width:35px;filter:brightness(0)invert(1)}
+.logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+.tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+.brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+.main-nav{display:flex;gap:20px}
+.main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;text-decoration:none}
+.main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+.header-icons{display:flex;gap:16px;align-items:center}
+.icon-btn{color:#fff;font-size:20px;cursor:pointer;transition:all .3s;position:relative;text-decoration:none}
+.icon-btn:hover{transform:scale(1.2)}
+.icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+
+/* ── SEARCH ── */
+.search-wrap{display:flex;justify-content:center;padding:30px 15px;background:#fff}
+.search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:12px 24px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 20px rgba(111,43,103,.15);border:1px solid #702767}
+.search-box input{flex:1;border:0;background:0 0;outline:0;color:#702767;font-size:15px}
+.search-box input::placeholder{color:#702767}
+.search-box .btn-search{background:#702767;border:0;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding:0;transition:all .3s;cursor:pointer}
+.search-box .btn-search:hover{transform:rotate(90deg) scale(1.1)}
+
+/* ── LAYOUT ── */
+.main-container{max-width:1200px;margin:30px auto;padding:0 20px;display:flex;gap:20px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:240px;background:#fff;border:2px solid #6f2b67;border-radius:16px;padding:15px;height:fit-content;position:sticky;top:20px;z-index:1}
+.sidebar-nav{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:12px 15px;color:#6f2b67;text-decoration:none;font-weight:600;font-size:14px;border-radius:10px;transition:all .3s;border:2px solid transparent}
+.sidebar-link:hover{background:#f5f0f6;border-color:#d8b5d8}
+.sidebar-link.active{background:#6f2b67;color:#fff}
+.sidebar-link i{font-size:16px;width:20px}
+.logout-btn{width:100%;background:none;text-align:left;display:flex;align-items:center;gap:12px;padding:12px 15px;font-weight:600;font-size:14px;color:#6f2b67;border-radius:10px;transition:all .3s;border-top:1px solid #a75ea7;border-left:none;border-right:none;border-bottom:none;cursor:pointer}
+.logout-btn i{font-size:16px;width:20px;color:#6f2b67}
+.logout-btn:hover{background:#d8b5d8;transform:translateX(3px)}
+
+/* ── CONTENT ── */
+.content{flex:1;animation:slideUp .4s ease-out}
+
+/* ── WALLET BALANCE CARD ── */
+.wallet-balance-card{background:#fff;border:2px solid #6f2b67;border-radius:20px;padding:28px 30px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 4px 20px rgba(111,43,103,.1);position:relative;overflow:hidden}
+.wallet-balance-card::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;background:radial-gradient(circle,rgba(111,43,103,.08),transparent 70%);border-radius:50%;pointer-events:none}
+.wallet-left{display:flex;align-items:center;gap:20px}
+.wallet-icon-wrap{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#f5e6f3,#e8d0e6);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid #d8b5d8}
+.wallet-icon-wrap i{font-size:28px;color:#6f2b67}
+.wallet-label{font-size:13px;color:#8e4a86;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.wallet-amount{font-size:38px;font-weight:800;color:#6f2b67;line-height:1}
+.wallet-amount span{font-size:22px;font-weight:700;vertical-align:super;margin-right:2px}
+.wallet-added{font-size:12px;color:#a78aa5;margin-top:5px}
+.btn-add-money{background:#6f2b67;color:#fff;border:none;padding:13px 28px;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;transition:all .3s;animation:droplet 3s infinite;box-shadow:0 4px 14px rgba(111,43,103,.3);white-space:nowrap;flex-shrink:0}
+.btn-add-money:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 6px 20px rgba(111,43,103,.4)}
+.btn-add-money i{margin-right:8px}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:18px}
+.filter-label{font-size:14px;font-weight:600;color:#6f2b67}
+.filter-select{background:#fff;border:2px solid #d8b5d8;color:#6f2b67;border-radius:50px;padding:8px 18px 8px 18px;font-size:13px;font-weight:600;cursor:pointer;outline:none;transition:all .3s;appearance:none;-webkit-appearance:none;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236f2b67' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.filter-select:focus{border-color:#6f2b67}
+
+/* ── HISTORY CARD ── */
+.history-card{background:#fff;border:2px solid #6f2b67;border-radius:20px;overflow:hidden;box-shadow:0 4px 16px rgba(111,43,103,.08)}
+.history-header{padding:18px 24px;border-bottom:2px solid #f5f0f6;display:flex;align-items:center;gap:10px}
+.history-header h5{margin:0;font-size:17px;font-weight:700;color:#6f2b67}
+.history-header i{color:#6f2b67;font-size:18px}
+
+.transaction-item{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #f5f0f6;transition:background .2s;gap:16px}
+.transaction-item:last-child{border-bottom:none}
+.transaction-item:hover{background:#fdf8fe}
+
+.txn-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
+.txn-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.txn-icon.credit{background:#edfbf0;color:#22a850}
+.txn-icon.debit{background:#fff2f2;color:#e74c3c}
+
+.txn-details{min-width:0}
+.txn-id{font-size:12px;color:#999;margin-bottom:2px}
+.txn-id a{color:#6f2b67;text-decoration:none;font-weight:600}
+.txn-id a:hover{text-decoration:underline}
+.txn-date{font-size:12px;color:#aaa;margin-bottom:3px}
+.txn-type{font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;display:inline-block}
+.txn-type.wallet-topup{background:#edf5ff;color:#1a73e8}
+.txn-type.refund{background:#edfbf0;color:#22a850}
+.txn-type.purchase{background:#fff2f2;color:#e74c3c}
+
+.txn-amount{font-size:16px;font-weight:800;flex-shrink:0;white-space:nowrap}
+.txn-amount.credit{color:#22a850}
+.txn-amount.debit{color:#e74c3c}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;z-index:10000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+body.modal-open{overflow:hidden;position:fixed;width:100%}
+.modal-box{background:#fff;width:90%;max-width:420px;border-radius:20px;border:2px solid #6f2b67;overflow:hidden;animation:slideUp .3s ease-out}
+.modal-head{padding:18px 22px;border-bottom:2px solid #f5f0f6;display:flex;justify-content:space-between;align-items:center}
+.modal-head h3{font-size:17px;font-weight:700;color:#6f2b67;margin:0}
+.modal-close{color:#6f2b67;font-size:24px;font-weight:700;cursor:pointer;border:none;background:none;line-height:1;padding:0}
+.modal-close:hover{color:#8e4a86}
+.modal-body-inner{padding:22px}
+.form-label-m{display:block;font-weight:600;color:#6f2b67;margin-bottom:8px;font-size:14px}
+.form-input-m{width:100%;background:#fff;border:2px solid #d8b5d8;color:#6f2b67;border-radius:50px;padding:11px 20px;font-size:14px;transition:all .3s;outline:none}
+.form-input-m:focus{border-color:#6f2b67}
+.form-input-m::placeholder{color:#c4a5c2}
+.error-msg{color:#e74c3c;font-size:12px;font-weight:600;margin-top:5px;padding-left:16px;display:none}
+.btn-modal-add{width:100%;background:#6f2b67;color:#fff;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;transition:all .3s;margin-top:18px}
+.btn-modal-add:hover{background:#8e4a86;transform:translateY(-1px)}
+
+/* ── HAMBURGER / MOBILE MENU ── */
+.hamburger-btn-p{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0}
+.hamburger-btn-p:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+.mobile-menu-p{background:var(--purple);display:none;flex-direction:column;padding:10px 0;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+.mobile-menu-p.open{display:flex!important}
+.mobile-nav-link-p{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+.mobile-nav-link-p:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+.mobile-nav-link-p i{width:20px;text-align:center;opacity:.85}
+
+/* ── FAB DRAWER ── */
+.profile-filter-fab{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;border:none;padding:13px 30px;border-radius:50px;font-size:.92rem;font-weight:700;font-family:inherit;cursor:pointer;z-index:1050;align-items:center;gap:9px;box-shadow:0 6px 24px rgba(111,43,103,.45);white-space:nowrap;transition:all .25s}
+.profile-filter-fab:hover{background:var(--light);transform:translateX(-50%) translateY(-2px)}
+.profile-filter-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1060;backdrop-filter:blur(2px)}
+.profile-filter-overlay.show{display:block}
+.profile-filter-drawer{position:fixed;left:0;top:0;bottom:0;width:280px;max-width:88vw;background:#fff;z-index:1070;overflow-y:auto;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.profile-filter-drawer.open{transform:translateX(0)}
+.profile-drawer-header{background:var(--purple);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
+.profile-drawer-header h5{margin:0;font-weight:700;font-size:.98rem;display:flex;align-items:center;gap:8px}
+.profile-drawer-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.profile-drawer-close:hover{background:rgba(255,255,255,.35)}
+.profile-drawer-body{padding:16px}
+
+.swal2-container{z-index:20000!important}
+
+/* ── FOOTER ── */
+footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
+.footer-content{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px}
+.footer-section h5{font-size:15px;font-weight:700;margin-bottom:12px}
+.footer-section p,.footer-section a{font-size:13px;color:#d8b5d8;text-decoration:none;display:block;margin-bottom:6px}
+.footer-section a:hover{color:#fff}
+.footer-bottom{text-align:center;margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,.2);font-size:12px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .main-container{flex-direction:column;padding-bottom:80px}
+  .sidebar{width:100%;position:static}
+  .sidebar-nav{flex-direction:row;flex-wrap:wrap}
+  .sidebar-nav li{flex:1;min-width:140px}
+  .main-nav{display:none}
+  .nav-row{flex-wrap:wrap;gap:10px}
+  .search-wrap{padding:20px 15px}
+  .wallet-balance-card{flex-direction:column;align-items:flex-start;gap:16px}
+  .btn-add-money{width:auto;align-self:center;padding:7px 14px;font-size:11px}
+  .brand .txt{font-size:18px}
+  .logo-circle{width:50px;height:50px}
+  .book-logo{width:28px}
+  .profile-filter-fab{display:flex}
+  .transaction-item{padding:14px 16px}
+  .history-header{padding:16px 18px}
+}
+@media(max-width:414px){
+  .sidebar-link{font-size:12px;padding:10px 12px}
+  .sidebar-link i{font-size:14px}
+  .navbar-container{padding:0 10px}
+  .logo-text{font-size:6px}
+  .brand .txt{font-size:16px}
+  .logo-circle{width:45px;height:45px}
+  .book-logo{width:25px}
+  .search-wrap{padding:15px 10px}
+  .wallet-amount{font-size:30px}
+  .wallet-icon-wrap{width:55px;height:55px}
+  .wallet-icon-wrap i{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="nav-row">
+      <a class="brand" href="/">
+        <div class="logo-circle">
+          <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+          <div class="logo-text">LitHeaven</div>
+          <div class="tagline">Your Literary Escape</div>
+        </div>
+        <div class="txt">LitHeaven</div>
+      </a>
+      <nav class="main-nav d-none d-lg-flex">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/shop">Shop</a>
+        <a class="nav-link" href="/about">About</a>
+        <a class="nav-link" href="/contact">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+          <i class="fa-solid fa-heart"></i>
+          <div class="icon-badge" id="wishlistBadge">0</div>
+        </a>
+        <a class="icon-btn position-relative" href="/cart" title="Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <div class="icon-badge" id="cartBadge">0</div>
+        </a>
+        <a href="/profile" class="icon-btn"><i class="fa-regular fa-user"></i></a>
+        <button class="hamburger-btn-p d-lg-none" id="menuToggleP" aria-label="Toggle menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile nav menu -->
+<div id="mobileMenuP" class="mobile-menu-p d-lg-none">
+  <a class="mobile-nav-link-p" href="/"><i class="fa-solid fa-house"></i> Home</a>
+  <a class="mobile-nav-link-p" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+  <a class="mobile-nav-link-p" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+  <a class="mobile-nav-link-p" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+</div>
+
+<!-- Search -->
+<div class="search-wrap">
+  <div class="search-box">
+    <input type="text" placeholder="What are you looking for?">
+    <button class="btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main-container">
+
+  <!-- Sidebar -->
+  <aside class="sidebar d-none d-md-block">
+    <ul class="sidebar-nav">
+      <li><a href="/order" class="sidebar-link"><i class="fa-solid fa-box"></i><span>My Orders</span></a></li>
+      <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+      <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
+      <li><a href="/wallet" class="sidebar-link active"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
+      <li><a href="/coupons" class="sidebar-link"><i class="fa-solid fa-ticket"></i><span>My Coupons</span></a></li>
+      <li class="mt-2">
+        <button type="button" id="logoutBtn" class="sidebar-link logout-btn">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Wallet Balance Card -->
+    <div class="wallet-balance-card">
+      <div class="wallet-left">
+        <div class="wallet-icon-wrap">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <div class="wallet-info">
+          <div class="wallet-label">My Balance</div>
+          <div class="wallet-amount"><span>₹</span><span id="walletBalance">480</span></div>
+          <div class="wallet-added" id="walletAdded">Added : 8 May 2020</div>
+        </div>
+      </div>
+      <button class="btn-add-money" onclick="openAddMoneyModal()">
+        <i class="fa-solid fa-plus"></i> Add Money to wallet
+      </button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter By :</span>
+      <select class="filter-select" id="txnFilter" onchange="filterTransactions()">
+        <option value="all">All</option>
+        <option value="credit">Credited</option>
+        <option value="debit">Debited</option>
+      </select>
+    </div>
+
+    <!-- History -->
+    <div class="history-card">
+      <div class="history-header">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <h5>History</h5>
+      </div>
+
+      <!-- Transaction 1 -->
+      <div class="transaction-item" data-type="credit">
+        <div class="txn-left">
+          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
+          <div class="txn-details">
+            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
+            <div class="txn-date">6 May 2018, 12.56PM</div>
+            <span class="txn-type wallet-topup">Wallet Top Up</span>
+          </div>
+        </div>
+        <div class="txn-amount credit">+₹7500</div>
+      </div>
+
+      <!-- Transaction 2 -->
+      <div class="transaction-item" data-type="credit">
+        <div class="txn-left">
+          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
+          <div class="txn-details">
+            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
+            <div class="txn-date">8 May 2018, 12.56PM</div>
+            <span class="txn-type wallet-topup">Wallet Top Up</span>
+          </div>
+        </div>
+        <div class="txn-amount credit">+₹1500</div>
+      </div>
+
+      <!-- Transaction 3 -->
+      <div class="transaction-item" data-type="credit">
+        <div class="txn-left">
+          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
+          <div class="txn-details">
+            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
+            <div class="txn-date">12 May 2018, 12.56PM</div>
+            <span class="txn-type refund">Refund</span>
+          </div>
+        </div>
+        <div class="txn-amount credit">+₹7500</div>
+      </div>
+
+      <!-- Transaction 4 -->
+      <div class="transaction-item" data-type="debit">
+        <div class="txn-left">
+          <div class="txn-icon debit"><i class="fa-solid fa-minus"></i></div>
+          <div class="txn-details">
+            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
+            <div class="txn-date">14 May 2018, 12.56PM</div>
+            <span class="txn-type purchase">Purchase</span>
+          </div>
+        </div>
+        <div class="txn-amount debit">-₹750</div>
+      </div>
+
+    </div><!-- /history-card -->
+
+  </div><!-- /content -->
+</div><!-- /main-container -->
+
+<!-- ═══════════ ADD MONEY MODAL ═══════════ -->
+<div class="modal-overlay" id="addMoneyModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Add money to wallet</h3>
+      <button class="modal-close" onclick="closeAddMoneyModal()">&times;</button>
+    </div>
+    <div class="modal-body-inner">
+      <label class="form-label-m">Enter Amount</label>
+      <input type="number" class="form-input-m" id="addAmount" placeholder="Enter Amount" min="1">
+      <div class="error-msg" id="amountErr">Please enter a valid amount (minimum ₹1)</div>
+      <button class="btn-modal-add" onclick="addMoneyToWallet()">Add Money</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FAB + DRAWER (mobile) ═══════════ -->
+<button class="profile-filter-fab" onclick="openProfileFilter()">
+  <i class="fa-solid fa-bars-staggered"></i> My Account
+</button>
+
+<div class="profile-filter-overlay" id="profileFilterOverlay" onclick="closeProfileFilter()"></div>
+
+<div class="profile-filter-drawer" id="profileFilterDrawer">
+  <div class="profile-drawer-header">
+    <h5><i class="fa-solid fa-user-circle"></i> My Account</h5>
+    <button class="profile-drawer-close" onclick="closeProfileFilter()">✕</button>
+  </div>
+  <div class="profile-drawer-body">
+    <ul class="sidebar-nav">
+      <li><a href="/order" class="sidebar-link"><i class="fa-solid fa-box"></i><span>My Orders</span></a></li>
+      <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+      <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
+      <li><a href="/wallet" class="sidebar-link active"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
+      <li><a href="/coupons" class="sidebar-link"><i class="fa-solid fa-ticket"></i><span>My Coupons</span></a></li>
+      <li class="mt-2">
+        <button type="button" id="logoutBtnDrawer" class="sidebar-link logout-btn" style="width:100%">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h5>Get In Touch</h5>
+      <p>LitHeaven Company<br>Gandhipuram road<br>Coimbatore - 641018</p>
+      <p>support@litheaven.com</p>
+    </div>
+    <div class="footer-section">
+      <h5>Quick Links</h5>
+      <a href="/">Home</a>
+      <a href="/shop">Shop Books</a>
+      <a href="/about">About Us</a>
+    </div>
+    <div class="footer-section">
+      <h5>LitHeaven</h5>
+      <p>Read, learn, and enjoy stories that inspire every reader.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 LITHEAVEN. All Rights Reserved.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+/* ── ADD MONEY MODAL ── */
+function openAddMoneyModal(){
+  document.getElementById('addAmount').value = '';
+  document.getElementById('amountErr').style.display = 'none';
+  document.getElementById('addMoneyModal').classList.add('show');
+  document.body.classList.add('modal-open');
+}
+function closeAddMoneyModal(){
+  document.getElementById('addMoneyModal').classList.remove('show');
+  document.body.classList.remove('modal-open');
+}
+document.getElementById('addMoneyModal').addEventListener('click', function(e){
+  if(e.target === this) closeAddMoneyModal();
+});
+
+function addMoneyToWallet(){
+  const amountInput = document.getElementById('addAmount');
+  const amountErr   = document.getElementById('amountErr');
+  const amount = parseFloat(amountInput.value);
+  amountErr.style.display = 'none';
+  if(!amountInput.value || isNaN(amount) || amount < 1){
+    amountErr.style.display = 'block';
+    return;
+  }
+  // Replace below with your actual fetch/API call
+  Swal.fire({
+    icon:'success',
+    title:'Money Added!',
+    text:`₹${amount} has been added to your wallet.`,
+    confirmButtonColor:'#6f2b67',
+    timer:1800
+  }).then(()=>{
+    closeAddMoneyModal();
+    // Update balance display (demo)
+    const current = parseFloat(document.getElementById('walletBalance').textContent) || 0;
+    document.getElementById('walletBalance').textContent = current + amount;
+  });
+}
+
+/* ── FILTER ── */
+function filterTransactions(){
+  const val = document.getElementById('txnFilter').value;
+  document.querySelectorAll('.transaction-item').forEach(item => {
+    const type = item.dataset.type;
+    if(val === 'all') item.style.display = 'flex';
+    else if(val === 'credit' && type === 'credit') item.style.display = 'flex';
+    else if(val === 'debit'  && type === 'debit')  item.style.display = 'flex';
+    else item.style.display = 'none';
+  });
+}
+
+/* ── LOGOUT ── */
+document.getElementById('logoutBtn')?.addEventListener('click', function(e){
+  e.preventDefault();
+  Swal.fire({
+    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+    imageUrl:"https://cdn-icons-png.flaticon.com/512/1828/1828479.png",
+    imageWidth:100,imageHeight:100,imageAlt:"Logout",
+    showCancelButton:true,
+    confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
+    confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",
+    reverseButtons:true,
+    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
+    backdrop:"rgba(0,0,0,0.6)"
+  }).then(r=>{ if(r.isConfirmed) window.location.href="/logout"; });
+});
+
+/* ── HAMBURGER ── */
+const menuToggleP = document.getElementById('menuToggleP');
+const mobileMenuP = document.getElementById('mobileMenuP');
+menuToggleP?.addEventListener('click', function(){
+  mobileMenuP.classList.toggle('open');
+  const icon = this.querySelector('i');
+  icon.classList.toggle('fa-bars');
+  icon.classList.toggle('fa-xmark');
+});
+document.addEventListener('click', function(e){
+  if(mobileMenuP && menuToggleP &&
+     !mobileMenuP.contains(e.target) &&
+     !menuToggleP.contains(e.target)){
+    mobileMenuP.classList.remove('open');
+    const icon = menuToggleP.querySelector('i');
+    if(icon){ icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+  }
+});
+
+/* ── FAB DRAWER ── */
+function openProfileFilter(){
+  document.getElementById('profileFilterDrawer').classList.add('open');
+  document.getElementById('profileFilterOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeProfileFilter(){
+  document.getElementById('profileFilterDrawer').classList.remove('open');
+  document.getElementById('profileFilterOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.getElementById('logoutBtnDrawer')?.addEventListener('click', function(e){
+  e.preventDefault();
+  closeProfileFilter();
+  document.getElementById('logoutBtn')?.click();
+});
+</script>
+</body>
+</html>

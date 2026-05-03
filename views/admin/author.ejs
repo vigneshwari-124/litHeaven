@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authors - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet"/>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+    
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
+    
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
+    
+    .filter-row{display:flex;gap:10px;margin-bottom:15px;align-items:center;font-size:13px;flex-wrap:wrap;}
+    .filter-row select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;color:#6f2b67;padding:8px 15px;border-radius:8px;outline:none;cursor:pointer;font-size:13px;}
+    
+    .add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 25px;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(111,43,103,0.4);display:flex;align-items:center;gap:8px;font-size:13px;}
+    .add-btn:hover{background:#8a3a7f;}
+
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
+
+    .table-wrapper{height:480px;overflow-y:auto;overflow-x:auto;}
+    .authors-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+    .authors-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
+    .authors-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .authors-table td{vertical-align:middle;}
+    .authors-table tr:hover{background:rgba(111,43,103,0.05);}
+    .authors-table td:nth-child(3){white-space:normal;word-break:break-word;overflow-wrap:anywhere;line-height:1.5;}
+
+    /* LIST/UNLIST toggle button styles */
+    .list-toggle-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:120px;height:32px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.3s ease;}
+    .list-toggle-btn.listed{background:rgba(40,167,69,0.15);color:#28a745;border:1.5px solid rgba(40,167,69,0.4);}
+    .list-toggle-btn.listed:hover{background:rgba(40,167,69,0.25);transform:scale(1.03);}
+    .list-toggle-btn.unlisted{background:rgba(220,53,69,0.15);color:#dc3545;border:1.5px solid rgba(220,53,69,0.4);}
+    .list-toggle-btn.unlisted:hover{background:rgba(220,53,69,0.25);transform:scale(1.03);}
+
+    .action-cell{text-align:center;}
+    .icon-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:18px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;line-height:1;transition:0.3s;}
+    .icon-btn:hover{color:#5a2252;transform:scale(1.15);}
+
+    .swal2-container{z-index:3000 !important;}
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
+    
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+    
+    /* Modal Styles */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(111,43,103,0.15);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+    .modal.show{display:flex;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:0;max-width:500px;width:100%;max-height:90vh;overflow:hidden;position:relative;margin:auto;box-shadow:0 10px 40px rgba(111,43,103,0.3);}
+    
+    .modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+    .modal-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .close-modal{background:rgba(255,255,255,0.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
+    
+    .modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px);}
+    .modal-body::-webkit-scrollbar{width:8px;}
+    .modal-body::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:10px;}
+    
+    .form-group{margin-bottom:20px;}
+    .form-label{display:block;font-size:13px;font-weight:600;color:#6f2b67;margin-bottom:8px;}
+    .form-input{width:100%;padding:10px 15px;border:1px solid #6f2b67;border-radius:8px;background:rgba(111,43,103,0.05);color:#333;font-size:14px;outline:none;transition:0.3s;}
+    .form-input:focus{border-color:#8e4a86;background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,0.1);}
+    .form-textarea{resize:vertical;min-height:100px;}
+    
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:20px;border-top:1px solid rgba(111,43,103,0.2);}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:0.3s;border:none;}
+    .btn-cancel{background:rgba(111,43,103,0.1);color:#6f2b67;}
+    .btn-cancel:hover{background:rgba(111,43,103,0.2);}
+    .btn-save{background:#6f2b67;color:#fff;}
+    .btn-save:hover{background:#5a2252;}
+    
+    /* Profile Modal */
+    .profile-modal .modal-content{max-width:400px;text-align:center;}
+    .profile-avatar{width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,0.1);margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;box-shadow:0 0 20px rgba(111,43,103,0.3);}
+    .profile-avatar i{font-size:50px;color:#6f2b67;}
+    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:linear-gradient(135deg,#6f2b67,#5a2252);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;box-shadow:0 4px 15px rgba(111,43,103,0.5);}
+    .camera-icon i{font-size:16px;color:#fff;}
+    .profile-input{display:none;}
+    .profile-name{font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px;}
+    .profile-email{font-size:14px;color:rgba(111,43,103,0.7);margin-bottom:20px;}
+    
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;align-items:flex-start;}
+      .authors-table{min-width:700px;}
+      .modal-body{padding:15px;}
+    }
+    
+    @media(max-width:480px){
+      .main-content{padding:10px;}
+      .user-info div:first-child{display:none;}
+      .authors-table{min-width:600px;}
+      .authors-table th,.authors-table td{padding:8px 5px;font-size:11px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    
+    <a href="/admin/dashboard" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="/admin/order" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
+    </div>
+    
+    <a href="/admin/product" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="/admin/coupon" class="menu-item">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="/admin/categoryOff">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
+    </div>
+    
+    <a href="/admin/author" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="/admin/admin" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="/admin/customer" class="menu-item">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <!-- <a href="/admin/rating" class="menu-item">
+      <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
+    </a> -->
+    <a href="/admin/salesReport" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="/admin/appSetting">App Settings</a>
+      <a href="/admin/language">Language</a>
+    </div>
+    
+    <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <h1 class="page-title">Authors</h1>
+      <div class="user-info" onclick="openProfile()">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+    
+    <div class="filter-row">
+      <select class="filter-select" id="limitSelect">
+        <option value="7">Show 7 entries</option>
+        <option value="15">Show 15 entries</option>
+        <option value="25">Show 25 entries</option>
+      </select>
+      <button class="add-btn" onclick="openAddModal()" style="margin-left:auto;">
+        <i class="fas fa-plus"></i> ADD AUTHOR
+      </button>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Author List</div>
+        <div style="position:relative;flex:1;max-width:350px;margin-left:auto;">
+          <i class="fas fa-search" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#6f2b67;font-size:14px;"></i>
+          <input type="text" id="searchInput" class="form-input" placeholder="Search authors..." style="padding-left:40px;width:100%;border-radius:20px;">
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="authors-table">
+          <thead>
+            <tr>
+              <th style="width:8%;">S.NO</th>
+              <th style="width:25%;">AUTHOR NAME</th>
+              <th style="width:35%;">AUTHOR BIO</th>
+              <th style="width:14%;">DATE</th>
+              <th style="width:18%;">LIST/UNLIST</th>
+              <th style="width:10%;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="authorTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- ADD/EDIT AUTHOR MODAL — Status removed -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-tie"></i> <span id="modalTitle">Add Author</span></h2>
+        <button class="close-modal" onclick="closeModal('editModal')">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="authorForm">
+          <div class="form-group">
+            <label class="form-label">Author Name *</label>
+            <input type="text" class="form-input" id="authorName" placeholder="Enter author name">
+            <small id="nameError" style="color:#dc3545;font-size:12px;"></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Author Bio *</label>
+            <textarea class="form-input form-textarea" id="authorBio" placeholder="Enter author bio"></textarea>
+            <small id="bioError" style="color:#dc3545;font-size:12px;"></small>
+          </div>
+
+          <!-- STATUS SELECT REMOVED -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+            <button type="submit" class="btn btn-save">Save Author</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal profile-modal" id="profileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> Profile</h2>
+        <button class="close-modal" onclick="closeProfile()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+          <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+        <input type="file" id="fileInput" class="profile-input" accept="image/*">
+        <div class="profile-name">App Admin</div>
+        <div class="profile-email">support@litheaven.com</div>
+        <button class="btn btn-save" style="width:100%;" onclick="closeProfile()">UPDATE PROFILE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+
+    let editingAuthorId = null;
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+
+    function toggleMenu(id) {
+      document.getElementById(id).classList.toggle('show');
+    }
+
+    function openProfile() {
+      document.getElementById('profileModal').classList.add('show');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileModal').classList.remove('show');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    function openAddModal() {
+      editingAuthorId = null;
+      document.getElementById('modalTitle').textContent = 'Add Author';
+      document.getElementById('authorForm').reset();
+      document.getElementById("nameError").textContent = "";
+      document.getElementById("bioError").textContent = "";
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function editAuthor(id, name, bio) {
+      editingAuthorId = id;
+      document.getElementById('modalTitle').textContent = 'Edit Author';
+      document.getElementById('authorName').value = decodeURIComponent(name);
+      document.getElementById('authorBio').value = decodeURIComponent(bio);
+      document.getElementById("nameError").textContent = "";
+      document.getElementById("bioError").textContent = "";
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    async function toggleAuthorDelete(id, currentIsDeleted) {
+      const actionLabel = currentIsDeleted ? "Restore" : "Delete";
+
+      const confirm = await Swal.fire({
+        title: `${actionLabel} this author?`,
+        text: currentIsDeleted
+          ? "Author will be restored and visible."
+          : "Author will be hidden from users.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6f2b67',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: `Yes, ${actionLabel}`
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const res = await fetch(`/admin/author/toggle-delete/${id}`, {
+          method: "PATCH"
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+          Toast.fire({ icon: 'error', title: result.message || 'Failed' });
+          return;
+        }
+
+        Toast.fire({
+          icon: 'success',
+          title: result.message
+        }).then(() => {
+          loadAuthors(currentPage);
+        });
+
+      } catch (err) {
+        console.error(err);
+        Toast.fire({ icon: 'error', title: 'Something went wrong' });
+      }
+    }
+
+    // PAGE LOAD LOGIC
+    const tbody = document.getElementById('authorTableBody');
+    const pagination = document.getElementById('pagination');
+    const searchInput = document.getElementById('searchInput');
+    const limitSelect = document.getElementById('limitSelect');
+
+    let currentPage = 1;
+    let LIMIT = 7;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAuthors(1);
+    });
+
+    async function loadAuthors(page = 1) {
+      currentPage = page;
+      const query = searchInput.value.trim();
+
+      const res = await fetch(
+        `/admin/author/search?query=${query}&page=${page}&limit=${LIMIT}`
+      );
+
+      const data = await res.json();
+      tbody.innerHTML = '';
+
+      if (!data.authors || data.authors.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;">No authors found</td>
+          </tr>`;
+        pagination.innerHTML = '';
+        return;
+      }
+
+      data.authors.forEach((author, index) => {
+        const isDeleted = author.isDeleted;
+        tbody.innerHTML += `
+          <tr>
+            <td>${(page - 1) * LIMIT + index + 1}</td>
+            <td><strong>${author.name}</strong></td>
+            <td>${author.bio}</td>
+            <td>${new Date(author.createdAt).toLocaleDateString()}</td>
+            <td>
+              <button
+                class="list-toggle-btn ${isDeleted ? 'unlisted' : 'listed'}"
+                onclick="toggleAuthorDelete('${author._id}', ${author.isDeleted})">
+                <i class="fas fa-${isDeleted ? 'times-circle' : 'check-circle'}"></i>
+                ${isDeleted ? 'UNLISTED' : 'LISTED'}
+              </button>
+            </td>
+            <td class="action-cell">
+              <button class="icon-btn"
+                onclick="editAuthor(
+                  '${author._id}',
+                  '${encodeURIComponent(author.name)}',
+                  '${encodeURIComponent(author.bio)}'
+                )">
+                <i class="fas fa-edit"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      renderPagination(data.totalPages, page);
+    }
+
+    function renderPagination(totalPages, page) {
+      pagination.innerHTML = '';
+      pagination.innerHTML += `
+        <button class="page-btn" ${page === 1 ? 'disabled' : ''} onclick="loadAuthors(${page - 1})">‹</button>
+      `;
+      for (let i = 1; i <= totalPages; i++) {
+        pagination.innerHTML += `
+          <button class="page-btn ${i === page ? 'active' : ''}" onclick="loadAuthors(${i})">${i}</button>
+        `;
+      }
+      pagination.innerHTML += `
+        <button class="page-btn" ${page === totalPages ? 'disabled' : ''} onclick="loadAuthors(${page + 1})">›</button>
+      `;
+    }
+
+    limitSelect.addEventListener('change', () => {
+      LIMIT = Number(limitSelect.value);
+      loadAuthors(1);
+    });
+
+    document.getElementById("authorName").addEventListener("input", () => {
+      document.getElementById("nameError").textContent = "";
+    });
+
+    document.getElementById("authorBio").addEventListener("input", () => {
+      document.getElementById("bioError").textContent = "";
+    });
+
+    document.getElementById('authorForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const nameInput = document.getElementById("authorName");
+      const bioInput = document.getElementById("authorBio");
+      const name = nameInput.value.trim();
+      const bio = bioInput.value.trim();
+      const nameError = document.getElementById("nameError");
+      const bioError = document.getElementById("bioError");
+
+      nameError.textContent = "";
+      bioError.textContent = "";
+
+      let isValid = true;
+      if (!name) { nameError.textContent = "Author name is required"; isValid = false; }
+      if (!bio) { bioError.textContent = "Author bio is required"; isValid = false; }
+      if (!isValid) return;
+
+      const data = { name, bio };
+
+      try {
+        const url = editingAuthorId ? `/admin/author/${editingAuthorId}` : "/admin/author";
+        const method = editingAuthorId ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+          Toast.fire({ icon: 'error', title: result.message || 'Author already exists' });
+          nameInput.focus();
+          return;
+        }
+
+        Toast.fire({
+          icon: 'success',
+          title: editingAuthorId ? 'Author updated successfully' : 'Author added successfully'
+        }).then(() => {
+          closeModal('editModal');
+          loadAuthors(currentPage);
+        });
+
+      } catch (err) {
+        console.error(err);
+        Toast.fire({ icon: 'error', title: 'Something went wrong. Try again' });
+      }
+    });
+
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('editModal');
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadAuthors(1);
+    });
+
+    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will be logged out from admin panel",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#aaa",
+        confirmButtonText: "Yes, Logout"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch('/admin/logout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if (!res.ok) { Swal.fire("Error", data.message, "error"); return; }
+            Swal.fire({ icon: "success", title: "Logged out", timer: 1200, showConfirmButton: false })
+              .then(() => { window.location.href = data.redirect; });
+          } catch (err) {
+            console.log(err);
+            Swal.fire("Error", "Something went wrong", "error");
+          }
+        }
+      });
+    });
+
+  </script>
+</body>
+</html>

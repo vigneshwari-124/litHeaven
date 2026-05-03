@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>My Wishlist – LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"DM Sans","Segoe UI",Roboto,Arial;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw;min-height:100vh}
+
+    @keyframes fadeUp   {from{opacity:0;transform:translateY(30px)}  to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown {from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse    {0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float    {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes droplet  {0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+    @keyframes slideUp  {from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)}}
+
+    /* ── TOP BAR ── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+    /* ── NAVBAR ── */
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after{width:80%}
+    .main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i{color:#fff}
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb-wrap{background:#fff;padding:13px 20px;border-bottom:1px solid #f0e5f5}
+    .breadcrumb{margin:0;font-size:13px}
+    .breadcrumb-item a{color:var(--purple);text-decoration:none;font-weight:600}
+    .breadcrumb-item.active{color:#999;font-weight:500}
+    .breadcrumb-item+.breadcrumb-item::before{color:#d0c0d0}
+
+    /* ── PAGE TITLE ── */
+    .page-title-strip{background:linear-gradient(135deg,var(--purple) 0%,var(--light) 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+    .page-title-strip::before{content:'💜';font-size:130px;position:absolute;right:-10px;top:50%;transform:translateY(-50%);opacity:.08;user-select:none;pointer-events:none}
+    .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s}
+    .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;animation:fadeUp 1s}
+
+    /* ── WISHLIST WRAP ── */
+    .wish-wrap{max-width:1280px;margin:0 auto;padding:36px 20px 60px;animation:fadeUp .9s}
+
+    /* topbar */
+    .wish-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .wish-count-pill{background:#fff;border-radius:50px;padding:9px 22px;font-size:13px;font-weight:700;color:var(--purple);box-shadow:0 3px 12px rgba(111,43,103,.12);border:1.5px solid #f0e5f5;display:flex;align-items:center;gap:8px}
+    .btn-empty-wish{background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:50px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;font-family:inherit;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(111,43,103,.3)}
+    .btn-empty-wish:hover{transform:scale(1.04);box-shadow:0 6px 20px rgba(111,43,103,.4)}
+
+    /* ── PRODUCT GRID ── */
+    .wish-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:24px;
+    }
+
+    /* ── PRODUCT CARD ── */
+    .wish-card{
+      background:#fff;
+      border-radius:20px;
+      border:2px solid #f0e5f5;
+      box-shadow:0 6px 22px rgba(111,43,103,.09);
+      overflow:hidden;
+      transition:all .35s;
+      position:relative;
+      display:flex;flex-direction:column;
+      animation:slideUp .5s ease both;
+    }
+    .wish-card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 16px 40px rgba(111,43,103,.20);
+      border-color:var(--purple);
+    }
+
+    /* discount badge */
+    .disc-corner{
+      position:absolute;top:10px;left:10px;
+      background:linear-gradient(135deg,#ff6b6b,#ee0979);
+      color:#fff;font-size:11px;font-weight:800;
+      border-radius:20px;padding:3px 10px;
+      z-index:3;
+    }
+
+    /* delete icon top-right */
+    .btn-card-del{
+      position:absolute;top:10px;right:10px;
+      width:32px;height:32px;border-radius:50%;
+      background:#fff;border:1.5px solid #e0d0e0;
+      color:#bbb;font-size:14px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .3s;z-index:3;
+    }
+    .btn-card-del:hover{background:#f5f5f5;color:#888;border-color:#ccc;transform:scale(1.1)}
+
+    /* book image */
+    .wish-card-img-wrap{
+      width:100%;height:200px;
+      overflow:hidden;
+      background:#f8f4f9;
+    }
+    .wish-card-img{
+      width:100%;height:100%;
+      object-fit:cover;
+      transition:transform .4s;
+    }
+    .wish-card:hover .wish-card-img{transform:scale(1.07)}
+
+    /* card body */
+    .wish-card-body{
+      padding:16px 16px 10px;
+      flex:1;display:flex;flex-direction:column;gap:6px;
+    }
+    .wc-title{font-weight:700;font-size:14px;color:#222;line-height:1.35}
+    .wc-author{font-size:12px;color:var(--purple);font-weight:600}
+
+    /* stars */
+    .wc-stars{display:flex;align-items:center;gap:2px}
+    .wc-stars i{font-size:12px;color:#f5a623}
+    .wc-stars .no-review{font-size:11px;color:#bbb;font-weight:600}
+
+    /* price row */
+    .wc-price-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+    .wc-price-new{color:var(--purple);font-weight:800;font-size:17px}
+    .wc-price-old{text-decoration:line-through;color:#bbb;font-size:12px}
+
+    /* add to cart button */
+    .btn-add-cart{
+      margin:10px 16px 16px;
+      background:linear-gradient(135deg,var(--purple),var(--light));
+      color:#fff;border:none;border-radius:50px;
+      padding:11px 0;font-size:13px;font-weight:700;
+      cursor:pointer;transition:all .3s;
+      font-family:inherit;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 4px 14px rgba(111,43,103,.28);
+      animation:droplet 3s infinite;
+    }
+    .btn-add-cart:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(111,43,103,.38)}
+
+    /* ── PAGINATION ── */
+    .pagination-wrap{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-top:40px;flex-wrap:wrap;gap:14px;
+    }
+    .found-text{font-size:13px;color:#888;font-weight:600}
+    .found-text strong{color:var(--purple)}
+    .pagination-btns{display:flex;align-items:center;gap:6px}
+    .pg-btn{
+      width:36px;height:36px;border-radius:50%;
+      border:2px solid #e8d5e8;background:#fff;
+      color:var(--purple);font-weight:700;font-size:14px;
+      cursor:pointer;transition:all .3s;
+      display:flex;align-items:center;justify-content:center;
+      font-family:inherit;
+    }
+    .pg-btn:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn.arrow{font-size:16px}
+    .pg-dots{color:#bbb;font-weight:700;letter-spacing:2px;padding:0 4px}
+
+    /* ── FOOTER ── */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .main-nav{display:none}
+      .page-title-strip h2{font-size:1.5rem}
+      .wish-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+    }
+    @media(max-width:480px){
+      .wish-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+      .wish-card-img-wrap{height:160px}
+      .wish-wrap{padding:24px 12px 50px}
+    }
+    @media(max-width:360px){
+      .wish-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:390px){
+      .brand .txt{font-size:16px}
+      .logo-circle{width:48px;height:48px}
+      .book-logo{width:26px}
+      .navbar-container{padding:0 10px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <header class="navbar-area">
+    <div class="navbar-container">
+      <div class="row align-items-center g-0">
+        <div class="col-6 d-flex align-items-center gap-3">
+          <a class="brand" href="/">
+            <div class="logo-circle">
+              <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+              <div class="logo-text">LitHeaven</div>
+              <div class="tagline">Your Literary Escape</div>
+            </div>
+            <div class="txt">LitHeaven</div>
+          </a>
+          <nav class="main-nav d-none d-lg-flex">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/contact">Contact</a>
+          </nav>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+          <div class="header-icons">
+            <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div class="icon-badge">7</div>
+            </a>
+            <a class="icon-btn position-relative" href="/cart" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge">3</div>
+            </a>
+            <div class="dropdown">
+              <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-user"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end p-2">
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+                <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+              </ul>
+            </div>
+            <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu d-lg-none">
+    <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-wrap">
+    <nav><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+      <li class="breadcrumb-item active">My Wishlist</li>
+    </ol></nav>
+  </div>
+
+  <!-- Page Title -->
+  <div class="page-title-strip">
+    <h2>💜 My Wishlist</h2>
+    <p>Books you love — saved for later</p>
+  </div>
+
+  <!-- ═══ WISHLIST BODY ═══ -->
+  <div class="wish-wrap">
+
+    <!-- Top bar -->
+    <div class="wish-topbar">
+      <div class="wish-count-pill">
+        <i class="fa-solid fa-heart"></i>
+        <span>7 items in wishlist</span>
+      </div>
+      <button class="btn-empty-wish" onclick="confirmEmptyWish()">
+        <i class="fa-regular fa-trash-can"></i> Empty my Wishlist
+      </button>
+    </div>
+
+    <!-- Grid -->
+    <div class="wish-grid" id="wishGrid">
+
+      <!-- Card 1 -->
+      <div class="wish-card" id="wcard-1" style="animation-delay:.05s">
+        <div class="disc-corner">19%</div>
+        <button class="btn-card-del" onclick="removeWish(1)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/8739161-M.jpg" class="wish-card-img" alt="Writing Practice">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">Writing Practice Boxset</div>
+          <div class="wc-author">Wonder Hous...</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹226</span>
+            <span class="wc-price-old">₹279</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="wish-card" id="wcard-2" style="animation-delay:.10s">
+        <div class="disc-corner">9%</div>
+        <button class="btn-card-del" onclick="removeWish(2)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/12008510-M.jpg" class="wish-card-img" alt="Can't Hurt Me">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">Can't Hurt Me</div>
+          <div class="wc-author">David Goggins</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹2,025</span>
+            <span class="wc-price-old">₹2,225</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="wish-card" id="wcard-3" style="animation-delay:.15s">
+        <div class="disc-corner">12%</div>
+        <button class="btn-card-del" onclick="removeWish(3)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/8091016-M.jpg" class="wish-card-img" alt="Hatha Yoga">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">Hatha Yoga Pradipika</div>
+          <div class="wc-author">Muktibodhana...</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹3,871</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="wish-card" id="wcard-4" style="animation-delay:.20s">
+        <div class="disc-corner">12%</div>
+        <button class="btn-card-del" onclick="removeWish(4)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/10976186-M.jpg" class="wish-card-img" alt="Ikigai">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">Ikigai</div>
+          <div class="wc-author">Keira Miki</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹176</span>
+            <span class="wc-price-old">₹200</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="wish-card" id="wcard-5" style="animation-delay:.25s">
+        <div class="disc-corner">23%</div>
+        <button class="btn-card-del" onclick="removeWish(5)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/8406786-M.jpg" class="wish-card-img" alt="Satanic Verses">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">The Satanic Verses</div>
+          <div class="wc-author">Salman Rushdie</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹1,020</span>
+            <span class="wc-price-old">₹1,325</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="wish-card" id="wcard-6" style="animation-delay:.30s">
+        <div class="disc-corner">26%</div>
+        <button class="btn-card-del" onclick="removeWish(6)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/12647413-M.jpg" class="wish-card-img" alt="RD Sharma">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">R D Sharma Mathematics Class 7 Cbse</div>
+          <div class="wc-author">R.D Sharma</div>
+          <div class="wc-stars">
+            <span class="no-review">No Review Yet</span>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹329</span>
+            <span class="wc-price-old">₹445</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+      <!-- Card 7 -->
+      <div class="wish-card" id="wcard-7" style="animation-delay:.35s">
+        <div class="disc-corner">12%</div>
+        <button class="btn-card-del" onclick="removeWish(7)" title="Remove"><i class="fa-solid fa-trash"></i></button>
+        <div class="wish-card-img-wrap">
+          <img src="https://covers.openlibrary.org/b/id/7222246-M.jpg" class="wish-card-img" alt="Think and Grow Rich">
+        </div>
+        <div class="wish-card-body">
+          <div class="wc-title">Think &amp; Grow Rich</div>
+          <div class="wc-author">Napoleon Hill</div>
+          <div class="wc-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="wc-price-row">
+            <span class="wc-price-new">₹175</span>
+            <span class="wc-price-old">₹199</span>
+          </div>
+        </div>
+        <button class="btn-add-cart" onclick="addToCart(this)">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+
+    </div><!-- /wish-grid -->
+
+    <!-- Pagination -->
+    <div class="pagination-wrap">
+      <div class="found-text">Found <strong>68</strong> items</div>
+      <div class="pagination-btns">
+        <button class="pg-btn arrow">‹</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <span class="pg-dots">…</span>
+        <button class="pg-btn">5</button>
+        <button class="pg-btn arrow">›</button>
+      </div>
+    </div>
+
+  </div><!-- /wish-wrap -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5>Get In Touch</h5>
+          <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+          <p><small>support@litheaven.com</small></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop Books</a></li>
+            <li><a href="/about">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h5>LitHeaven</h5>
+          <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+        </div>
+      </div>
+      <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    /* ── Remove single item ── */
+    function removeWish(id) {
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:800'>Remove from Wishlist?</span>",
+        text: "This book will be removed from your wishlist.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '🗑️ Yes, Remove',
+        cancelButtonText: 'Keep It',
+        confirmButtonColor: '#6f2b67',
+        cancelButtonColor: '#d6c3d3',
+        background: 'linear-gradient(135deg,#f6eef6,#efe3f0)',
+      }).then(r => {
+        if (r.isConfirmed) {
+          const el = document.getElementById('wcard-' + id);
+          if (!el) return;
+          el.style.transition = 'all .35s ease';
+          el.style.opacity = '0';
+          el.style.transform = 'scale(0.85)';
+          setTimeout(() => el.remove(), 360);
+        }
+      });
+    }
+
+    /* ── Empty wishlist ── */
+    function confirmEmptyWish() {
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:800'>Empty Wishlist?</span>",
+        text: "All saved books will be removed.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '🗑️ Empty All',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#6f2b67',
+        cancelButtonColor: '#d6c3d3',
+        background: 'linear-gradient(135deg,#f6eef6,#efe3f0)',
+      }).then(r => {
+        if (r.isConfirmed) {
+          document.querySelectorAll('.wish-card').forEach(el => el.remove());
+          Swal.fire({ title: 'Wishlist Cleared!', icon: 'success', timer: 1800, showConfirmButton: false, background: 'linear-gradient(135deg,#f6eef6,#efe3f0)' });
+        }
+      });
+    }
+
+    /* ── Add to Cart ── */
+    function addToCart(btn) {
+      const title = btn.closest('.wish-card').querySelector('.wc-title').textContent;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
+      btn.style.background = 'linear-gradient(135deg,#2e7d32,#43a047)';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Add to Cart';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 2000);
+    }
+
+    /* ── Pagination (visual only) ── */
+    document.querySelectorAll('.pg-btn:not(.arrow)').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.pg-btn:not(.arrow)').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ── Mobile menu ── */
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle?.addEventListener('click', function () {
+      mobileMenu.classList.toggle('open');
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle?.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+      }
+    });
+
+    /* ── Logout ── */
+    document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html: `<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+               <p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+        showCancelButton: true,
+        confirmButtonText: "🚪 Logout",
+        cancelButtonText: "Stay Here",
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#d6c3d3",
+        reverseButtons: true,
+        background: "linear-gradient(135deg,#f6eef6,#efe3f0)",
+      }).then(r => { if (r.isConfirmed) window.location.href = "/logout"; });
+    });
+  </script>
+</body>
+</html>

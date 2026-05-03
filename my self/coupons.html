@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coupons - LitHeaven Admin</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;max-width:100vw;}
+
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);overflow-x:hidden;}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:14px;}
+    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    .page-title{font-size:28px;font-weight:700;margin-bottom:25px;color:#5a2252;}
+
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:30px;}
+    .stat-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px;transition:0.3s;}
+    .stat-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(111,43,103,0.3);}
+    .stat-icon{width:40px;height:40px;border-radius:10px;background:rgba(111,43,103,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;color:#5a2252;margin-bottom:10px;}
+    .stat-label{font-size:12px;color:rgba(111,43,103,0.7);margin-bottom:5px;}
+    .stat-value{font-size:24px;font-weight:800;color:#5a2252;}
+    .stat-subtitle{font-size:10px;color:rgba(111,43,103,0.6);margin-top:5px;}
+
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;margin-bottom:30px;}
+    .card-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+    .card-title{font-size:18px;font-weight:700;color:#5a2252;}
+    .add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:0.3s;}
+    .add-btn:hover{background:#5a2252;transform:translateY(-1px);box-shadow:0 4px 15px rgba(111,43,103,0.4);}
+
+    .table-wrapper{overflow-x:auto;max-height:450px;overflow-y:auto;margin:15px 0;}
+    .table-wrapper::-webkit-scrollbar{height:8px;width:8px;}
+    .table-wrapper::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:4px;}
+    .coupons-table{width:100%;border-collapse:collapse;min-width:850px;}
+    .coupons-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#5a2252;border-bottom:2px solid #6f2b67;white-space:nowrap;}
+    .coupons-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(80,30,75,0.85);vertical-align:middle;}
+    .coupons-table tr:hover{background:rgba(111,43,103,0.04);}
+
+    .coupon-code{display:inline-flex;align-items:center;gap:6px;background:rgba(111,43,103,0.08);border:1.5px dashed #6f2b67;border-radius:8px;padding:5px 12px;font-family:monospace;font-size:13px;font-weight:700;color:#5a2252;letter-spacing:1px;}
+    .coupon-code .copy-icon{font-size:11px;cursor:pointer;opacity:0.6;transition:0.2s;}
+    .coupon-code .copy-icon:hover{opacity:1;}
+
+    .status-badge{padding:5px 0;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;width:80px;text-align:center;}
+    .status-active{background:rgba(46,204,113,0.15);color:#27ae60;}
+    .status-inactive{background:rgba(220,53,69,0.15);color:#dc3545;}
+    .status-expired{background:rgba(108,117,125,0.15);color:#6c757d;}
+    .status-scheduled{background:rgba(0,123,255,0.15);color:#007bff;}
+
+    .type-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;display:inline-block;}
+    .type-percent{background:rgba(111,43,103,0.12);color:#6f2b67;}
+    .type-flat{background:rgba(255,193,7,0.15);color:#c9a200;}
+    .type-free{background:rgba(46,204,113,0.12);color:#27ae60;}
+
+    .action-btns{display:flex;gap:6px;}
+    .btn-icon{width:30px;height:30px;border-radius:7px;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:0.2s;}
+    .btn-edit{background:rgba(111,43,103,0.1);color:#6f2b67;}
+    .btn-edit:hover{background:#6f2b67;color:#fff;}
+    .btn-delete{background:rgba(220,53,69,0.1);color:#dc3545;}
+    .btn-delete:hover{background:#dc3545;color:#fff;}
+    .btn-toggle{background:rgba(46,204,113,0.1);color:#27ae60;}
+    .btn-toggle:hover{background:#27ae60;color:#fff;}
+
+    .usage-bar-wrap{display:flex;align-items:center;gap:8px;}
+    .usage-bar{flex:1;height:6px;background:rgba(111,43,103,0.1);border-radius:4px;overflow:hidden;min-width:60px;}
+    .usage-fill{height:100%;background:linear-gradient(90deg,#6f2b67,#5a2252);border-radius:4px;}
+    .usage-text{font-size:11px;color:rgba(111,43,103,0.7);white-space:nowrap;}
+
+    .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+    .filter-chip{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid #6f2b67;background:transparent;color:#6f2b67;cursor:pointer;transition:0.2s;}
+    .filter-chip.active,.filter-chip:hover{background:#6f2b67;color:#fff;}
+    .filter-search{flex:1;max-width:260px;background:rgba(111,43,103,0.07);border:1px solid #6f2b67;border-radius:8px;padding:7px 14px;display:flex;gap:8px;align-items:center;}
+    .filter-search input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;font-size:13px;}
+    .filter-search input::placeholder{color:rgba(111,43,103,0.4);}
+
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;align-items:center;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.3s;}
+    .page-btn:hover:not(.active),.page-btn.active{background:#6f2b67;color:#fff;}
+
+    /* Coupon Add/Edit Modal */
+    .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2000;align-items:center;justify-content:center;}
+    .modal-overlay.show{display:flex;}
+    .modal-box{background:#fff;border:2px solid #6f2b67;border-radius:16px;padding:30px;width:100%;max-width:520px;position:relative;max-height:90vh;overflow-y:auto;}
+    .modal-box::-webkit-scrollbar{width:5px;}
+    .modal-box::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    .modal-title{font-size:20px;font-weight:700;color:#5a2252;margin-bottom:20px;}
+    .close-modal-btn{position:absolute;top:14px;right:18px;background:transparent;border:none;font-size:22px;color:#6f2b67;cursor:pointer;}
+
+    .form-group{margin-bottom:16px;}
+    .form-label{font-size:12px;font-weight:700;color:#5a2252;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
+    .form-control-custom{width:100%;background:rgba(111,43,103,0.06);border:1.5px solid rgba(111,43,103,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#5a2252;outline:none;transition:0.2s;}
+    .form-control-custom:focus{border-color:#6f2b67;background:rgba(111,43,103,0.1);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .form-select-custom{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236f2b67' fill='none' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+    .modal-footer-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;}
+    .btn-cancel{padding:10px 24px;border:1.5px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;}
+    .btn-cancel:hover{background:rgba(111,43,103,0.08);}
+    .btn-save{padding:10px 24px;background:#6f2b67;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;}
+    .btn-save:hover{background:#5a2252;}
+
+    /* Profile Modal */
+    .profile-modal-box{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:35px;width:100%;max-width:400px;text-align:center;position:relative;}
+    .profile-avatar{width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,0.1);margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;}
+    .profile-avatar i{font-size:50px;color:#6f2b67;}
+    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:#6f2b67;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;}
+    .camera-icon i{font-size:16px;color:#fff;}
+    .profile-name{font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px;}
+    .profile-email{font-size:14px;color:rgba(111,43,103,0.7);margin-bottom:20px;}
+    .save-profile-btn{background:#6f2b67;color:#fff;border:none;padding:12px;border-radius:20px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;}
+    .save-profile-btn:hover{background:#5a2252;}
+
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+
+    @media(max-width:992px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .top-bar{flex-direction:column;}
+      .search-box{max-width:100%;}
+      .form-row{grid-template-columns:1fr;}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr;}
+      .main-content{padding:10px;}
+      .coupons-table{min-width:700px;}
+      .modal-box{padding:20px;}
+    }
+  </style>
+</head>
+<body>
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar" id="sidebar">
+    <div style="text-align:center;padding:10px 0;">
+      <div class="logo-circle">
+        <i class="fas fa-book-open book-logo"></i>
+        <div class="logo-text">LitHeaven</div>
+      </div>
+      <div class="tagline">Admin Portal</div>
+    </div>
+    <a href="/admin/dashboard" class="menu-item">
+      <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
+    </a>
+    <a href="/admin/order" class="menu-item">
+      <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
+    </a>
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
+      <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="catMenu">
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
+    </div>
+    <a href="/admin/product" class="menu-item">
+      <div class="menu-left"><i class="fas fa-box"></i> Products</div>
+    </a>
+    <a href="/admin/coupon" class="menu-item active">
+      <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
+    </a>
+    <div class="menu-item" onclick="toggleMenu('offerMenu')">
+      <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="offerMenu">
+      <a href="/admin/categoryOff">Category Offers</a>
+      <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    </div>
+    <a href="/admin/author" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
+    </a>
+    <a href="/admin/admin" class="menu-item">
+      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
+    </a>
+    <a href="/admin/customer" class="menu-item">
+      <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
+    </a>
+    <a href="/admin/salesReport" class="menu-item">
+      <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
+    </a>
+    <div class="menu-item" onclick="toggleMenu('settMenu')">
+      <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="submenu" id="settMenu">
+      <a href="/admin/appSetting">App Settings</a>
+      <a href="/admin/language">Language</a>
+    </div>
+    <button class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="search-box">
+        <i class="fas fa-search" style="color:#6f2b67;"></i>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <div class="user-info" onclick="openProfile()">
+        <div>
+          <div style="font-weight:600;font-size:14px;">App Admin</div>
+          <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+        </div>
+        <div class="user-avatar"><i class="fas fa-user" style="color:#6f2b67;"></i></div>
+      </div>
+    </div>
+
+    <h1 class="page-title">Coupons</h1>
+
+   
+
+    <div class="table-card">
+      <div class="card-header-row">
+        <div class="card-title">All Coupons</div>
+        <button class="add-btn" onclick="openAddModal()">
+          <i class="fas fa-plus"></i> Add Coupon
+        </button>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-chip active" onclick="filterStatus(this,'all')">All</button>
+        <button class="filter-chip" onclick="filterStatus(this,'active')">Active</button>
+        <button class="filter-chip" onclick="filterStatus(this,'inactive')">Inactive</button>
+        <button class="filter-chip" onclick="filterStatus(this,'expired')">Expired</button>
+        <button class="filter-chip" onclick="filterStatus(this,'scheduled')">Scheduled</button>
+        <div class="filter-search">
+          <i class="fas fa-search" style="color:#6f2b67;font-size:12px;"></i>
+          <input type="text" placeholder="Search coupon..." id="couponSearch" oninput="applyFilters()">
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="coupons-table">
+          <thead>
+            <tr>
+              
+              <th>COUPON CODE</th>
+
+              <th>TYPE</th>
+              <th>DISCOUNT</th>
+              <th>MIN ORDER</th>
+              <th>USAGE</th>
+              <th>VALID TILL</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="couponTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="paginationWrap"></div>
+    </div>
+  </div>
+
+  <!-- ── Add / Edit Modal ── -->
+  <div class="modal-overlay" id="couponModal">
+    <div class="modal-box">
+      <button class="close-modal-btn" onclick="closeModal()">×</button>
+      <div class="modal-title" id="modalTitle">Add New Coupon</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Coupon Code *</label>
+          <input class="form-control-custom" id="fCode" type="text" placeholder="e.g. BOOK20" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discount Type *</label>
+          <select class="form-control-custom form-select-custom" id="fType">
+            <option value="percent">Percentage (%)</option>
+            <option value="flat">Flat Amount (₹)</option>
+            <option value="free">Free Shipping</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input class="form-control-custom" id="fDesc" type="text" placeholder="Short description for this coupon">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Discount Value</label>
+          <input class="form-control-custom" id="fValue" type="number" placeholder="e.g. 20">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Min Order Amount (₹)</label>
+          <input class="form-control-custom" id="fMinOrder" type="number" placeholder="e.g. 300">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Max Discount (₹)</label>
+          <input class="form-control-custom" id="fMaxDiscount" type="number" placeholder="e.g. 200">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Usage Limit</label>
+          <input class="form-control-custom" id="fLimit" type="number" placeholder="Total usage allowed">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Start Date *</label>
+          <input class="form-control-custom" id="fStart" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expiry Date *</label>
+          <input class="form-control-custom" id="fExpiry" type="date">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control-custom form-select-custom" id="fStatus">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="scheduled">Scheduled</option>
+        </select>
+      </div>
+
+      <div class="modal-footer-btns">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveCoupon()">Save Coupon</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Profile Modal ── -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="profile-modal-box">
+      <button class="close-modal-btn" onclick="closeProfile()">×</button>
+      <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+        <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-camera"></i>
+        </div>
+      </div>
+      <input type="file" id="fileInput" style="display:none;" accept="image/*">
+      <div class="profile-name">App Admin</div>
+      <div class="profile-email">support@litheaven.com</div>
+      <button class="save-profile-btn" onclick="closeProfile()">UPDATE PROFILE</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    let coupons = [
+      {id:1,code:'BOOK20',type:'percent',value:20,minOrder:300,maxDiscount:200,limit:500,used:312,start:'2025-01-01',expiry:'2025-12-31',status:'active'},
+      {id:2,code:'FLAT50',type:'flat',value:50,minOrder:200,maxDiscount:50,limit:1000,used:780,start:'2025-01-01',expiry:'2025-06-30',status:'active'},
+      {id:3,code:'FREESHIP',type:'free',value:0,minOrder:299,maxDiscount:0,limit:300,used:300,start:'2024-11-01',expiry:'2024-12-31',status:'expired'},
+      {id:4,code:'LITLOVE',type:'percent',value:15,minOrder:500,maxDiscount:300,limit:200,used:89,start:'2025-03-01',expiry:'2025-09-01',status:'active'},
+      {id:5,code:'NEWUSER',type:'percent',value:30,minOrder:0,maxDiscount:150,limit:999,used:412,start:'2025-02-01',expiry:'2025-12-31',status:'active'},
+      {id:6,code:'SUMMER25',type:'percent',value:25,minOrder:400,maxDiscount:250,limit:400,used:0,start:'2025-06-01',expiry:'2025-08-31',status:'scheduled'},
+      {id:7,code:'OFF100',type:'flat',value:100,minOrder:800,maxDiscount:100,limit:150,used:12,start:'2025-01-15',expiry:'2025-04-30',status:'inactive'},
+      {id:8,code:'FESTIVE40',type:'flat',value:40,minOrder:250,maxDiscount:40,limit:600,used:598,start:'2024-10-01',expiry:'2024-11-15',status:'expired'},
+    ];
+
+    let editingId=null, currentPage=1, filtered=[...coupons], currentFilter='all';
+    const PER_PAGE=5;
+
+    function render(){
+      const start=(currentPage-1)*PER_PAGE;
+      const page=filtered.slice(start,start+PER_PAGE);
+      const tbody=document.getElementById('couponTableBody');
+
+      tbody.innerHTML=page.map(c=>{
+        const pct=c.limit?Math.min(100,Math.round((c.used/c.limit)*100)):0;
+        const typeLabel=c.type==='percent'?'%':c.type==='flat'?'Flat':'Free';
+        const typeClass=c.type==='percent'?'type-percent':c.type==='flat'?'type-flat':'type-free';
+        const valStr=c.type==='percent'?`${c.value}%`:c.type==='flat'?`₹${c.value}`:'Free Ship';
+        const statusClass=`status-${c.status}`;
+        const statusLabel=c.status.charAt(0).toUpperCase()+c.status.slice(1);
+        const expDate=new Date(c.expiry).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+        return `<tr>
+       
+          <td>
+            <span class="coupon-code">
+              <i class="fas fa-ticket-alt" style="font-size:11px;"></i>${c.code}
+              <i class="fas fa-copy copy-icon" title="Copy" onclick="copyCode('${c.code}')"></i>
+            </span>
+          </td>
+      
+          <td><span class="type-badge ${typeClass}">${typeLabel}</span></td>
+          <td style="font-weight:700;color:#5a2252;">${valStr}</td>
+          <td>${c.minOrder?'₹'+c.minOrder:'—'}</td>
+          <td>
+            <div class="usage-bar-wrap">
+              <div class="usage-bar"><div class="usage-fill" style="width:${pct}%"></div></div>
+              <span class="usage-text">${c.used}/${c.limit||'∞'}</span>
+            </div>
+          </td>
+          <td style="white-space:nowrap;">${expDate}</td>
+          <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-icon btn-edit" title="Edit" onclick="openEditModal(${c.id})"><i class="fas fa-pen"></i></button>
+              <button class="btn-icon btn-toggle" title="Toggle Status" onclick="toggleStatus(${c.id})"><i class="fas fa-power-off"></i></button>
+              <button class="btn-icon btn-delete" title="Delete" onclick="deleteCoupon(${c.id})"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      renderPagination(start);
+    }
+
+    function renderPagination(start){
+      const total=Math.ceil(filtered.length/PER_PAGE);
+      const wrap=document.getElementById('paginationWrap');
+      let html=`<span style="font-size:13px;color:#6f2b67;margin-right:10px;">${start+1}-${Math.min(start+PER_PAGE,filtered.length)} of ${filtered.length}</span>`;
+      html+=`<button class="page-btn" onclick="goToPage(${currentPage-1})"><i class="fas fa-chevron-left"></i></button>`;
+      for(let i=1;i<=total;i++) html+=`<button class="page-btn${i===currentPage?' active':''}" onclick="goToPage(${i})">${i}</button>`;
+      html+=`<button class="page-btn" onclick="goToPage(${currentPage+1})"><i class="fas fa-chevron-right"></i></button>`;
+      wrap.innerHTML=html;
+    }
+
+    function goToPage(p){const t=Math.ceil(filtered.length/PER_PAGE);if(p<1||p>t)return;currentPage=p;render();}
+
+    function filterStatus(el,status){
+      document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+      el.classList.add('active'); currentFilter=status; applyFilters();
+    }
+
+    function applyFilters(){
+      const q=document.getElementById('couponSearch').value.toLowerCase();
+      filtered=coupons.filter(c=>{
+        const mS=currentFilter==='all'||c.status===currentFilter;
+        const mQ=!q||c.code.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q);
+        return mS&&mQ;
+      });
+      currentPage=1; render();
+    }
+
+    function toggleAll(el){document.querySelectorAll('.row-check').forEach(c=>c.checked=el.checked);}
+
+    function copyCode(code){
+      navigator.clipboard.writeText(code).then(()=>{
+        Swal.fire({toast:true,position:'top-end',icon:'success',title:`Copied: ${code}`,showConfirmButton:false,timer:1400,timerProgressBar:true});
+      });
+    }
+
+    function toggleStatus(id){
+      const c=coupons.find(x=>x.id===id); if(!c) return;
+      const next=c.status==='active'?'inactive':'active';
+      Swal.fire({title:`Set coupon ${next}?`,icon:'question',showCancelButton:true,confirmButtonColor:'#6f2b67',cancelButtonColor:'#aaa',confirmButtonText:'Yes, update'})
+        .then(r=>{if(r.isConfirmed){c.status=next;applyFilters();Swal.fire({toast:true,position:'top-end',icon:'success',title:'Status updated',showConfirmButton:false,timer:1400});}});
+    }
+
+    function deleteCoupon(id){
+      Swal.fire({title:'Delete this coupon?',text:'This cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',cancelButtonColor:'#aaa',confirmButtonText:'Yes, delete'})
+        .then(r=>{if(r.isConfirmed){coupons=coupons.filter(c=>c.id!==id);applyFilters();Swal.fire({toast:true,position:'top-end',icon:'success',title:'Coupon deleted',showConfirmButton:false,timer:1400});}});
+    }
+
+    function openAddModal(){
+      editingId=null;
+      document.getElementById('modalTitle').textContent='Add New Coupon';
+      ['fCode','fDesc','fValue','fMinOrder','fMaxDiscount','fLimit','fStart','fExpiry'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('fType').value='percent';
+      document.getElementById('fStatus').value='active';
+      document.getElementById('couponModal').classList.add('show');
+    }
+
+    function openEditModal(id){
+      const c=coupons.find(x=>x.id===id); if(!c) return;
+      editingId=id;
+      document.getElementById('modalTitle').textContent='Edit Coupon';
+      document.getElementById('fCode').value=c.code;
+      document.getElementById('fType').value=c.type;
+      document.getElementById('fDesc').value=c.desc;
+      document.getElementById('fValue').value=c.value;
+      document.getElementById('fMinOrder').value=c.minOrder;
+      document.getElementById('fMaxDiscount').value=c.maxDiscount;
+      document.getElementById('fLimit').value=c.limit;
+      document.getElementById('fStart').value=c.start;
+      document.getElementById('fExpiry').value=c.expiry;
+      document.getElementById('fStatus').value=c.status;
+      document.getElementById('couponModal').classList.add('show');
+    }
+
+    function closeModal(){document.getElementById('couponModal').classList.remove('show');}
+
+    function saveCoupon(){
+      const code=document.getElementById('fCode').value.trim();
+      const expiry=document.getElementById('fExpiry').value;
+      if(!code||!expiry){Swal.fire({icon:'warning',title:'Required fields missing',text:'Please fill Code and Expiry Date.',confirmButtonColor:'#6f2b67'});return;}
+      const obj={
+        id:editingId||Date.now(),code,
+        desc:document.getElementById('fDesc').value||'—',
+        type:document.getElementById('fType').value,
+        value:parseFloat(document.getElementById('fValue').value)||0,
+        minOrder:parseFloat(document.getElementById('fMinOrder').value)||0,
+        maxDiscount:parseFloat(document.getElementById('fMaxDiscount').value)||0,
+        limit:parseInt(document.getElementById('fLimit').value)||0,
+        used:editingId?(coupons.find(c=>c.id===editingId)||{}).used||0:0,
+        start:document.getElementById('fStart').value||new Date().toISOString().split('T')[0],
+        expiry,status:document.getElementById('fStatus').value,
+      };
+      if(editingId){const idx=coupons.findIndex(c=>c.id===editingId);if(idx>-1)coupons[idx]=obj;}
+      else coupons.unshift(obj);
+      closeModal(); applyFilters();
+      Swal.fire({toast:true,position:'top-end',icon:'success',title:editingId?'Coupon updated!':'Coupon added!',showConfirmButton:false,timer:1500,timerProgressBar:true});
+    }
+
+    function openProfile(){document.getElementById('profileModal').classList.add('show');}
+    function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+    function toggleMenu(id){document.getElementById(id).classList.toggle('show');}
+
+    document.querySelectorAll('.modal-overlay').forEach(m=>{
+      m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+    });
+
+    document.getElementById('adminLogoutBtn').addEventListener('click',()=>{
+      Swal.fire({title:'Are you sure?',text:'You will be logged out from admin panel',icon:'warning',showCancelButton:true,confirmButtonColor:'#6f2b67',cancelButtonColor:'#aaa',confirmButtonText:'Yes, Logout'})
+        .then(async r=>{
+          if(r.isConfirmed){
+            try{
+              const res=await fetch('/admin/logout',{method:'POST',headers:{'Content-Type':'application/json'}});
+              const data=await res.json();
+              if(!res.ok){Swal.fire('Error',data.message,'error');return;}
+              Swal.fire({icon:'success',title:'Logged out',timer:1200,showConfirmButton:false}).then(()=>window.location.replace('/admin/login'));
+            }catch(err){console.log(err);Swal.fire('Error','Something went wrong','error');}
+          }
+        });
+    });
+
+    window.onpageshow=e=>{if(e.persisted)window.location.reload();};
+    render();
+  </script>
+</body>
+</html>

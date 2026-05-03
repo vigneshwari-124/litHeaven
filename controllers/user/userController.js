@@ -1,17 +1,20 @@
 const User = require('../../models/User')
 const Otp  = require('../../models/Otp_temp')
-
+const Product = require("../../models/Product")
+const Offers=require('../../models/Offers')
+const Review=require('../../models/Review')
 const bcrypt=require('bcrypt')
-const sendOtpMail=require('../../public/utils/sendMail')
+const Category = require("../../models/Categories");
+const sendOtpMail=require('../../utils/sendMail')
 const passport = require('passport')
 
-///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getSignup=(req,res)=>{
     res.render('user/signup',{error:null,success:null })
 }
 
-//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postSignup=async (req,res)=>{
   try{
@@ -88,7 +91,7 @@ const postSignup=async (req,res)=>{
   }
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getOtp=async(req,res)=>{
   if(!req.session.otpUserId){
@@ -132,7 +135,7 @@ const getOtp=async(req,res)=>{
   })
 }
 
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postOtp = async (req, res) => {
   try {
@@ -185,6 +188,7 @@ const postOtp = async (req, res) => {
 
       req.session.userId = user._id
       req.session.isLoggedIn = true
+      
       redirectUrl = '/';
       successMessage = 'Account verified successfully!';
   
@@ -225,7 +229,7 @@ const postOtp = async (req, res) => {
   }
 }
 
-//////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const resendOtp=async(req,res)=>{
   try{
@@ -285,14 +289,14 @@ const resendOtp=async(req,res)=>{
   }
 }
 
-///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getLogin=(req,res)=>{
 
   res.render('user/login')
 }
 
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postLogin=async(req,res)=>{
   try{
@@ -338,13 +342,20 @@ const postLogin=async(req,res)=>{
       })
     }
 
-    req.session.userId=user._id
-    req.session.isLoggedIn=true
+req.session.userId = user._id
+req.session.isLoggedIn = true
 
-    res.status(200).json({
-      success:true,
-      redirect:'/'
-    })
+req.session.save((err) => {
+  if (err) {
+    console.log("Session save error:", err)
+    return res.status(500).json({ message: "Session error" })
+  }
+
+  return res.json({
+    success: true,
+    redirect: '/'
+  })
+})
 
   }catch(err){
     console.log(err)
@@ -354,22 +365,119 @@ const postLogin=async(req,res)=>{
   }
 }
 
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const getHome=(req,res)=>{ 
-  res.render('user/home',{
-    isLoggedIn:req.session.isLoggedIn || false,
-    userId:req.session.userId || null
-  }) 
-}
 
-////////////////////////////////////////////////////////////
+const getHome = async (req, res) => {
+  try {
+
+    const products = await Product.find({ isDeleted: false })
+  .populate({
+    path: "author",
+    match: { isDeleted: false }
+  })
+  .populate({
+    path: "category",
+    match: { isDeleted: false }
+  })
+  .populate({
+    path: "subCategory",
+    match: { isDeleted: false }
+  })
+  .sort({ createdAt: -1 });
+
+  const offers = await Offers.find({isListed: true});
+
+const bestSellers = await Promise.all(
+  products
+    .filter(p => p.author && p.category && p.subCategory)
+    .slice(0,6)
+    .map(async (p) => {
+
+      const reviews = await Review.find({ product: p._id })
+
+      let totalReviews = reviews.length
+      let avgRating = 0
+
+      if(totalReviews > 0){
+        const total = reviews.reduce((sum, r) => sum + r.rating, 0)
+        avgRating = total / totalReviews
+      }
+
+      let totalStock = 0
+      p.variants.forEach(v => {
+        v.formats.forEach(f => {
+          totalStock += f.stock
+        })
+      })
+
+      let productOffer = offers.find(o =>
+        o.type === "product" &&
+        String(o.product) === String(p._id) &&
+        o.isListed
+      )
+
+      let subCategoryOffer = offers.find(o =>
+        o.type === "subCategory" &&
+        String(o.subCategory) === String(p.subCategory._id) &&
+        o.isListed
+      )
+
+      let categoryOffer = offers.find(o =>
+        o.type === "category" &&
+        String(o.category) === String(p.category._id) &&
+        o.isListed
+      )
+
+      let finalOffer = productOffer || subCategoryOffer || categoryOffer
+      let discount = finalOffer ? finalOffer.discount : 0
+      let basePrice = p.variants[0]?.formats[0]?.price || 0
+      let offerPrice = basePrice - (basePrice * discount / 100)
+
+      return {
+        ...p.toObject(),
+        isOutOfStock: totalStock === 0,
+        discount,
+        originalPrice: basePrice,
+        offerPrice: Math.round(offerPrice),
+        avgRating,
+        totalReviews
+      }
+
+    })
+)
+    const featuredCategories = await Category.find({
+      isFeatured: true,
+      isDeleted: false,
+      parentCategory: { $ne: null }
+     }).populate({
+      path: "parentCategory",
+     match: { isDeleted: false }
+    });
+
+    const validFeaturedCategories = featuredCategories.filter(
+       c => c.parentCategory
+    );
+    res.render("user/home", {
+      bestSellers,
+      featuredCategories: validFeaturedCategories,
+      isLoggedIn: req.session.isLoggedIn || false,
+      userId: req.session.userId || null
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getForgot=(req,res)=>{
   res.render('user/forgot')
 }
 
-//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postForgot=async(req,res)=>{
   try{
@@ -452,7 +560,7 @@ const postForgot=async(req,res)=>{
 
 }
 
-/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getResetPass=async (req,res)=>{
    if (!req.session.allowPasswordReset) {
@@ -467,7 +575,7 @@ const getResetPass=async (req,res)=>{
   res.render('user/resetPage')
 }
 
-/////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postRestPass=async(req,res)=>{
   try{
@@ -529,7 +637,7 @@ const postRestPass=async(req,res)=>{
 }
 
 
-/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const logout = (req, res) => {
   req.session.destroy(() => {
@@ -537,7 +645,7 @@ const logout = (req, res) => {
   });
 };
 
-////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const googleAuthCallback=(req,res,next)=>{
   passport.authenticate('google',(err,user,info)=>{
@@ -575,7 +683,8 @@ const googleAuthCallback=(req,res,next)=>{
 }
 
 
-//////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const clearOtpSession = async (req, res) => {
   try {
     if (req.session.otpUserId && req.session.otpPurpose) {
@@ -601,7 +710,7 @@ const clearOtpSession = async (req, res) => {
   }
 };
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports={
     getSignup,

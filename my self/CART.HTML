@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>My Cart – LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"DM Sans","Segoe UI",Roboto,Arial;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw;min-height:100vh}
+
+    @keyframes fadeUp   {from{opacity:0;transform:translateY(30px)}  to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown {from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse    {0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float    {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes droplet  {0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+    @keyframes slideIn  {from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)}}
+
+    /* ── TOP BAR ── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+
+    /* ── NAVBAR ── */
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after{width:80%}
+    .main-nav .nav-link:hover{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i{color:#fff}
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;flex-shrink:0}
+    .hamburger-btn:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;animation:fadeDown .3s ease;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%}
+    .mobile-menu.open{display:flex!important}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+    .mobile-nav-link i{width:20px;text-align:center;opacity:.85}
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb-wrap{background:#fff;padding:13px 20px;border-bottom:1px solid #f0e5f5}
+    .breadcrumb{margin:0;font-size:13px}
+    .breadcrumb-item a{color:var(--purple);text-decoration:none;font-weight:600}
+    .breadcrumb-item.active{color:#999;font-weight:500}
+    .breadcrumb-item+.breadcrumb-item::before{color:#d0c0d0}
+
+    /* ── PAGE TITLE ── */
+    .page-title-strip{background:linear-gradient(135deg,var(--purple) 0%,var(--light) 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+    .page-title-strip::before{content:'📚';font-size:130px;position:absolute;right:-10px;top:50%;transform:translateY(-50%);opacity:.07;user-select:none;pointer-events:none}
+    .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s}
+    .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;animation:fadeUp 1s}
+
+    /* ── CART WRAP ── */
+    .cart-wrap{max-width:1280px;margin:0 auto;padding:36px 20px 60px;animation:fadeUp .9s}
+
+    /* topbar */
+    .cart-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .cart-count-pill{background:#fff;border-radius:50px;padding:9px 22px;font-size:13px;font-weight:700;color:var(--purple);box-shadow:0 3px 12px rgba(111,43,103,.12);border:1.5px solid #f0e5f5;display:flex;align-items:center;gap:8px}
+    .btn-empty{background:#fff;border:2px solid #ffcdd2;color:#c62828;border-radius:50px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;font-family:inherit;display:flex;align-items:center;gap:7px}
+    .btn-empty:hover{background:#ffebee;transform:scale(1.04)}
+
+    /* ── CART TABLE ── */
+    .cart-card{background:#fff;border-radius:22px;box-shadow:0 8px 28px rgba(111,43,103,.10);border:2px solid #f0e5f5;overflow:hidden;width:100%}
+    .cart-table{width:100%;border-collapse:collapse;table-layout:fixed}
+    .cart-table colgroup col.col-num    {width:52px}
+    .cart-table colgroup col.col-product{width:auto}
+    .cart-table colgroup col.col-price  {width:140px}
+    .cart-table colgroup col.col-qty    {width:120px}
+    .cart-table colgroup col.col-total  {width:130px}
+    .cart-table colgroup col.col-action {width:160px}
+
+    /* HEADER ROW */
+    .cart-table thead tr{background:linear-gradient(135deg,var(--purple),var(--light))}
+    .cart-table thead th{color:#fff;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.9px;padding:15px 14px;text-align:center;white-space:nowrap}
+    .cart-table thead th.th-product{text-align:left;padding-left:16px}
+
+    /* BODY ROWS */
+    .cart-table tbody tr{border-bottom:1px solid #f5eef5;transition:background .25s;animation:slideIn .5s ease both}
+    .cart-table tbody tr:last-child{border-bottom:none}
+    .cart-table tbody tr:hover{background:#fdf8fe}
+    .cart-table tbody td{padding:20px 14px;vertical-align:middle;text-align:center}
+    .cart-table tbody td.td-product{text-align:left;padding-left:16px}
+
+    /* # cell */
+    .item-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#f0e5f5,#e4d2e4);color:var(--purple);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+
+    /* product cell */
+    .item-product{display:flex;align-items:center;gap:14px}
+    .item-thumb{width:66px;height:88px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 14px rgba(111,43,103,.18);transition:transform .35s}
+    .cart-table tbody tr:hover .item-thumb{transform:scale(1.06) rotate(1.5deg)}
+    .item-title{font-weight:700;font-size:14px;color:#222;line-height:1.35;margin-bottom:4px}
+    .item-author{font-size:12px;color:var(--purple);font-weight:600;margin-bottom:5px}
+    .item-format{background:#f0e5f5;color:var(--purple);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block}
+
+    /* price cell */
+    .price-old{text-decoration:line-through;color:#bbb;font-size:11px;margin-bottom:2px}
+    .price-new{color:var(--purple);font-weight:800;font-size:16px}
+    .price-badge{background:linear-gradient(135deg,#ff6b6b,#ee0979);color:#fff;font-size:10px;font-weight:800;border-radius:20px;padding:2px 8px;display:inline-block;margin-top:4px}
+
+    /* ── QTY CONTROLS (WORKING) ── */
+    .qty-ctrl{display:inline-flex;align-items:center;border:2px solid #e0d0e0;border-radius:50px;overflow:hidden;background:#fff}
+    .qty-btn{width:34px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--purple);background:none;border:none;cursor:pointer;transition:background .2s;user-select:none;font-family:inherit}
+    .qty-btn:hover:not(:disabled){background:#f0e5f5}
+    .qty-btn:disabled{color:#ccc;cursor:not-allowed}
+    .qty-num{width:34px;text-align:center;font-weight:800;font-size:15px;color:#333}
+
+    /* total cell */
+    .total-val{font-weight:800;font-size:16px;color:#333}
+
+    /* actions cell */
+    .action-cell{display:flex;flex-direction:column;align-items:center;gap:9px}
+    .btn-wish{background:#fff;border:2px solid var(--purple);color:var(--purple);border-radius:50px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;width:100%;justify-content:center}
+    .btn-wish:hover{background:#fdf0fd;transform:scale(1.04)}
+    .btn-wish.wishlisted{background:var(--purple);color:#fff}
+    /* Remove button */
+.btn-del{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:2px solid #e3e3e3;
+  color:#9b9b9b;
+  background:#f7f7f7;
+  padding:8px 16px;
+  border-radius:30px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .3s;
+}
+
+.btn-del:hover{
+  background:#ececec;
+  color:#555;
+}
+
+.action-cell{
+  display:flex;
+  gap:12px;
+  margin-top:10px;
+}
+    /* ── SUMMARY ── */
+    .summary-card{background:#fff;border-radius:22px;box-shadow:0 8px 28px rgba(111,43,103,.12);border:2px solid #f0e5f5;padding:28px 24px;position:sticky;top:16px}
+    .summary-head{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;color:var(--purple);margin-bottom:20px;padding-bottom:14px;border-bottom:2px dashed #edd8ed;display:flex;align-items:center;gap:8px}
+    .offer-strip{background:linear-gradient(135deg,#fff9e6,#fff3cd);border:1.5px dashed #f5c200;border-radius:12px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:#7a5500;font-weight:600;display:flex;align-items:center;gap:7px}
+    .s-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;border-bottom:1px solid #f7f0f7}
+    .s-row:last-of-type{border-bottom:none}
+    .s-row .lbl{font-weight:600;color:#555}
+    .s-row .val{font-weight:700;color:#333}
+    .s-row.saving .val{color:#2e7d32}
+    .s-row.free .val{color:#2e7d32;font-weight:800}
+    .s-row.total-row{margin-top:14px;padding-top:16px;border-top:2px solid #f0e5f5}
+    .s-row.total-row .lbl{font-size:16px;font-weight:800;color:#222}
+    .s-row.total-row .val{font-size:22px;font-weight:800;color:var(--purple)}
+    .coupon-row{display:flex;gap:8px;margin:18px 0}
+    .coupon-inp{flex:1;border:2px solid #e8d5e8;border-radius:50px;padding:10px 16px;font-size:13px;outline:none;transition:border-color .3s;font-family:inherit;background:#fff}
+    .coupon-inp:focus{border-color:var(--purple)}
+    .coupon-apply{background:var(--purple);color:#fff;border:none;border-radius:50px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap;font-family:inherit}
+    .coupon-apply:hover{background:var(--light);transform:scale(1.05)}
+    .btn-checkout{width:100%;background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:50px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;box-shadow:0 6px 22px rgba(111,43,103,.35);margin-top:16px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;animation:droplet 3s infinite}
+    .btn-checkout:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(111,43,103,.45)}
+    .btn-shop{width:100%;background:#fff;color:var(--purple);border:2px solid var(--purple);border-radius:50px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;margin-top:10px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;animation:droplet 3s infinite 1.5s}
+    .btn-shop:hover{background:#f8f0f8;transform:translateY(-2px)}
+    .secure-note{text-align:center;margin-top:14px;font-size:12px;color:#aaa;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px}
+    .secure-note i{color:#4caf50}
+    .savings-banner{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:12px;padding:12px 16px;margin-top:16px;font-size:12px;color:#2e7d32;font-weight:700;text-align:center;border:1.5px solid #a5d6a7}
+
+    /* ── FOOTER ── */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      .cart-table,.cart-table thead,.cart-table tbody,.cart-table thead tr,.cart-table tbody tr,.cart-table tbody td,.cart-table thead th{display:block;width:100%}
+      .cart-table thead tr{display:none}
+      .cart-table tbody tr{background:#fff;border-radius:16px;margin-bottom:14px;padding:16px;border:1.5px solid #f0e5f5;position:relative;box-shadow:0 4px 14px rgba(111,43,103,.08)}
+      .cart-table tbody td{text-align:left;padding:6px 0;border:none;display:flex;align-items:center;gap:10px}
+      .cart-table tbody td::before{content:attr(data-label);font-weight:700;font-size:12px;color:#aaa;text-transform:uppercase;letter-spacing:.6px;min-width:70px;flex-shrink:0}
+      .cart-table tbody td.td-product::before{content:''}
+      .cart-table tbody td.td-product{padding-bottom:14px;border-bottom:1px solid #f5eef5;margin-bottom:6px}
+      .item-num{position:absolute;top:16px;right:16px}
+      .action-cell{flex-direction:row;flex-wrap:wrap}
+      .btn-wish,.btn-del{width:auto}
+    }
+
+
+    /* Quantity container */
+.qty-display{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  border:2px solid #e3d4e6;
+  border-radius:40px;
+  padding:6px 16px;
+  background:#fff;
+  width:110px;
+}
+
+/* + and - buttons */
+.qty-display button{
+  background:none;
+  border:none;
+  font-size:20px;
+  font-weight:700;
+  color:#7a6d7a;
+  cursor:pointer;
+  transition:all .2s;
+}
+
+/* hover */
+.qty-display button:hover{
+  color:#6f2b67;
+  transform:scale(1.1);
+}
+
+/* quantity number */
+.qty-display span{
+  font-size:16px;
+  font-weight:700;
+  color:#222;
+  min-width:20px;
+  text-align:center;
+}
+
+
+/* Wishlist button */
+.btn-wish{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:2px solid #6f2b67;
+  color:#6f2b67;
+  background:#fff;
+  padding:8px 16px;
+  border-radius:30px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .3s;
+}
+
+/* icon */
+.btn-wish i{
+  font-size:15px;
+}
+
+/* hover */
+.btn-wish:hover{
+  background:#6f2b67;
+  color:#fff;
+}
+    @media(max-width:768px){.main-nav{display:none}.page-title-strip h2{font-size:1.5rem}}
+    @media(max-width:390px){.brand .txt{font-size:16px}.logo-circle{width:48px;height:48px}.book-logo{width:26px}.navbar-container{padding:0 10px}}
+  </style>
+</head>
+<body>
+
+  <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+  <header class="navbar-area">
+    <div class="navbar-container">
+      <div class="row align-items-center g-0">
+        <div class="col-6 d-flex align-items-center gap-3">
+          <a class="brand" href="/">
+            <div class="logo-circle">
+              <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+              <div class="logo-text">LitHeaven</div>
+              <div class="tagline">Your Literary Escape</div>
+            </div>
+            <div class="txt">LitHeaven</div>
+          </a>
+          <nav class="main-nav d-none d-lg-flex">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/shop">Shop</a>
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/contact">Contact</a>
+          </nav>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+          <div class="header-icons">
+            <div class="icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></div>
+            <a class="icon-btn position-relative" href="/cart" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge" id="cartBadge">3</div>
+            </a>
+            <div class="dropdown">
+              <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-user"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end p-2">
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+                <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+              </ul>
+            </div>
+            <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu d-lg-none">
+    <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+    <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+  </div>
+
+  <div class="breadcrumb-wrap">
+    <nav><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+      <li class="breadcrumb-item active">My Cart</li>
+    </ol></nav>
+  </div>
+
+  <div class="page-title-strip">
+    <h2>🛒 My Shopping Cart</h2>
+    <p>Review your selected books and proceed to checkout</p>
+  </div>
+
+  <!-- ═══ CART BODY ═══ -->
+  <div class="cart-wrap">
+
+    <div class="cart-topbar">
+      <div class="cart-count-pill">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span id="topbarCount">3 items in cart</span>
+      </div>
+      <button class="btn-empty" onclick="confirmEmptyCart()">
+        <i class="fa-regular fa-trash-can"></i> Empty Cart
+      </button>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- ══ LEFT: TABLE ══ -->
+      <div class="col-lg-8">
+        <div class="cart-card">
+          <table class="cart-table">
+            <colgroup>
+              <col class="col-num">
+              <col class="col-product">
+              <col class="col-price">
+              <col class="col-qty">
+              <col class="col-total">
+              <col class="col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th class="th-product">Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cartBody">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ RIGHT: SUMMARY ══ -->
+      <div class="col-lg-4">
+        <div class="summary-card">
+
+          <div class="offer-strip">🏷️ Use code <strong style="margin:0 4px">NEW1</strong> for extra 10% off!</div>
+
+          <div class="summary-head"><i class="fa-solid fa-receipt"></i> Price Details</div>
+
+          <div class="s-row">
+            <span class="lbl" id="summaryItemLbl">Price (3 items)</span>
+            <span class="val" id="summaryMRP">₹9,098</span>
+          </div>
+          <div class="s-row saving">
+            <span class="lbl">You Save</span>
+            <span class="val" id="summarySavings">− ₹3,482</span>
+          </div>
+          <div class="s-row free">
+            <span class="lbl">Delivery</span>
+            <span class="val">FREE 🎉</span>
+          </div>
+          <div class="s-row saving">
+            <span class="lbl">Coupon Discount</span>
+            <span class="val" id="couponAmt">₹0</span>
+          </div>
+
+          <div class="coupon-row">
+            <input type="text" id="couponInp" class="coupon-inp" placeholder="Enter coupon code…">
+            <button class="coupon-apply" onclick="applyCoupon()">Apply</button>
+          </div>
+
+          <div class="s-row total-row">
+            <span class="lbl">Total Amount</span>
+            <span class="val">₹<span id="finalAmt">5,616</span></span>
+          </div>
+
+          <div class="savings-banner" id="savingsBanner">🎉 You're saving ₹3,482 on this order!</div>
+
+          <button class="btn-checkout" onclick="window.location.href='/checkout'">
+            <i class="fa-solid fa-lock"></i> Proceed To Checkout
+          </button>
+          <button class="btn-shop" onclick="window.location.href='/shop'">
+            <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+          </button>
+          <div class="secure-note"><i class="fa-solid fa-shield-halved"></i> 100% Secure Checkout</div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5>Get In Touch</h5>
+          <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+          <p><small>support@litheaven.com</small></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop Books</a></li>
+            <li><a href="/about">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h5>LitHeaven</h5>
+          <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+        </div>
+      </div>
+      <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    /* ═══════════════════════════════════════════
+       CART DATA
+    ═══════════════════════════════════════════ */
+    const cartItems = [
+      {
+        id: 1,
+        title: 'Shadowhunters Short Story Paperback Collection (Boxed Set)',
+        author: 'Kelly Link',
+        format: 'Paperback',
+        img: 'https://covers.openlibrary.org/b/id/8739161-M.jpg',
+        mrp: 4005,
+        price: 2723,
+        qty: 1
+      },
+      {
+        id: 2,
+        title: "Dr. Seuss's Second Beginner Book Boxed Set Collection",
+        author: 'Dr. Seuss',
+        format: 'Hardcover',
+        img: 'https://covers.openlibrary.org/b/id/8406786-M.jpg',
+        mrp: 4444,
+        price: 2445,
+        qty: 1
+      },
+      {
+        id: 3,
+        title: 'The Best of Rabindranath Tagore: Nobel Prize Winner',
+        author: 'Rabindranath Tagore',
+        format: 'Paperback',
+        img: 'https://covers.openlibrary.org/b/id/8091016-M.jpg',
+        mrp: 649,
+        price: 448,
+        qty: 1
+      }
+    ];
+
+    let couponApplied = false;
+
+    /* ── helpers ── */
+    function fmt(n) {
+      return '₹' + n.toLocaleString('en-IN');
+    }
+    function discPct(item) {
+      return Math.round(((item.mrp - item.price) / item.mrp) * 100);
+    }
+
+    /* ═══════════════════════════════════════════
+       RENDER TABLE ROWS
+    ═══════════════════════════════════════════ */
+    function renderCart() {
+      const tbody = document.getElementById('cartBody');
+      tbody.innerHTML = '';
+
+      cartItems.forEach((item, index) => {
+        const rowTotal = item.price * item.qty;
+        const tr = document.createElement('tr');
+        tr.id = 'row-' + item.id;
+        tr.style.animationDelay = (index * 0.1 + 0.1) + 's';
+
+        tr.innerHTML = `
+          <td data-label="#">
+            <div class="item-num">${index + 1}</div>
+          </td>
+          <td class="td-product" data-label="">
+            <div class="item-product">
+              <img src="${item.img}" class="item-thumb" alt="Book">
+              <div>
+                <div class="item-title">${item.title}</div>
+                <div class="item-author"><i class="fa-solid fa-pen-nib me-1" style="font-size:10px"></i>By: ${item.author}</div>
+                <span class="item-format">${item.format}</span>
+              </div>
+            </div>
+          </td>
+          <td data-label="Price">
+            <div class="price-old">${fmt(item.mrp)}</div>
+            <div class="price-new">${fmt(item.price)}</div>
+            <div class="price-badge">${discPct(item)}% OFF</div>
+          </td>
+          <td data-label="Qty">
+            <div class="qty-ctrl">
+              <button type="button" class="qty-btn" onclick="changeQty(${item.id}, -1)" ${item.qty <= 1 ? 'disabled' : ''}>−</button>
+              <span class="qty-num">${item.qty}</span>
+              <button type="button" class="qty-btn" onclick="changeQty(${item.id}, 1)" ${item.qty >= 10 ? 'disabled' : ''}>+</button>
+            </div>
+          </td>
+          <td data-label="Total">
+            <div class="total-val">${fmt(rowTotal)}</div>
+          </td>
+          <td data-label="Actions">
+            <div class="action-cell">
+              <button class="btn-wish" onclick="toggleWish(this)">
+                <i class="fa-regular fa-heart"></i> Wishlist
+              </button>
+              <button class="btn-del" onclick="removeItem(${item.id})">
+                <i class="fa-regular fa-trash-can"></i> Remove
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updateSummary();
+    }
+
+    /* ═══════════════════════════════════════════
+       CHANGE QUANTITY  ← NEW WORKING FUNCTION
+    ═══════════════════════════════════════════ */
+    function changeQty(id, delta) {
+      const item = cartItems.find(x => x.id === id);
+      if (!item) return;
+      const newQty = item.qty + delta;
+      if (newQty < 1 || newQty > 10) return;
+      item.qty = newQty;
+      renderCart();
+      // re-apply coupon if it was on
+      if (couponApplied) applyStoredCoupon();
+    }
+
+    /* ═══════════════════════════════════════════
+       UPDATE SUMMARY PANEL
+    ═══════════════════════════════════════════ */
+    function updateSummary() {
+      const totalQty   = cartItems.reduce((s, x) => s + x.qty, 0);
+      const totalMRP   = cartItems.reduce((s, x) => s + (x.mrp   * x.qty), 0);
+      const totalPrice = cartItems.reduce((s, x) => s + (x.price * x.qty), 0);
+      const saved      = totalMRP - totalPrice;
+
+      document.getElementById('topbarCount').textContent    = totalQty + ' item' + (totalQty !== 1 ? 's' : '') + ' in cart';
+      document.getElementById('cartBadge').textContent      = totalQty;
+      document.getElementById('summaryItemLbl').textContent = 'Price (' + totalQty + ' item' + (totalQty !== 1 ? 's' : '') + ')';
+      document.getElementById('summaryMRP').textContent     = fmt(totalMRP);
+      document.getElementById('summarySavings').textContent = '− ' + fmt(saved);
+      document.getElementById('savingsBanner').textContent  = '🎉 You\'re saving ' + fmt(saved) + ' on this order!';
+
+      // recalc final with coupon
+      const couponDisc = couponApplied ? Math.round(totalPrice * 0.10) : 0;
+      document.getElementById('couponAmt').textContent = couponApplied ? '− ' + fmt(couponDisc) : '₹0';
+      document.getElementById('finalAmt').textContent  = (totalPrice - couponDisc).toLocaleString('en-IN');
+    }
+
+    /* ═══════════════════════════════════════════
+       COUPON
+    ═══════════════════════════════════════════ */
+    function applyCoupon() {
+      const code = document.getElementById('couponInp').value.trim().toUpperCase();
+      if (code === 'NEW1') {
+        couponApplied = true;
+        updateSummary();
+        Swal.fire({ title:'🎉 Coupon Applied!', text:'10% extra discount added.', icon:'success', timer:2000, showConfirmButton:false, background:'linear-gradient(135deg,#f6eef6,#efe3f0)' });
+      } else if (!code) {
+        Swal.fire({ title:'Enter a Code', icon:'info', confirmButtonColor:'#6f2b67', background:'linear-gradient(135deg,#f6eef6,#efe3f0)' });
+      } else {
+        Swal.fire({ title:'Invalid Code', text:'Try NEW1 for 10% off!', icon:'error', confirmButtonColor:'#6f2b67', background:'linear-gradient(135deg,#f6eef6,#efe3f0)' });
+      }
+    }
+
+    function applyStoredCoupon() {
+      couponApplied = true;
+      updateSummary();
+    }
+
+    /* ═══════════════════════════════════════════
+       WISHLIST TOGGLE
+    ═══════════════════════════════════════════ */
+    function toggleWish(btn) {
+      const on = btn.classList.toggle('wishlisted');
+      btn.innerHTML = on
+        ? '<i class="fa-solid fa-heart"></i> Wishlisted'
+        : '<i class="fa-regular fa-heart"></i> Wishlist';
+    }
+
+    /* ═══════════════════════════════════════════
+       REMOVE ITEM
+    ═══════════════════════════════════════════ */
+    function removeItem(id) {
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:800'>Remove this book?</span>",
+        text: "This item will be removed from your cart.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '🗑️ Yes, Remove',
+        cancelButtonText: 'Keep It',
+        confirmButtonColor: '#6f2b67',
+        cancelButtonColor: '#d6c3d3',
+        background: 'linear-gradient(135deg,#f6eef6,#efe3f0)',
+      }).then(r => {
+        if (r.isConfirmed) {
+          const el = document.getElementById('row-' + id);
+          if (!el) return;
+          el.style.transition = 'all .4s ease';
+          el.style.opacity = '0';
+          el.style.transform = 'translateX(30px)';
+          setTimeout(() => {
+            const idx = cartItems.findIndex(x => x.id === id);
+            if (idx > -1) cartItems.splice(idx, 1);
+            renderCart();
+          }, 420);
+        }
+      });
+    }
+
+    /* ═══════════════════════════════════════════
+       EMPTY CART
+    ═══════════════════════════════════════════ */
+    function confirmEmptyCart() {
+      Swal.fire({
+        title: "<span style='color:#c62828;font-weight:800'>Empty entire cart?</span>",
+        text: "All books will be removed.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '🗑️ Empty All',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#e53935',
+        cancelButtonColor: '#6f2b67',
+        background: 'linear-gradient(135deg,#f6eef6,#efe3f0)',
+      }).then(r => {
+        if (r.isConfirmed) {
+          cartItems.length = 0;
+          renderCart();
+          Swal.fire({ title:'Cart Cleared!', icon:'success', timer:1800, showConfirmButton:false, background:'linear-gradient(135deg,#f6eef6,#efe3f0)' });
+        }
+      });
+    }
+
+    /* ═══════════════════════════════════════════
+       MOBILE MENU
+    ═══════════════════════════════════════════ */
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle?.addEventListener('click', function () {
+      mobileMenu.classList.toggle('open');
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle?.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+      });
+    });
+    document.addEventListener('click', function(e) {
+      if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        const icon = menuToggle.querySelector('i');
+        if (icon) { icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+      }
+    });
+
+    /* ── LOGOUT ── */
+    document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html: `<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+               <p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+        showCancelButton: true,
+        confirmButtonText: "🚪 Logout",
+        cancelButtonText: "Stay Here",
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#d6c3d3",
+        reverseButtons: true,
+        background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+      }).then(r => { if (r.isConfirmed) window.location.href = "/logout"; });
+    });
+
+    /* ── INIT ── */
+    renderCart();
+  </script>
+</body>
+</html>

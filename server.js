@@ -7,6 +7,7 @@ const connectDB = require('./config/db.js')
 const userRouter=require('./routes/user/userRouter.js')
 const adminRouter = require('./routes/admin/adminRouter')
 const passport=require('./config/passport.js')
+const MongoStore = require("connect-mongo")
 
 
 connectDB()
@@ -18,17 +19,33 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(express.static("public"))
 
+// app.use(session({
+//     secret:process.env.SESSION_SECRET,
+//     resave:false,
+//     saveUninitialized:false,
+//     cookie:{
+//         maxAge:1000*60*60*24,
+//         httpOnly: true,
+//         secure: false
+//     },
+//     rolling: true
+// }))
+
 app.use(session({
-    secret:process.env.SESSION_SECRET,
-    resave:false,
-    saveUninitialized:false,
-    cookie:{
-        maxAge:1000*60*60*24,
-        httpOnly: true,
-        secure: false
-    },
-    rolling: true
+  secret: "mysecret",
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24,
+     httpOnly: true,
+    secure: false
+  }
 }))
+
+
 
 app.use(passport.initialize());
 app.use(passport.session());

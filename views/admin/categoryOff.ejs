@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Offers - LitHeaven</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
+    html,body{max-width:100%;overflow-y:auto;scroll-behavior:smooth;}
+
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
+    .sidebar::-webkit-scrollbar{width:5px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+    .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
+    .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
+    .menu-item i{width:20px;font-size:16px;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    .submenu{max-height:0;overflow:hidden;transition:0.3s;}
+    .submenu.show{max-height:200px;}
+    .submenu a{padding:10px 20px 10px 52px;color:#6f2b67;text-decoration:none;display:block;font-size:13px;transition:0.3s;}
+    .submenu a:hover{background:rgba(111,43,103,0.05);color:#5a2252;}
+    .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
+    .logout-btn:hover{background:#5a2252;}
+    .error{color:red;font-size:12px;margin-top:4px;}
+
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:auto;min-height:100vh;}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;}
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
+    .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+    .add-btn{background:#6f2b67;color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:0.3s;white-space:nowrap;}
+    .add-btn:hover{background:#5a2252;transform:translateY(-1px);box-shadow:0 4px 15px rgba(111,43,103,0.4);}
+
+    .filter-row{display:flex;gap:15px;align-items:center;margin-bottom:20px;flex-wrap:wrap;justify-content:space-between;}
+    .filter-left{display:flex;gap:15px;flex-wrap:wrap;align-items:center;}
+    .filter-select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:8px;padding:8px 15px;color:#6f2b67;font-size:13px;outline:none;cursor:pointer;}
+
+    .table-card{max-width:100%;background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;overflow:hidden;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
+    .table-search-wrapper{display:flex;align-items:center;gap:8px;background:rgba(111,43,103,.1);border:1px solid #6f2b67;border-radius:20px;padding:6px 14px;}
+    .table-search-wrapper i{color:#6f2b67;font-size:14px;}
+    .table-search{border:none;outline:none;background:transparent;width:220px;font-size:13px;color:#6f2b67;}
+    .table-search::placeholder{color:rgba(111,43,103,0.5);}
+    .table-wrapper{width:100%;overflow-x:auto;}
+    .table-wrapper::-webkit-scrollbar{display:none;}
+
+    .offers-table{width:100%;border-collapse:collapse;table-layout:auto;}
+    .offers-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
+    .offers-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .offers-table tr:hover{background:rgba(111,43,103,0.05);}
+    .offers-table td,.offers-table th{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+    /* Status badges — date-driven */
+    .badge{padding:5px 12px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;text-align:center;}
+    .badge-active  {background:rgba(40,167,69,0.15);color:#28a745;}
+    .badge-expired {background:rgba(220,53,69,0.15);color:#dc3545;}
+    .badge-upcoming{background:rgba(255,193,7,0.15);color:#856404;}
+    .badge-unlisted{background:rgba(108,117,125,0.15);color:#6c757d;}
+
+    /* List/Unlist toggle */
+    .toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .toggle-label{font-size:10px;font-weight:700;letter-spacing:.5px;}
+    .toggle-label.listed  {color:#28a745;}
+    .toggle-label.unlisted{color:#dc3545;}
+
+    .toggle-switch{position:relative;display:inline-block;width:46px;height:24px;cursor:pointer;}
+    .toggle-switch input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;border-radius:24px;background:#ccc;transition:.3s;}
+    .toggle-slider:before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+    .toggle-switch input:checked + .toggle-slider{background:#28a745;}
+    .toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}
+    .toggle-switch input:not(:checked) + .toggle-slider{background:#dc3545;}
+
+    /* Action icons */
+    .action-wrap{display:flex;align-items:center;gap:6px;}
+    .icon-btn{background:transparent;border:none;cursor:pointer;font-size:17px;transition:0.3s;padding:4px 5px;border-radius:6px;}
+    .icon-btn.edit  {color:#6f2b67;}
+    .icon-btn.edit:hover {color:#5a2252;background:rgba(111,43,103,0.1);transform:scale(1.15);}
+    .icon-btn.delete{color:#dc3545;}
+    .icon-btn.delete:hover{color:#b02a37;background:rgba(220,53,69,0.1);transform:scale(1.15);}
+
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
+    .page-btn:disabled{opacity:0.4;cursor:default;}
+
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
+
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+    .modal.show{display:flex;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:0;max-width:600px;width:100%;max-height:90vh;overflow:auto;position:relative;margin:auto;}
+    .modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+    .modal-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .close-modal{background:rgba(255,255,255,0.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
+    .modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px);}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+    .form-group{display:flex;flex-direction:column;gap:7px;}
+    .form-group.full{grid-column:1/-1;}
+    .form-label{font-size:13px;font-weight:600;color:#6f2b67;}
+    .form-input{background:rgba(111,43,103,0.07);border:1px solid #6f2b67;border-radius:8px;padding:10px 14px;font-size:13px;color:#333;outline:none;transition:0.2s;}
+    .form-input:focus{border-color:#5a2252;box-shadow:0 0 0 3px rgba(111,43,103,0.15);}
+    .form-input::placeholder{color:rgba(111,43,103,0.4);}
+
+    .modal-footer{padding:18px 25px;border-top:1px solid rgba(111,43,103,0.2);display:flex;justify-content:flex-end;gap:12px;}
+    .btn-cancel{background:transparent;border:1px solid #6f2b67;color:#6f2b67;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;}
+    .btn-cancel:hover{background:rgba(111,43,103,0.07);}
+    .btn-save{background:#6f2b67;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;}
+    .btn-save:hover{background:#5a2252;}
+
+    .empty-row td{text-align:center;padding:40px 10px;color:#8e4a86;font-size:14px;font-weight:600;}
+    .swal2-container{z-index:9999 !important;}
+
+    @media(max-width:768px){
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;gap:10px;text-align:center;}
+      .offers-table{min-width:800px;}
+      .filter-row{flex-direction:column;align-items:flex-start;gap:10px;}
+      .filter-left{width:100%;}
+      .add-btn{width:auto;align-self:flex-start;}
+      .form-grid{grid-template-columns:1fr;}
+      .form-group.full{grid-column:1;}
+    }
+    @media(max-width:480px){
+      .main-content{padding:10px;}
+      .offers-table{min-width:750px;}
+      .offers-table th,.offers-table td{padding:8px 5px;font-size:11px;}
+    }
+  </style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+  <div style="text-align:center;padding:10px 0;">
+    <div class="logo-circle">
+      <i class="fas fa-book-open book-logo"></i>
+      <div class="logo-text">LitHeaven</div>
+    </div>
+    <div class="tagline">Admin Portal</div>
+  </div>
+  <a href="/admin/dashboard" class="menu-item"><div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div></a>
+  <a href="/admin/order" class="menu-item"><div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div></a>
+  <div class="menu-item" onclick="toggleMenu('catMenu')">
+    <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu" id="catMenu">
+    <a href="/admin/category">Category</a>
+    <a href="/admin/sub-category">Sub-Category</a>
+  </div>
+  <a href="/admin/product" class="menu-item"><div class="menu-left"><i class="fas fa-box"></i> Products</div></a>
+  <a href="/admin/coupon" class="menu-item"><div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div></a>
+  <div class="menu-item" onclick="toggleMenu('offerMenu')">
+    <div class="menu-left"><i class="fas fa-tags"></i> Offers</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu show" id="offerMenu">
+    <a href="/admin/categoryOff" style="background:rgba(111,43,103,0.1);font-weight:600;">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
+  </div>
+  <a href="/admin/author" class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
+  <a href="/admin/admin" class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+  <a href="/admin/customer" class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
+  <a href="/admin/salesReport" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
+  <div class="menu-item" onclick="toggleMenu('settMenu')">
+    <div class="menu-left"><i class="fas fa-cog"></i> Settings</div>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="submenu" id="settMenu">
+    <a href="/admin/appSetting">App Settings</a>
+    <a href="/admin/language">Language</a>
+  </div>
+  <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+</div>
+
+<div class="main-content">
+  <div class="top-bar">
+    <h1 class="page-title">Category Offers</h1>
+    <div class="user-info">
+      <div>
+        <div style="font-weight:600;font-size:14px;">App Admin</div>
+        <div style="font-size:11px;opacity:0.7;">support@litheaven.com</div>
+      </div>
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <div class="filter-left">
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+        <option value="upcoming">Upcoming</option>
+      </select>
+    </div>
+    <button class="add-btn" onclick="openAddModal()">
+      <i class="fas fa-plus"></i> Add Offer
+    </button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title">Category Offer List</div>
+      <div class="table-search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" class="table-search" placeholder="Search offers..." id="searchInput" />
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="offers-table">
+        <thead>
+          <tr>
+            <th>S.NO</th>
+            <th>CATEGORY</th>
+            <th>OFFER NAME</th>
+            <th>DISCOUNT %</th>
+            <th>START DATE</th>
+            <th>END DATE</th>
+            <th>STATUS</th>
+            <th>LIST / UNLIST</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="offerTbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="offerModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-tags"></i> <span id="modalTitle">Add Category Offer</span></h2>
+      <button class="close-modal" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">Category *</label>
+          <select class="form-input" id="categorySelect">
+            <option value="">-- Select Category --</option>
+          </select>
+          <span class="error" id="categoryError"></span>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Offer Name *</label>
+          <input type="text" class="form-input" id="offerName" placeholder="e.g. Summer Sale">
+          <span class="error" id="nameError"></span>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Discount Percentage *</label>
+          <input type="number" class="form-input" id="discountPct" placeholder="e.g. 15" min="1" max="100">
+          <span class="error" id="discountError"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Start Date *</label>
+          <input type="date" class="form-input" id="startDate">
+          <span class="error" id="startError"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Date *</label>
+          <input type="date" class="form-input" id="endDate">
+          <span class="error" id="endError"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveOffer()"><i class="fas fa-save"></i> Save Offer</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+let currentPage = 1;
+let search = "";
+let status = "all";
+
+async function fetchCategoryOff(){
+    let res=await fetch(`/admin/category-off?page=${currentPage}&search=${search}&status=${status}`);
+    let data=await res.json()
+
+    renderCategoryOff(data)
+    renderCoupons(data.coupons);
+   if(data.coupons.length === 0){
+    document.getElementById('pagination').innerHTML = '';
+  }else{
+    renderPagination(data.totalPages);
+  }
+}
+
+function renderCategoryOff(result){
+    const tbody=document.getElementById("offerTbody")
+    tbody.innerHTML=""
+
+    if(!result.data || result.data.length===0){
+        tbody.innerHTML=`
+        <tr class="empty-row">
+            <td colspan="9">No Category Offers Found</td>
+        </tr>
+        `;
+        return 
+    }
+
+    result.data.forEach((offer,index) => {
+        tbody.innerHTML+=`
+        <tr>
+            <td>${index+1}</td>
+            <td>${offer.category?.name || '-'}</td>
+            <td>${offer.offerName}</td>
+            <td>${offer.discount}%</td>
+            <td>${new Date(offer.startDate).toLocaleDateString('en-GB')}</td>
+            <td>${new Date(offer.endDate).toLocaleDateString('en-GB')}</td>
+            <td>${getStatus(offer)}</td>
+            <td>
+              <label class="toggle-switch">
+                 <input type="checkbox" 
+                 ${offer.isListed ? "checked" : ""} 
+                 onchange="toggleStatus('${offer._id}')">
+                <span class="toggle-slider"></span>
+              </label>
+            </td>  
+            <td> 
+              <button class="icon-btn edit" onclick="openEditModal('${offer._id}')">
+              <i class="fas fa-edit"></i>
+              </button>
+
+              <button class="icon-btn delete" onclick="deleteOffer('${offer._id}')">
+               <i class="fas fa-trash"></i>
+              </button>
+            </td>
+            
+        </tr>
+        
+        `
+        
+    });
+
+
+}
+
+function getStatus(offer){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const start = new Date(offer.startDate);
+  start.setHours(0,0,0,0)
+  const end = new Date(offer.endDate);
+  end.setHours(0,0,0,0)
+
+  if(!offer.isListed) return "Unlisted";
+  if(today < start) return "Upcoming";
+  if(today > end) return "Expired";
+  return "Active";
+}
+
+document.addEventListener('DOMContentLoaded', fetchCategoryOff);
+
+function openAddModal(){
+    document.getElementById("modalTitle").innerHTML="Add Category Offer";
+
+    document.getElementById("offerName").value="";
+    document.getElementById("discountPct").value="";
+    document.getElementById("startDate").value="";
+    document.getElementById("endDate").value="";
+    document.getElementById("categorySelect").value=""
+
+    loadCategories();
+
+    document.getElementById("offerModal").classList.add("show")
+
+}
+
+function closeModal(){
+    document.getElementById("offerModal").classList.remove("show")
+    editingId = null;
+
+}
+
+document.getElementById('offerModal').addEventListener('click', function(e){
+  if(e.target === this){
+    closeModal();
+  }
+});
+
+document.getElementById('categorySelect').addEventListener('input', () => {
+  document.getElementById('categoryError').innerText = '';
+});
+
+document.getElementById('offerName').addEventListener('input', () => {
+  document.getElementById('nameError').innerText = '';
+});
+
+
+const discount = document.getElementById('discountPct');
+
+discount.addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  document.getElementById('discountError').innerText = '';
+});
+
+document.getElementById('startDate').addEventListener('input', () => {
+  document.getElementById('startError').innerText = '';
+});
+
+document.getElementById('endDate').addEventListener('input', () => {
+  document.getElementById('endError').innerText = '';
+});
+
+
+async function saveOffer(){
+    let isValid=true
+
+   const category=document.getElementById("categorySelect").value
+   const offerName=document.getElementById("offerName").value
+   const discount=document.getElementById("discountPct").value
+   const startDate=document.getElementById("startDate").value
+   const endDate=document.getElementById("endDate").value
+
+     if(!category){
+    document.getElementById('categoryError').innerText = "Select a category";
+    isValid = false;
+  }
+    if(!offerName){
+    document.getElementById('nameError').innerText = "Offer name is Required";
+    isValid = false;
+  }
+
+    if(!discount){
+    document.getElementById('discountError').innerText = "discount % is Required";
+    isValid = false;
+  }
+
+    if(!startDate){
+    document.getElementById('startError').innerText = "Start date is Required";
+    isValid = false;
+  }
+
+    if(!endDate){
+    document.getElementById('endError').innerText = "End date is Required";
+    isValid = false;
+  }
+
+  const today = new Date();
+today.setHours(0,0,0,0);
+
+const start = new Date(startDate);
+const end = new Date(endDate);
+
+if(start < today){
+  document.getElementById('startError').innerText = "Start date cannot be in the past";
+  isValid = false;
+}
+
+
+if(end < today){
+  document.getElementById('endError').innerText = "End date cannot be in the past";
+  isValid = false;
+}
+
+if(start.getTime() === end.getTime()){
+  document.getElementById('endError').innerText = "End date must be greater than start date";
+  isValid = false;
+}
+
+
+if(end < start){
+  document.getElementById('endError').innerText = "End date must be after start date";
+  isValid = false;
+}
+
+  if(!isValid) return;
+
+  const data={
+    category,
+    offerName,
+    discount,
+    startDate,
+    endDate
+  }
+
+  let url='/admin/categoryOff'
+  let method='POST'
+
+  if(editingId){
+    url=`/admin/categoryOff/${editingId}`
+    method='PUT'
+  }
+  const res=await fetch(url,{
+    method,
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify(data)
+  })
+
+  let result=await res.json()
+
+  if(!result.success){
+      Swal.fire({
+        toast:true,
+        position:'top-end',
+        icon:'error',
+        title: result.message, 
+        timer:2000,
+        showConfirmButton:false
+      });
+      return;
+    }
+
+     Swal.fire({
+      toast:true,
+      position:'top-end',
+      icon:'success',
+      title: result.message,
+      timer:2000,
+      showConfirmButton:false,
+      zIndex: 9999
+    });
+
+    document.getElementById("offerModal").classList.remove("show")
+
+    fetchCategoryOff()
+
+}
+
+async function loadCategories(){
+  let res=await fetch('/admin/parent-categories')
+  let result=await res.json()
+
+  const select =document.getElementById("categorySelect")
+
+  select.innerHTML = `<option value="">-- Select Category --</option>`;
+
+  result.categories.forEach(cat => {
+    select.innerHTML += `
+      <option value="${cat._id}">${cat.name}</option>
+    `;
+  });
+}
+
+
+async function toggleStatus(id){
+  const confirm = await Swal.fire({
+    title: "Change Offer Visibility?",
+    text: "Do you want to show or hide this offer?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#28a745",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Yes",
+    cancelButtonText: "Cancel",
+    width: "350px",           
+    padding: "1.5em",
+  });
+
+  if(!confirm.isConfirmed) return;
+
+  const res = await fetch(`/admin/offer-toggle/${id}`, {
+    method: "PATCH"
+  });
+
+  const result = await res.json();
+
+  if(result.success){
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: result.isListed ? "Offer Listed" : "Offer Unlisted",
+      timer: 2000,
+      showConfirmButton: false
+    });
+
+    fetchCategoryOff();
+  }
+}
+
+let editingId = null; 
+
+async function openEditModal(id){
+  editingId = id;
+
+  const res = await fetch('/admin/category-off');
+  const result = await res.json();
+
+  const offer = result.data.find(o => o._id === id);
+
+  if(!offer) return;
+
+  document.getElementById("modalTitle").innerText = "Edit Category Offer";
+
+  document.getElementById("offerName").value = offer.offerName;
+  document.getElementById("discountPct").value = offer.discount;
+  document.getElementById("startDate").value = offer.startDate.split('T')[0];
+  document.getElementById("endDate").value = offer.endDate.split('T')[0];
+
+  await loadCategories();
+  document.getElementById("categorySelect").value = offer.category?._id;
+
+  document.getElementById("offerModal").classList.add("show");
+}
+
+async function deleteOffer(id){
+  const confirm = await Swal.fire({
+    title: "Delete Offer?",
+    text: "This action cannot be undone!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#dc3545",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Delete",
+    cancelButtonText: "Cancel",
+    width: "350px",
+    padding: "1.5em"
+  });
+
+  if(!confirm.isConfirmed) return;
+
+  const res = await fetch(`/admin/categoryOff/${id}`, {
+    method: "DELETE"
+  });
+
+  const result = await res.json();
+
+  if(result.success){
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: result.message,
+      timer: 2000,
+      showConfirmButton: false
+    });
+
+    fetchCategoryOff(); // refresh table
+  }else{
+    Swal.fire({
+      icon: 'error',
+      title: result.message || "Delete failed"
+    });
+  }
+}
+
+
+function renderPagination(totalPages){
+  const container = document.getElementById('pagination');
+  container.innerHTML = '';
+
+
+  container.innerHTML += `
+    <button class="page-btn"
+      onclick="changePage(${currentPage - 1})"
+      ${currentPage === 1 ? 'disabled' : ''}>
+      ←
+    </button>
+  `;
+
+  
+  for(let i = 1; i <= totalPages; i++){
+    container.innerHTML += `
+      <button class="page-btn ${i === currentPage ? 'active' : ''}"
+        onclick="changePage(${i})">
+        ${i}
+      </button>
+    `;
+  }
+
+  
+  container.innerHTML += `
+    <button class="page-btn"
+      onclick="changePage(${currentPage + 1})"
+      ${currentPage === totalPages ? 'disabled' : ''}>
+      →
+    </button>
+  `;
+}
+
+
+function changePage(page){
+  currentPage = page;
+  fetchCategoryOff();
+}
+
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+  search = e.target.value;
+  currentPage = 1;
+  fetchCategoryOff();
+});
+
+document.getElementById("statusFilter").addEventListener("change", (e)=>{
+  status = e.target.value;
+  currentPage = 1;
+  fetchCategoryOff();
+});
+
+  function toggleMenu(id) { document.getElementById(id).classList.toggle('show'); }
+
+  document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to logout?')) return;
+    try {
+      const res  = await fetch('/admin/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+      if (res.ok) window.location.href = data.redirect;
+    } catch (err) { console.error(err); }
+  });
+</script>
+</body>
+</html>

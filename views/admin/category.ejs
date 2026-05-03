@@ -3,24 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Category</title>
-  
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Categories - LitHeaven</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  
+  <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet"/>
+
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;width:100%;max-width:100vw;}
+    body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
     
-    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
     .sidebar::-webkit-scrollbar{width:5px;}
     .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
     
-    .logo-circle{position:relative;width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5),inset 0 -3px 10px rgba(0,0,0,0.2);padding:15px;}
-    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;text-shadow:0 3px 8px rgba(0,0,0,0.3);}
-    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;text-align:center;letter-spacing:1.5px;text-shadow:0 2px 6px rgba(0,0,0,0.4);line-height:1.2;}
-    .tagline{font-size:9px;font-weight:600;color:#6f2b67;opacity:0.7;text-align:center;margin-top:8px;letter-spacing:0.5px;}
-    
+    .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
+    .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
+    .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
+    .tagline{font-size:9px;font-weight:600;color:#6f2b67;text-align:center;margin-top:8px;}
+
     .menu-item{padding:12px 20px;color:#6f2b67;text-decoration:none;display:flex;align-items:center;justify-content:space-between;transition:0.3s;border-left:3px solid transparent;font-size:14px;font-weight:500;cursor:pointer;}
     .menu-item:hover,.menu-item.active{background:rgba(111,43,103,0.1);border-left-color:#6f2b67;color:#5a2252;}
     .menu-item i{width:20px;font-size:16px;}
@@ -34,249 +33,111 @@
     .logout-btn{margin:20px;background:#6f2b67;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;text-transform:uppercase;cursor:pointer;width:calc(100% - 40px);}
     .logout-btn:hover{background:#5a2252;}
     
-    .main-content{margin-left:250px;padding:20px;width:calc(100% - 250px);max-width:100%;overflow-x:hidden;}
-    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;width:100%;max-width:100%;box-sizing:border-box;}
-    .search-box{flex:1;max-width:500px;background:rgba(111,43,103,0.1);border:1px solid #6f2b67;border-radius:25px;padding:8px 20px;display:flex;gap:10px;}
-    .search-box input{flex:1;background:transparent;border:none;outline:none;color:#6f2b67;}
-    .search-box input::placeholder{color:rgba(111,43,103,0.5);}
+    .main-content{margin-left:250px;padding:20px;transition:0.3s;width:calc(100% - 250px);}
     
-    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;}
+    .top-bar{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;}
+    
+    .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
     .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
     
-    .breadcrumb{color:#6f2b67;font-size:13px;margin-bottom:15px;}
-    .page-title{font-size:24px;font-weight:700;margin-bottom:20px;}
+    .page-title{font-size:28px;font-weight:700;color:#6f2b67;}
     
-    .add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 25px;border-radius:25px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(111,43,103,0.4);}
-    .add-btn:hover{background:#5a2252;}
+    .filter-row{display:flex;gap:10px;margin-bottom:15px;align-items:center;font-size:13px;flex-wrap:wrap;}
+    .filter-row select{background:rgba(111,43,103,0.1);border:1px solid #6f2b67;color:#6f2b67;padding:8px 15px;border-radius:8px;outline:none;cursor:pointer;font-size:13px;}
     
-    .filter-bar{display:flex;gap:10px;margin-bottom:15px;align-items:center;justify-content:space-between;width:100%;max-width:100%;box-sizing:border-box;flex-wrap:wrap;}
-    .filter-left{display:flex;gap:10px;align-items:center;font-size:13px;}
-    .filter-right{display:flex;gap:10px;align-items:center;font-size:13px;}
-    .filter-bar select{background:transparent;border:1px solid #6f2b67;color:#6f2b67;padding:6px 12px;border-radius:6px;}
+    .add-btn{background:#6f2b67;color:#fff;border:none;padding:10px 25px;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(111,43,103,0.4);display:flex;align-items:center;gap:8px;font-size:13px;}
+    .add-btn:hover{background:#8a3a7f;}
     
-    .table-container{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;max-width:100%;box-sizing:border-box;}
-    .table-wrapper{overflow-x:auto;width:100%;max-width:100%;}
-    table{width:100%;border-collapse:collapse;min-width:800px;}
-    th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#5a2252;border-bottom:2px solid #6f2b67;white-space:nowrap;}
-    td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);vertical-align:middle;}
-    tr:hover{background:rgba(111,43,103,0.05);}
+    .table-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
+    .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;}
+    .table-title{font-size:18px;font-weight:700;color:#6f2b67;}
+
+    .table-wrapper{height:480px;overflow-y:auto;overflow-x:auto;}
+    .categories-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+    .categories-table th{background:rgba(111,43,103,0.1);padding:12px;text-align:left;font-size:12px;font-weight:700;color:#6f2b67;border-bottom:2px solid #6f2b67;}
+    .categories-table td{padding:12px;font-size:13px;border-bottom:1px solid rgba(111,43,103,0.2);color:rgba(111,43,103,0.8);}
+    .categories-table td{vertical-align:middle;}
+    .categories-table tr:hover{background:rgba(111,43,103,0.05);}
+    .categories-table td:nth-child(3){white-space:normal;word-break:break-word;overflow-wrap:anywhere;line-height:1.5;}
+
+    /* LIST/UNLIST toggle button styles */
+    .list-toggle-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:120px;height:32px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.3s ease;}
+    .list-toggle-btn.listed{background:rgba(40,167,69,0.15);color:#28a745;border:1.5px solid rgba(40,167,69,0.4);}
+    .list-toggle-btn.listed:hover{background:rgba(40,167,69,0.25);transform:scale(1.03);}
+    .list-toggle-btn.unlisted{background:rgba(220,53,69,0.15);color:#dc3545;border:1.5px solid rgba(220,53,69,0.4);}
+    .list-toggle-btn.unlisted:hover{background:rgba(220,53,69,0.25);transform:scale(1.03);}
+
+    .action-cell{text-align:center;}
+    .icon-btn{background:transparent;border:none;cursor:pointer;color:#6f2b67;font-size:18px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;line-height:1;transition:0.3s;}
+    .icon-btn:hover{color:#5a2252;transform:scale(1.15);}
     
-    .status-active{background:rgba(220,53,69,0.2);color:#dc3545;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block;min-width:70px;text-align:center;}
-    .action-btn{background:transparent;border:none;color:#007bff;font-size:16px;cursor:pointer;margin:0 5px;}
-    .action-btn.delete{color:#dc3545;}
+    .swal2-container{z-index:3000 !important;}
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;transition:0.3s;}
+    .page-btn:hover,.page-btn.active{background:#6f2b67;color:#fff;}
     
-    .featured-icon{color:#5a2252;font-size:18px;}
+    .mobile-toggle{display:none;position:fixed;top:20px;left:20px;z-index:1100;width:40px;height:40px;background:#6f2b67;border:none;border-radius:8px;color:#fff;font-size:20px;}
     
-    .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px;}
-    .page-btn{width:32px;height:32px;border:1px solid #6f2b67;background:transparent;color:#6f2b67;border-radius:6px;cursor:pointer;font-size:13px;}
-    .page-btn.active{background:#6f2b67;color:#fff;}
-    
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+    /* Modal Styles */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(111,43,103,0.15);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
     .modal.show{display:flex;}
-    .modal-content{background:linear-gradient(145deg,#ffffff,#f5f3ff);border:2px solid #6f2b67;border-radius:15px;width:90%;max-width:400px;padding:20px;position:relative;box-shadow:0 20px 60px rgba(111,43,103,0.3);}
-    .modal-title{font-size:16px;font-weight:700;color:#6f2b67;margin-bottom:18px;text-align:center;text-shadow:0 0 10px rgba(111,43,103,0.3);}
-    .form-group{margin-bottom:12px;}
-    .form-group label{display:block;color:#6f2b67;font-size:11px;margin-bottom:5px;font-weight:600;}
-    .form-group input,.form-group select,.form-group textarea{width:100%;padding:7px 10px;border:1px solid #6f2b67;border-radius:8px;font-size:12px;background:rgba(111,43,103,0.05);color:#6f2b67;transition:0.3s;}
-    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#5a2252;background:rgba(111,43,103,0.1);box-shadow:0 0 15px rgba(111,43,103,0.2);}
-    .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(111,43,103,0.4);}
-    .form-group textarea{resize:vertical;min-height:50px;}
+    .modal-content{background:#fff;border:2px solid #6f2b67;border-radius:15px;padding:0;max-width:500px;width:100%;max-height:90vh;overflow:hidden;position:relative;margin:auto;box-shadow:0 10px 40px rgba(111,43,103,0.3);}
     
-    .image-upload{width:80px;height:80px;border:2px dashed #6f2b67;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:0.3s;background:rgba(111,43,103,0.05);}
-    .image-upload:hover{border-color:#5a2252;background:rgba(111,43,103,0.1);}
-    .image-upload i{font-size:20px;color:#6f2b67;margin-bottom:5px;}
-    .image-upload-text{font-size:9px;color:rgba(111,43,103,0.7);}
-    .upload-input{display:none;}
+    .modal-header{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;padding:20px 25px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+    .modal-header h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .close-modal{background:rgba(255,255,255,0.2);border:none;width:35px;height:35px;border-radius:50%;color:#fff;cursor:pointer;font-size:20px;transition:0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg);}
     
-    .checkbox-group{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-    .checkbox-group input{width:16px;height:16px;cursor:pointer;}
-    .checkbox-group label{margin:0;font-size:12px;font-weight:normal;cursor:pointer;}
+    .modal-body{padding:25px;overflow-y:auto;max-height:calc(90vh - 80px);}
+    .modal-body::-webkit-scrollbar{width:8px;}
+    .modal-body::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:10px;}
     
-    .date-time{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-    .save-btn{background:linear-gradient(135deg,#6f2b67,#5a2252);color:#fff;border:none;padding:9px;border-radius:20px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;box-shadow:0 8px 25px rgba(111,43,103,0.4);text-transform:uppercase;letter-spacing:1px;transition:0.3s;font-size:12px;}
-    .save-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(111,43,103,0.6);}
-    .close-modal{position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:22px;color:#6f2b67;cursor:pointer;transition:0.3s;}
-    .close-modal:hover{color:#5a2252;transform:rotate(90deg);}
+    .form-group{margin-bottom:20px;}
+    .form-label{display:block;font-size:13px;font-weight:600;color:#6f2b67;margin-bottom:8px;}
+    .form-input{width:100%;padding:10px 15px;border:1px solid #6f2b67;border-radius:8px;background:rgba(111,43,103,0.05);color:#333;font-size:14px;outline:none;transition:0.3s;}
+    .form-input:focus{border-color:#8e4a86;background:#fff;box-shadow:0 0 0 3px rgba(111,43,103,0.1);}
+    .form-textarea{resize:vertical;min-height:100px;}
     
-    .profile-modal .modal-content{max-width:400px;text-align:center;background:linear-gradient(145deg,#ffffff,#f5f3ff);border:2px solid #6f2b67;box-shadow:0 20px 60px rgba(111,43,103,0.3);}
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:20px;border-top:1px solid rgba(111,43,103,0.2);}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:0.3s;border:none;}
+    .btn-cancel{background:rgba(111,43,103,0.1);color:#6f2b67;}
+    .btn-cancel:hover{background:rgba(111,43,103,0.2);}
+    .btn-save{background:#6f2b67;color:#fff;}
+    .btn-save:hover{background:#5a2252;}
+    
+    /* Profile Modal */
+    .profile-modal .modal-content{max-width:400px;text-align:center;}
     .profile-avatar{width:120px;height:120px;border-radius:50%;background:rgba(111,43,103,0.1);margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid #6f2b67;box-shadow:0 0 20px rgba(111,43,103,0.3);}
     .profile-avatar i{font-size:50px;color:#6f2b67;}
-    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:linear-gradient(135deg,#6f2b67,#5a2252);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #ffffff;box-shadow:0 4px 15px rgba(111,43,103,0.5);}
+    .camera-icon{position:absolute;bottom:5px;right:5px;width:35px;height:35px;background:linear-gradient(135deg,#6f2b67,#5a2252);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff;box-shadow:0 4px 15px rgba(111,43,103,0.5);}
     .camera-icon i{font-size:16px;color:#fff;}
     .profile-input{display:none;}
     .profile-name{font-size:20px;font-weight:700;color:#6f2b67;margin-bottom:5px;}
     .profile-email{font-size:14px;color:rgba(111,43,103,0.7);margin-bottom:20px;}
     
     @media(max-width:768px){
-      .sidebar{
-        position:fixed;
-        left:-250px;
-        transition:left 0.3s ease;
-        z-index:9999;
-      }
-      .sidebar.show{
-        left:0;
-      }
-      .main-content{
-        margin-left:0;
-        padding:10px;
-        width:100%;
-      }
-      .top-bar{
-        flex-direction:column;
-        gap:10px;
-        padding:12px;
-        width:100%;
-      }
-      .search-box{
-        max-width:100%;
-        width:100%;
-      }
-      .page-header{
-        flex-direction:column;
-        gap:10px;
-        align-items:flex-start;
-        width:100%;
-      }
-      .filter-bar{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:8px;
-        width:100%;
-      }
-      .filter-left,.filter-right{
-        width:100%;
-        flex-wrap:wrap;
-      }
-      .table-container{
-        overflow-x:auto;
-        padding:10px;
-        width:100%;
-      }
-      .table-wrapper{
-        width:100%;
-        overflow-x:auto;
-      }
-      table{
-        min-width:700px;
-      }
-      th{
-        white-space:nowrap;
-        padding:10px 8px;
-        font-size:11px;
-      }
-      td{
-        padding:10px 8px;
-        font-size:12px;
-      }
-      .modal-content{
-        width:95%;
-        max-width:95%;
-        padding:20px;
-      }
-      .page-title{
-        font-size:20px;
-      }
-      .menu-toggle{
-        display:block;
-        position:fixed;
-        top:15px;
-        left:10px;
-        z-index:10000;
-        background:#6f2b67;
-        color:#fff;
-        border:none;
-        width:40px;
-        height:40px;
-        border-radius:8px;
-        font-size:18px;
-        cursor:pointer;
-        box-shadow:0 4px 15px rgba(111,43,103,0.4);
-      }
-      .overlay{
-        display:none;
-        position:fixed;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        background:rgba(0,0,0,0.5);
-        z-index:9998;
-      }
-      .overlay.show{
-        display:block;
-      }
+      .mobile-toggle{display:flex;align-items:center;justify-content:center;}
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      .main-content{margin-left:0;width:100%;padding:15px;}
+      .top-bar{flex-direction:column;align-items:flex-start;}
+      .categories-table{min-width:700px;}
+      .modal-body{padding:15px;}
     }
     
     @media(max-width:480px){
-      .user-info div:first-child{
-        display:none;
-      }
-      .pagination{
-        flex-wrap:wrap;
-        gap:5px;
-      }
-      .page-btn{
-        width:28px;
-        height:28px;
-        font-size:11px;
-      }
-      .add-btn{
-        padding:8px 20px;
-        font-size:13px;
-      }
-      .logo-circle{
-        width:100px;
-        height:100px;
-      }
-      .book-logo{
-        font-size:28px;
-        margin-bottom:5px;
-      }
-      .logo-text{
-        font-size:12px;
-      }
-      th,td{
-        font-size:11px;
-        padding:8px 6px;
-      }
-      .page-title{
-        font-size:18px;
-      }
-      .status-active{
-        font-size:10px;
-        padding:3px 8px;
-      }
-      .main-content{
-        padding:8px;
-      }
-    }
-    
-    @media(min-width:344px) and (max-width:400px){
-      .table-container{
-        padding:8px;
-      }
-      th,td{
-        font-size:10px;
-        padding:8px 5px;
-      }
-      .add-btn{
-        font-size:11px;
-        padding:6px 15px;
-      }
-    }
-    
-    .menu-toggle{
-      display:none;
+      .main-content{padding:10px;}
+      .user-info div:first-child{display:none;}
+      .categories-table{min-width:600px;}
+      .categories-table th,.categories-table td{padding:8px 5px;font-size:11px;}
     }
   </style>
 </head>
 <body>
-  <button class="menu-toggle" onclick="toggleSidebar()">
+
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
     <i class="fas fa-bars"></i>
   </button>
-  
-  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
   <div class="sidebar" id="sidebar">
     <div style="text-align:center;padding:10px 0;">
@@ -287,26 +148,26 @@
       <div class="tagline">Admin Portal</div>
     </div>
     
-    <a href="#" class="menu-item">
+    <a href="/admin/dashboard" class="menu-item active">
       <div class="menu-left"><i class="fas fa-chart-line"></i> Dashboard</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/order" class="menu-item">
       <div class="menu-left"><i class="fas fa-shopping-cart"></i> Orders</div>
     </a>
     
-    <div class="menu-item active" onclick="toggleMenu('catMenu')">
+    <div class="menu-item" onclick="toggleMenu('catMenu')">
       <div class="menu-left"><i class="fas fa-layer-group"></i> Categories</div>
       <i class="fas fa-chevron-down"></i>
     </div>
-    <div class="submenu show" id="catMenu">
-      <a href="#">Category</a>
-      <a href="#">Sub-Category</a>
+    <div class="submenu" id="catMenu">
+      <a href="/admin/category">Category</a>
+      <a href="/admin/sub-category">Sub-Category</a>
     </div>
     
-    <a href="#" class="menu-item">
+    <a href="/admin/product" class="menu-item">
       <div class="menu-left"><i class="fas fa-box"></i> Products</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/coupon" class="menu-item">
       <div class="menu-left"><i class="fas fa-ticket-alt"></i> Coupons</div>
     </a>
     
@@ -315,23 +176,24 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="offerMenu">
-      <a href="#">Category Offers</a>
-      <a href="#">Sub-Category Offers</a>
+     <a href="/admin/categoryOff">Category Offers</a>
+    <a href="/admin/subCategoryOff">Sub-Category Offers</a>
+    <a href="/admin/productOff">Product Offers</a>
     </div>
     
-    <a href="#" class="menu-item">
+    <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/admin" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
     </a>
-    <a href="#" class="menu-item">
+    <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
-    <a href="#" class="menu-item">
+    <!-- <a href="/admin/rating" class="menu-item">
       <div class="menu-left"><i class="fas fa-star"></i> Ratings</div>
-    </a>
-    <a href="#" class="menu-item">
+    </a> -->
+    <a href="/admin/salesReport" class="menu-item">
       <div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div>
     </a>
     
@@ -340,19 +202,16 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="#">App Settings</a>
-      <a href="#">User Settings</a>
+      <a href="/admin/appSetting">App Settings</a>
+      <a href="/admin/language">Language</a>
     </div>
     
-    <button class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+    <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
   </div>
 
   <div class="main-content">
     <div class="top-bar">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search anything...">
-      </div>
+      <h1 class="page-title">Categories</h1>
       <div class="user-info" onclick="openProfile()">
         <div>
           <div style="font-weight:600;font-size:14px;">App Admin</div>
@@ -362,187 +221,384 @@
       </div>
     </div>
     
-    <div class="breadcrumb">Dashboard/categories</div>
-    
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <h1 class="page-title">Category</h1>
-      <button class="add-btn" onclick="openModal()">
+    <!-- REMOVED: statusFilter select. Only limitSelect remains -->
+    <div class="filter-row">
+      <select class="filter-select" id="limitSelect">
+        <option value="7">Show 7 entries</option>
+        <option value="15">Show 15 entries</option>
+        <option value="25">Show 25 entries</option>
+      </select>
+      <button class="add-btn" onclick="openAddModal()" style="margin-left:auto;">
         <i class="fas fa-plus"></i> ADD CATEGORY
       </button>
     </div>
     
-    <div class="filter-bar">
-      <div class="filter-left">
-        <span>Show</span>
-        <select><option>9</option><option>25</option><option>50</option></select>
-        <span>entries</span>
-      </div>
-      <div class="filter-right">
-        <span>Filter By :</span>
-        <select><option>All Status</option><option>Active</option><option>Inactive</option></select>
-      </div>
-    </div>
-    
-    <div class="table-container">
-      <div class="table-wrapper">
-        <table>
-        <thead>
-          <tr>
-            <th>CATEGORY</th>
-            <th>DESCRIPTION</th>
-            <th>FEATURED</th>
-            <th>DATE</th>
-            <th>STATUS</th>
-            <th>ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Fiction</td>
-            <td>Stories that come from imagination</td>
-            <td><i class="fas fa-heart featured-icon toggle-heart" onclick="toggleFeatured(this)"></i></i></td>
-            <td>28 Mar 2025 at 2:00pm</td>
-            <td><span class="status-active">Active</span></td>
-            <td>
-              <button class="action-btn" onclick="openModal('Fiction')"><i class="fas fa-edit"></i></button>
-             
-            </td>
-          </tr>
-          <tr>
-            <td>Non-Fiction</td>
-            <td>Books based on real people and real events</td>
-            <td><i class="fas fa-heart featured-icon toggle-heart" onclick="toggleFeatured(this)"></i></i></td>
-            <td>28 Mar 2025 at 2:00pm</td>
-            <td><span class="status-active">Active</span></td>
-            <td>
-              <button class="action-btn" onclick="openModal('Non-Fiction')"><i class="fas fa-edit"></i></button>
-             
-            </td>
-          </tr>
-          <tr>
-            <td>Children's Book</td>
-            <td>Books written especially for kids</td>
-            <td><i class="fas fa-heart featured-icon toggle-heart" onclick="toggleFeatured(this)"></i></i></td>
-            <td>28 Mar 2025 at 2:00pm</td>
-            <td><span class="status-active">Active</span></td>
-            <td>
-              <button class="action-btn" onclick="openModal('Children Book')"><i class="fas fa-edit"></i></button>
-              
-            </td>
-          </tr>
-          <tr>
-            <td>Special Interest</td>
-            <td>Books written for readers who like specific hobby or topic</td>
-            <td><i class="fas fa-heart featured-icon toggle-heart" onclick="toggleFeatured(this)"></i></td>
-            <td>28 Mar 2025 at 2:00pm</td>
-            <td><span class="status-active">Active</span></td>
-            <td>
-              <button class="action-btn" onclick="openModal('Special Interest')"><i class="fas fa-edit"></i></button>
-              
-            </td>
-          </tr>
-          <tr>
-            <td>Academic/Economics</td>
-            <td>Books used for studying or learning</td>
-            <td><i class="fas fa-heart featured-icon toggle-heart" onclick="toggleFeatured(this)"></i></td>
-            <td>28 Mar 2025 at 2:50pm</td>
-            <td><span class="status-active">Active</span></td>
-            <td>
-              <button class="action-btn" onclick="openModal('Academic')"><i class="fas fa-edit"></i></button>
-            
-            </td>
-          </tr>
-        </tbody>
-        </table>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Category List</div>
+        <div style="position:relative;flex:1;max-width:350px;margin-left:auto;">
+          <i class="fas fa-search" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#6f2b67;font-size:14px;"></i>
+          <input type="text" id="searchInput" class="form-input" placeholder="Search categories..." style="padding-left:40px;width:100%;border-radius:20px;">
+        </div>
       </div>
       
-      <div class="pagination">
-        <span style="font-size:13px;margin-right:10px;">1-10 of 46</span>
-        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <button class="page-btn">...</button>
-        <button class="page-btn">5</button>
-        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+      <div class="table-wrapper">
+        <table class="categories-table">
+          <thead>
+            <tr>
+              <th style="width:8%;">S.NO</th>
+              <th style="width:25%;">CATEGORY</th>
+              <th style="width:35%;">DESCRIPTION</th>
+              <th style="width:14%;">DATE</th>
+              <th style="width:18%;">LIST/UNLIST</th>
+              <th style="width:10%;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="categoryTableBody"></tbody>
+        </table>
       </div>
+
+      <div class="pagination" id="pagination"></div>
     </div>
   </div>
 
-  <!-- CATEGORY MODAL -->
-  <div class="modal" id="modal">
+  <!-- ADD/EDIT CATEGORY MODAL — Status option REMOVED -->
+  <div class="modal" id="editModal">
     <div class="modal-content">
-      <button class="close-modal" onclick="closeModal()">×</button>
-      <h2 class="modal-title" id="modalTitle">Add Category</h2>
-      <form>
-        <div class="form-group">
-          <label>Category Name</label>
-          <input type="text" id="catName" placeholder="Category Name">
-        </div>
-        <div class="form-group">
-          <label>Category description</label>
-          <textarea placeholder="Category description"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select><option>Active</option><option>Inactive</option></select>
-        </div>
-        <div class="form-group">
-          <label style="margin-bottom:8px;">Upload Image</label>
-          <div class="image-upload" onclick="document.getElementById('imageInput').click()">
-            <i class="fas fa-image"></i>
-            <div class="image-upload-text">Choose Image</div>
+      <div class="modal-header">
+        <h2><i class="fas fa-layer-group"></i> <span id="modalTitle">Add Category</span></h2>
+        <button class="close-modal" onclick="closeModal('editModal')">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="categoryForm">
+          <div class="form-group">
+            <label class="form-label">Category Name *</label>
+            <input type="text" class="form-input" id="categoryName" placeholder="Enter category name">
+            <small id="nameError" style="color:#dc3545;font-size:12px;"></small>
           </div>
-          <input type="file" id="imageInput" class="upload-input" accept="image/*">
-        </div>
-        <div class="checkbox-group">
-          <input type="checkbox" id="featured">
-          <label for="featured">Featured</label>
-        </div>
-        <div class="form-group">
-          <label>Date Added</label>
-          <div class="date-time">
-            <input type="date" value="2020-12-12">
-            <input type="time" value="12:00">
+          
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea class="form-input form-textarea" id="categoryDescription" placeholder="Enter category description"></textarea>
+            <small id="descriptionError" style="color:#dc3545;font-size:12px;"></small>
           </div>
-        </div>
-        <button type="button" class="save-btn" onclick="closeModal()">SAVE CHANGES</button>
-      </form>
+          
+          <!-- STATUS SELECT REMOVED -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+            <button type="submit" class="btn btn-save">Save Category</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- PROFILE MODAL -->
   <div class="modal profile-modal" id="profileModal">
     <div class="modal-content">
-      <button class="close-modal" onclick="closeProfile()">×</button>
-      <div class="profile-avatar">
-        <i class="fas fa-user"></i>
-        <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
-          <i class="fas fa-camera"></i>
-        </div>
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> Profile</h2>
+        <button class="close-modal" onclick="closeProfile()">×</button>
       </div>
-      <input type="file" id="fileInput" class="profile-input" accept="image/*">
-      <div class="profile-name">App Admin</div>
-      <div class="profile-email">support@litheaven.com</div>
-      <button class="save-btn" onclick="closeProfile()">UPDATE PROFILE</button>
+      <div class="modal-body">
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+          <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+        <input type="file" id="fileInput" class="profile-input" accept="image/*">
+        <div class="profile-name">App Admin</div>
+        <div class="profile-email">support@litheaven.com</div>
+        <button class="btn btn-save" style="width:100%;" onclick="closeProfile()">UPDATE PROFILE</button>
+      </div>
     </div>
   </div>
 
+  <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-function toggleMenu(id){document.getElementById(id).classList.toggle('show');}
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('show');
-  document.getElementById('overlay').classList.toggle('show');
+
+    let editingCategoryId = null;
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+
+    function toggleMenu(id) {
+      document.getElementById(id).classList.toggle('show');
+    }
+
+    function openProfile() {
+      document.getElementById('profileModal').classList.add('show');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileModal').classList.remove('show');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    function openAddModal() {
+      editingCategoryId = null;
+      document.getElementById('modalTitle').textContent = 'Add Category';
+      document.getElementById('categoryForm').reset();
+      document.getElementById("nameError").textContent = "";
+      document.getElementById("descriptionError").textContent = "";
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function editCategory(id, name, description) {
+      editingCategoryId = id;
+      document.getElementById('modalTitle').textContent = 'Edit Category';
+      document.getElementById('categoryName').value = decodeURIComponent(name);
+      document.getElementById('categoryDescription').value = decodeURIComponent(description);
+      document.getElementById("nameError").textContent = "";
+      document.getElementById("descriptionError").textContent = "";
+      document.getElementById('editModal').classList.add('show');
+    }
+
+
+    async function toggleCategoryDelete(id, currentStatus) {
+
+  const actionLabel = currentStatus ? "Restore" : "Delete";
+
+  const confirm = await Swal.fire({
+    title: `${actionLabel} this category?`,
+    text: currentStatus 
+      ? "Category will be restored and visible."
+      : "Category will be hidden from users.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#6f2b67',
+    cancelButtonColor: '#aaa',
+    confirmButtonText: `Yes, ${actionLabel}`
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  try {
+
+    const res = await fetch(`/admin/category/toggle-delete/${id}`, {
+      method: "PATCH"
+    });
+
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      Toast.fire({ icon: 'error', title: result.message || 'Failed' });
+      return;
+    }
+
+    Toast.fire({
+      icon: 'success',
+      title: result.message
+    }).then(() => {
+      loadCategories(currentPage);
+    });
+
+  } catch (err) {
+    console.error(err);
+    Toast.fire({ icon: 'error', title: 'Something went wrong' });
+  }
 }
-function openModal(name){
-  document.getElementById('modal').classList.add('show');
-  document.getElementById('modalTitle').textContent=name?'Edit Category':'Add Category';
-  document.getElementById('catName').value=name||'';
-}
-function toggleFeatured(el){el.classList.toggle('fas');el.classList.toggle('far');el.style.color = el.classList.contains('fas') ? '#5a2252' : '#666';}
-function closeModal(){document.getElementById('modal').classList.remove('show');}
-function openProfile(){document.getElementById('profileModal').classList.add('show');}
-function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+    // PAGE LOAD LOGIC
+    const tbody = document.getElementById('categoryTableBody');
+    const pagination = document.getElementById('pagination');
+    const searchInput = document.getElementById('searchInput');
+    const limitSelect = document.getElementById('limitSelect');
+
+    let currentPage = 1;
+    let LIMIT = 7;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategories(1);
+    });
+
+    async function loadCategories(page = 1) {
+      currentPage = page;
+      const query = searchInput.value.trim();
+
+      // Status filter removed — always fetch all
+      const res = await fetch(
+        `/admin/category/search?query=${query}&page=${page}&limit=${LIMIT}`
+      );
+
+      const data = await res.json();
+      tbody.innerHTML = '';
+
+      if (!data.categories || data.categories.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;">No categories found</td>
+          </tr>`;
+        pagination.innerHTML = '';
+        return;
+      }
+
+      data.categories.forEach((cat, index) => {
+        const isDeleted = cat.isDeleted;
+        tbody.innerHTML += `
+          <tr>
+            <td>${(page - 1) * LIMIT + index + 1}</td>
+            <td><strong>${cat.name}</strong></td>
+            <td>${cat.description}</td>
+            <td>${new Date(cat.createdAt).toLocaleDateString()}</td>
+            <td>
+              <button
+    class="list-toggle-btn ${isDeleted ? 'unlisted' : 'listed'}"
+    onclick="toggleCategoryDelete('${cat._id}', ${cat.isDeleted})">
+    
+    <i class="fas fa-${isDeleted ? 'times-circle' : 'check-circle'}"></i>
+    ${isDeleted ? 'UNLISTED' : 'LISTED'}
+  </button>
+            </td>
+            <td class="action-cell">
+              <button class="icon-btn"
+                onclick="editCategory(
+                  '${cat._id}',
+                  '${encodeURIComponent(cat.name)}',
+                  '${encodeURIComponent(cat.description)}'
+                )">
+                <i class="fas fa-edit"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      renderPagination(data.totalPages, page);
+    }
+
+    function renderPagination(totalPages, page) {
+      pagination.innerHTML = '';
+      pagination.innerHTML += `
+        <button class="page-btn" ${page === 1 ? 'disabled' : ''} onclick="loadCategories(${page - 1})">‹</button>
+      `;
+      for (let i = 1; i <= totalPages; i++) {
+        pagination.innerHTML += `
+          <button class="page-btn ${i === page ? 'active' : ''}" onclick="loadCategories(${i})">${i}</button>
+        `;
+      }
+      pagination.innerHTML += `
+        <button class="page-btn" ${page === totalPages ? 'disabled' : ''} onclick="loadCategories(${page + 1})">›</button>
+      `;
+    }
+
+    limitSelect.addEventListener('change', () => {
+      LIMIT = Number(limitSelect.value);
+      loadCategories(1);
+    });
+
+    document.getElementById("categoryName").addEventListener("input", () => {
+      document.getElementById("nameError").textContent = "";
+    });
+
+    document.getElementById("categoryDescription").addEventListener("input", () => {
+      document.getElementById("descriptionError").textContent = "";
+    });
+
+    document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const nameInput = document.getElementById("categoryName");
+      const descInput = document.getElementById("categoryDescription");
+      const name = nameInput.value.trim();
+      const description = descInput.value.trim();
+      const nameError = document.getElementById("nameError");
+      const descriptionError = document.getElementById("descriptionError");
+
+      nameError.textContent = "";
+      descriptionError.textContent = "";
+
+      let isValid = true;
+      if (!name) { nameError.textContent = "Category name is required"; isValid = false; }
+      if (!description) { descriptionError.textContent = "Description is required"; isValid = false; }
+      if (!isValid) return;
+
+      // No status sent — backend should default to 'publish' for new categories
+      const data = { name, description };
+
+      try {
+        const url = editingCategoryId ? `/admin/category/${editingCategoryId}` : "/admin/category";
+        const method = editingCategoryId ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+          Toast.fire({ icon: 'error', title: result.message || 'Category already exists' });
+          nameInput.focus();
+          return;
+        }
+
+        Toast.fire({
+          icon: 'success',
+          title: editingCategoryId ? 'Category updated successfully' : 'Category added successfully'
+        }).then(() => {
+          closeModal('editModal');
+          loadCategories(currentPage);
+        });
+
+      } catch (err) {
+        console.error(err);
+        Toast.fire({ icon: 'error', title: 'Something went wrong. Try again' });
+      }
+    });
+
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('editModal');
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadCategories(1);
+    });
+
+    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will be logged out from admin panel",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#aaa",
+        confirmButtonText: "Yes, Logout"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch('/admin/logout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if (!res.ok) { Swal.fire("Error", data.message, "error"); return; }
+            Swal.fire({ icon: "success", title: "Logged out", timer: 1200, showConfirmButton: false })
+              .then(() => { window.location.href = data.redirect; });
+          } catch (err) {
+            console.log(err);
+            Swal.fire("Error", "Something went wrong", "error");
+          }
+        }
+      });
+    });
+
   </script>
 </body>
 </html>

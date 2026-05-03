@@ -8,6 +8,14 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+.hamburger-btn-p{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0;}
+.hamburger-btn-p:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+.mobile-menu-p{background:var(--purple);display:none;flex-direction:column;padding:10px 0;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 8px 20px rgba(0,0,0,.2);width:100%;}
+.mobile-menu-p.open{display:flex!important}
+.mobile-nav-link-p{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s;}
+.mobile-nav-link-p:hover{background:rgba(255,255,255,.15);color:#f3dff1;padding-left:32px}
+.mobile-nav-link-p i{width:20px;text-align:center;opacity:.85}
+
 :root{--purple:#6f2b67;--light:#8e4a86}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Segoe UI",Roboto,Arial;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#6f2b67;overflow-x:hidden;max-width:100vw}
@@ -181,6 +189,62 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
   .addresses-header h2{font-size:22px}
   .modal{padding:10px}
 }
+
+/* =====================================================
+   ADDITION 2 — Filter FAB + Overlay + Slide-in Drawer
+   ===================================================== */
+.profile-filter-fab{
+  display:none;
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--purple);color:#fff;
+  border:none;padding:13px 30px;border-radius:50px;
+  font-size:.92rem;font-weight:700;font-family:inherit;
+  cursor:pointer;z-index:1050;
+  align-items:center;gap:9px;
+  box-shadow:0 6px 24px rgba(111,43,103,.45);
+  white-space:nowrap;transition:all .25s;
+}
+.profile-filter-fab:hover{background:var(--light);transform:translateX(-50%) translateY(-2px)}
+
+.profile-filter-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.45);z-index:1060;
+  backdrop-filter:blur(2px);
+}
+.profile-filter-overlay.show{display:block}
+
+.profile-filter-drawer{
+  position:fixed;left:0;top:0;bottom:0;
+  width:280px;max-width:88vw;
+  background:#fff;z-index:1070;
+  overflow-y:auto;
+  transform:translateX(-100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.profile-filter-drawer.open{transform:translateX(0)}
+.profile-filter-drawer::-webkit-scrollbar{width:4px}
+.profile-filter-drawer::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+
+.profile-drawer-header{
+  background:var(--purple);color:#fff;
+  padding:16px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:2;
+}
+.profile-drawer-header h5{margin:0;font-weight:700;font-size:.98rem;display:flex;align-items:center;gap:8px}
+.profile-drawer-close{
+  background:rgba(255,255,255,.2);border:none;color:#fff;
+  width:32px;height:32px;border-radius:50%;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.profile-drawer-close:hover{background:rgba(255,255,255,.35)}
+.profile-drawer-body{padding:16px}
+
+@media(max-width:768px){
+  .profile-filter-fab{display:flex}
+  .main-container{padding-bottom:80px}
+}
 </style>
 </head>
 <body>
@@ -203,16 +267,29 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
         <a class="nav-link" href="/contact">Contact</a>
       </nav>
       <div class="header-icons">
-        <div class="icon-btn"><i class="fa-regular fa-heart"></i></div>
-        <div class="icon-btn">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <div class="icon-badge">2</div>
-        </div>
+          <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div class="icon-badge" id="wishlistBadge">0</div>
+          </a>
+          <a class="icon-btn position-relative" href="/cart" title="Cart">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <div class="icon-badge" id="cartBadge">0</div>
+          </a>
        <a href="/profile" class="icon-btn"><i class="fa-regular fa-user"></i></a>
+       <button class="hamburger-btn-p d-lg-none" id="menuToggleP" aria-label="Toggle menu">
+         <i class="fa-solid fa-bars"></i>
+       </button>
       </div>
     </div>
   </div>
 </header>
+
+<div id="mobileMenuP" class="mobile-menu-p d-lg-none">
+  <a class="mobile-nav-link-p" href="/"><i class="fa-solid fa-house"></i> Home</a>
+  <a class="mobile-nav-link-p" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+  <a class="mobile-nav-link-p" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+  <a class="mobile-nav-link-p" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+</div>
 
 <div class="search-wrap">
   <div class="search-box">
@@ -224,7 +301,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 <div class="main-container">
 
  
-  <aside class="sidebar">
+  <aside class="sidebar d-none d-md-block">
     <ul class="sidebar-nav">
       <li>
         <a href="#" class="sidebar-link">
@@ -247,18 +324,6 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <li>
         <a href="/wallet" class="sidebar-link">
           <i class="fa-solid fa-wallet"></i><span>Wallet</span>
-        </a>
-      </li>
-
-      <li>
-        <a href="/reviews" class="sidebar-link">
-          <i class="fa-solid fa-star"></i><span>My Reviews</span>
-        </a>
-      </li>
-
-      <li>
-        <a href="/coupons" class="sidebar-link">
-          <i class="fa-solid fa-ticket"></i><span>My Coupons</span>
         </a>
       </li>
 
@@ -292,7 +357,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
   </div>
 
   <% if (addresses.length > 0) { %>
-    <button class="btn-add btn-header" onclick="openAddModal()">
+    <button class="btn-add btn-header" style="width:auto;padding:11px 22px;white-space:nowrap;" onclick="openAddModal()">
       <i class="fa-solid fa-plus"></i> Add Address
     </button>
   <% } %>
@@ -478,7 +543,39 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
   <div class="footer-bottom">© 2025 LITHEAVEN. All Rights Reserved.</div>
 </footer>
 
+<!-- ADDED: Filter FAB Button (mobile only) -->
+<button class="profile-filter-fab" id="profileFilterFab" onclick="openProfileFilter()">
+  <i class="fa-solid fa-bars-staggered"></i> My Account
+</button>
+
+<!-- ADDED: Overlay -->
+<div class="profile-filter-overlay" id="profileFilterOverlay" onclick="closeProfileFilter()"></div>
+
+<!-- ADDED: Slide-in Drawer (same sidebar content) -->
+<div class="profile-filter-drawer" id="profileFilterDrawer">
+  <div class="profile-drawer-header">
+    <h5><i class="fa-solid fa-user-circle"></i> My Account</h5>
+    <button class="profile-drawer-close" onclick="closeProfileFilter()">✕</button>
+  </div>
+  <div class="profile-drawer-body">
+    <ul class="sidebar-nav">
+      <li><a href="/order" class="sidebar-link active"><i class="fa-solid fa-box"></i><span>My Orders</span></a></li>
+      <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+      <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
+      <li><a href="/wallet" class="sidebar-link"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
+      
+      <li class="mt-2">
+        <button type="button" id="logoutBtnDrawer" class="sidebar-link logout-btn" style="width:100%">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/common.js"></script>
+
 <script>
 let editIndex=-1;
 let  editAddressId = null;
@@ -812,6 +909,45 @@ window.addEventListener('load', () => {
 });
 
 window.onclick=(e)=>{if(e.target.classList.contains('modal'))closeModal()}
+
+const menuToggleP = document.getElementById('menuToggleP');
+const mobileMenuP = document.getElementById('mobileMenuP');
+menuToggleP?.addEventListener('click', function(){
+  mobileMenuP.classList.toggle('open');
+  const icon = this.querySelector('i');
+  icon.classList.toggle('fa-bars');
+  icon.classList.toggle('fa-xmark');
+});
+document.addEventListener('click', function(e){
+  if(mobileMenuP && menuToggleP &&
+     !mobileMenuP.contains(e.target) &&
+     !menuToggleP.contains(e.target)){
+    mobileMenuP.classList.remove('open');
+    const icon = menuToggleP.querySelector('i');
+    if(icon){ icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark'); }
+  }
+});
+
+/* =====================================================
+   ADDED JS — Filter FAB drawer (profile page)
+   ===================================================== */
+function openProfileFilter(){
+  document.getElementById('profileFilterDrawer').classList.add('open');
+  document.getElementById('profileFilterOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeProfileFilter(){
+  document.getElementById('profileFilterDrawer').classList.remove('open');
+  document.getElementById('profileFilterOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Drawer logout → reuse existing Swal logic
+document.getElementById('logoutBtnDrawer')?.addEventListener('click', function(e){
+  e.preventDefault();
+  closeProfileFilter();
+  document.getElementById('logoutBtn')?.click();
+});
 </script>
 
 </body>

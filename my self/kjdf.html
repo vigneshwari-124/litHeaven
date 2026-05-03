@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>LitHeaven – Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c}
+    *{box-sizing:border-box}
+    body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
+
+    /* ── TOP BAR ── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
+
+    /* ── NAVBAR ── */
+    header.navbar-area{background:var(--purple);color:#fff;padding:12px 0;animation:fadeDown .8s;width:100%}
+    .navbar-container{max-width:100%;padding:0 15px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.05)}
+    .logo-circle{position:relative;width:60px;height:60px;border-radius:50%;border:2px solid #fff;background:0 0;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:35px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:7px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .tagline{position:absolute;bottom:0;font-size:3.5px;font-weight:600;color:#fff;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after,.main-nav .nav-link.active-link::after{width:80%}
+    .main-nav .nav-link:hover,.main-nav .nav-link.active-link{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:16px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none;background:none;border:none;padding:0}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s ease;position:relative}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item:focus{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;outline:none}
+    .dropdown-item i{color:#6f2b67;transition:color .25s ease}
+    .dropdown-item:hover i,.dropdown-item:focus i{color:#fff}
+    #profileMenu:hover,#profileMenu:focus{background:rgba(255,255,255,.15);border-radius:50%;padding:6px}
+
+    /* ══════════════════════════════════════
+       SEARCH BAR  —  matches Image 1 exactly
+       🔍 emoji left · placeholder · ✕ right
+       No purple button. Border highlight only.
+    ══════════════════════════════════════ */
+    .search-wrap{
+      display:flex;justify-content:center;
+      padding:18px 15px;
+      background:#fff;
+      animation:fadeUp 1s;
+      width:100%;
+      border-bottom:1px solid #f0e5f5;
+    }
+    .search-box{
+      width:100%;max-width:600px;
+      background:#fff;
+      border-radius:50px;
+      padding:10px 18px;
+      display:flex;align-items:center;gap:10px;
+      box-shadow:0 3px 14px rgba(111,43,103,.10);
+      border:1.5px solid #d8cfe0;
+      transition:all .3s;
+    }
+    .search-box:focus-within{
+      border-color:#702767;
+      box-shadow:0 5px 20px rgba(111,43,103,.18);
+    }
+    /* 🔍 emoji icon — left */
+    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none}
+    /* text input */
+    .search-box input{
+      flex:1;border:0;background:0 0;outline:0;
+      color:#333;font-size:14.5px;font-family:inherit;
+      min-width:0;
+    }
+    .search-box input::placeholder{color:#aaa;font-size:14px}
+    /* ✕ cancel — right, hidden until text exists */
+    .s-cancel{
+      background:none;border:none;cursor:pointer;
+      color:#aaa;font-size:18px;line-height:1;
+      padding:0;flex-shrink:0;
+      display:none;          /* hidden by default */
+      transition:color .2s;
+    }
+    .s-cancel:hover{color:#555}
+    .s-cancel.show{display:block}   /* JS adds this class */
+
+    /* ── LAYOUT ── */
+    .shop-wrapper{display:flex;min-height:80vh}
+
+    /* ── SIDEBAR ── */
+    .sidebar{width:265px;flex-shrink:0;background:#fff;border-right:1px solid #e8dff0;padding:20px 16px;position:sticky;top:0;height:calc(100vh);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+    .filter-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .filter-hdr h5{font-weight:700;color:var(--purple);margin:0;font-size:.95rem}
+    .clear-all-btn{font-size:.73rem;color:var(--purple);background:none;border:1px solid var(--purple);border-radius:50px;cursor:pointer;font-weight:600;padding:3px 10px;transition:all .2s}
+    .clear-all-btn:hover{background:var(--purple);color:#fff}
+    .active-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:4px}
+    .atag{display:inline-flex;align-items:center;gap:4px;background:#f3e8ff;color:var(--purple);padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
+    .atag button{background:none;border:none;cursor:pointer;color:var(--purple);font-size:.8rem;line-height:1;padding:0 0 0 3px}
+
+    .fsec{border-top:1px solid #ebe3f0;padding:10px 0 2px}
+    .fsec-title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:.82rem;color:#333;padding-bottom:6px;user-select:none}
+    .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa}
+    .fsec-title.open .farr{transform:rotate(180deg)}
+    .fsec-body{display:none;flex-direction:column;gap:1px;padding-bottom:4px}
+    .fsec-body.open{display:flex}
+
+    .cat-parent{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:.81rem;font-weight:600;color:#444;transition:background .15s;user-select:none;margin-bottom:2px}
+    .cat-parent:hover{background:#f3e8ff;color:var(--purple)}
+    .cat-parent .cp-arr{font-size:.58rem;color:#bbb;transition:transform .2s}
+    .cat-parent.open .cp-arr{transform:rotate(90deg);color:var(--purple)}
+    .sub-opts{display:none;flex-direction:column;gap:1px;padding-left:8px;border-left:2px solid #ebe3f0;margin:2px 0 4px 8px}
+    .sub-opts.open{display:flex}
+    .foption{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;cursor:pointer;font-size:.79rem;color:#555;transition:background .15s}
+    .foption:hover{background:#f3e8ff;color:var(--purple)}
+    .foption input[type=checkbox]{accent-color:var(--purple);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+
+    /* ══════════════════════════════════════
+       PRICE SLIDER  —  matches Image 2
+       💵💵 | 0 – ₹3,000
+       purple track + thumb · green Apply btn
+    ══════════════════════════════════════ */
+    .price-slider-wrap{padding:4px 2px 2px}
+    .price-range-labels{
+      display:flex;justify-content:space-between;align-items:center;
+      font-size:.8rem;font-weight:600;color:#555;margin-bottom:10px;
+    }
+    .price-range-labels .money-emoji{font-size:1.1rem;letter-spacing:2px}
+    .price-range-labels .range-val{color:var(--purple);font-weight:700;font-size:.85rem}
+    /* slider track */
+    .price-slider{
+      -webkit-appearance:none;appearance:none;
+      width:100%;height:6px;border-radius:50px;
+      outline:none;cursor:pointer;
+      background:linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%);
+      transition:background .15s;
+    }
+    .price-slider::-webkit-slider-thumb{
+      -webkit-appearance:none;appearance:none;
+      width:20px;height:20px;border-radius:50%;
+      background:var(--purple);cursor:pointer;
+      box-shadow:0 2px 8px rgba(111,43,103,.4);
+      transition:transform .2s;
+    }
+    .price-slider::-webkit-slider-thumb:hover{transform:scale(1.15)}
+    .price-slider::-moz-range-thumb{
+      width:20px;height:20px;border-radius:50%;
+      background:var(--purple);cursor:pointer;border:none;
+      box-shadow:0 2px 8px rgba(111,43,103,.4);
+    }
+    /* green Apply button — full width, rounded pill */
+    .price-apply-btn{
+      width:100%;margin-top:12px;padding:9px;
+      background:#22c55e;color:#fff;border:none;
+      border-radius:50px;cursor:pointer;
+      font-size:.85rem;font-weight:700;letter-spacing:.5px;
+      font-family:inherit;
+      transition:all .2s;
+      box-shadow:0 3px 10px rgba(34,197,94,.3);
+    }
+    .price-apply-btn:hover{background:#16a34a;transform:translateY(-1px)}
+
+    .apply-all-btn{width:100%;margin-top:14px;padding:10px;background:var(--purple);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:700;letter-spacing:.5px;transition:all .2s;box-shadow:0 4px 12px rgba(111,43,103,.2)}
+    .apply-all-btn:hover{background:var(--light);transform:translateY(-1px)}
+
+    /* ── MAIN ── */
+    .main-area{flex:1;padding:22px 20px 40px}
+    .breadcrumb-row{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#aaa;margin-bottom:12px}
+    .breadcrumb-row a{color:#aaa;text-decoration:none;transition:color .2s}
+    .breadcrumb-row a:hover{color:var(--purple)}
+    .breadcrumb-row .cur{color:#555;font-weight:600}
+    .shop-h1{font-size:1.9rem;font-weight:800;color:#1a0a28;margin-bottom:14px}
+
+    /* ── TOOLBAR ── */
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;padding:10px 14px;border-radius:14px;box-shadow:0 4px 16px rgba(111,43,103,.1);margin-bottom:18px;border:1px solid #ebe3f0}
+    .tb-chip{padding:6px 15px;border:1.5px solid #ddd;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all .2s;white-space:nowrap;font-family:inherit}
+    .tb-chip:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
+    .tb-chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .tb-sort{padding:6px 14px;border:1.5px solid #ddd;border-radius:50px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;outline:none;transition:all .2s;min-width:185px}
+    .tb-sort:focus{border-color:var(--light)}
+    .tb-spacer{flex:1}
+    .tb-count{font-size:.8rem;color:#999;white-space:nowrap}
+    .tb-count strong{color:#222;font-weight:700}
+
+    /* ── GRID ── */
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px}
+
+    /* ── BOOK CARD ── */
+    .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s}
+    .bcard:hover{transform:translateY(-6px);box-shadow:0 16px 38px rgba(111,43,103,.2);border-color:var(--purple)}
+    .disc-badge{position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-size:.67rem;font-weight:700;padding:3px 9px;border-radius:50px;z-index:2}
+    .wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
+    .wish-btn:hover{transform:scale(1.2)}
+    .bcard-ph{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+    .bcard-body{padding:12px 13px 13px}
+    .bcard-title{font-size:.79rem;font-weight:700;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#222}
+    .bcard-author{font-size:.71rem;color:#999;margin-bottom:4px}
+    .bcard-stars{color:#f59e0b;font-size:.73rem}
+    .bcard-norev{font-size:.67rem;color:#bbb}
+    .bcard-prices{display:flex;align-items:center;gap:6px;margin-top:5px}
+    .bcard-new{color:var(--purple);font-weight:800;font-size:.88rem}
+    .bcard-old{color:#ccc;text-decoration:line-through;font-size:.72rem}
+    .bcard-add{width:100%;margin-top:8px;padding:7px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+    .bcard-add:hover{background:var(--light)}
+
+    /* ── NO RESULTS ── */
+    .no-res{text-align:center;padding:5rem 2rem;color:#aaa}
+    .no-res .nr-ico{font-size:3rem;margin-bottom:1rem}
+    .no-res h4{font-size:1.1rem;color:#777;font-weight:700}
+
+    /* ── PAGINATION ── */
+    .pg-wrap{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:26px;flex-wrap:wrap}
+    .pg-btn{width:36px;height:36px;border:1.5px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:600;display:flex;align-items:center;justify-content:center;transition:all .2s;color:#666;font-family:inherit}
+    .pg-btn:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
+    .pg-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .pg-btn:disabled{opacity:.3;cursor:default;pointer-events:none}
+    .pg-dots{display:flex;align-items:center;justify-content:center;width:28px;color:#bbb;font-size:.9rem}
+
+    /* ── FOOTER ── */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
+    .site-footer li{margin-bottom:6px}
+
+    @media(max-width:900px){.sidebar{width:220px}}
+    @media(max-width:768px){.sidebar{display:none}.books-grid{grid-template-columns:repeat(2,1fr)}.shop-h1{font-size:1.5rem}}
+    @media(max-width:480px){.books-grid{grid-template-columns:1fr}.toolbar{gap:7px}}
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+<!-- ══════════════════════════════════════
+     NAVBAR — same as home page
+     EJS auth: isLoggedIn check (same as home)
+════════════════════════════════════════ -->
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="row align-items-center g-0">
+      <div class="col-6 d-flex align-items-center gap-3">
+        <a class="brand" href="/home">
+          <div class="logo-circle">
+            <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+            <div class="logo-text">LitHeaven</div>
+            <div class="tagline">Your Literary Escape</div>
+          </div>
+          <div class="txt">LitHeaven</div>
+        </a>
+        <nav class="main-nav d-none d-lg-flex">
+          <a class="nav-link" href="/home">Home</a>
+          <a class="nav-link active-link" href="/shop">Shop</a>
+          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/contact">Contact</a>
+        </nav>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <div class="header-icons">
+          <a href="/wishlist" class="icon-btn" title="Wishlist">
+            <i class="fa-regular fa-heart"></i>
+          </a>
+          <a href="/cart" class="icon-btn position-relative" title="Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <div class="icon-badge" id="cartBadge">0</div>
+          </a>
+
+          <%if(!isLoggedIn){%>
+            <a href="/login" class="icon-btn" title="Login">
+              <i class="fa-regular fa-user"></i>
+            </a>
+          <%}else{%>
+          <div class="dropdown">
+            <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end p-2">
+              <li>
+                <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
+                  <i class="fa-regular fa-id-badge"></i> Profile
+                </a>
+              </li>
+              <li>
+                <a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2">
+                  <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+          <%}%>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     SEARCH BAR  —  Image 1 style
+     🔍 emoji left | placeholder | ✕ right
+     No button. Cancel shows only on typing.
+════════════════════════════════════════ -->
+<div class="search-wrap">
+  <div class="search-box">
+    <!-- 🔍 left emoji icon -->
+    <span class="s-emoji">🔍</span>
+    <!-- text input -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="What are you looking for?"
+      oninput="onSearchType(this)"
+      autocomplete="off"
+    >
+    <!-- ✕ cancel — hidden until user types -->
+    <button class="s-cancel" id="cancelBtn" onclick="cancelSearch()" title="Clear">✕</button>
+  </div>
+</div>
+
+<!-- SHOP LAYOUT -->
+<div class="shop-wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="filter-hdr">
+      <h5>Filter By</h5>
+      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+    </div>
+
+    <div class="active-tags" id="activeTags"></div>
+
+    <!-- CATEGORIES -->
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)">
+        <span>Categories</span><span class="farr">▼</span>
+      </div>
+      <div class="fsec-body open">
+        <div class="cat-parent" onclick="toggleSub(this,'sub-fiction')">
+          <span>Fiction</span><span class="cp-arr">▶</span>
+        </div>
+        <div class="sub-opts" id="sub-fiction">
+          <label class="foption"><input type="checkbox" data-f="category" value="Romance" onchange="applyFilters()"> Romance</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Horror" onchange="applyFilters()"> Horror</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Thriller" onchange="applyFilters()"> Thriller</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Fantasy" onchange="applyFilters()"> Fantasy</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Sci-Fi" onchange="applyFilters()"> Sci-Fi</label>
+        </div>
+
+        <div class="cat-parent" onclick="toggleSub(this,'sub-nf')">
+          <span>Non Fiction</span><span class="cp-arr">▶</span>
+        </div>
+        <div class="sub-opts" id="sub-nf">
+          <label class="foption"><input type="checkbox" data-f="category" value="Biography" onchange="applyFilters()"> Biography</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="History" onchange="applyFilters()"> History</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Self Help" onchange="applyFilters()"> Self Help</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Business" onchange="applyFilters()"> Business</label>
+        </div>
+
+        <div class="cat-parent" onclick="toggleSub(this,'sub-ch')">
+          <span>Children's Book</span><span class="cp-arr">▶</span>
+        </div>
+        <div class="sub-opts" id="sub-ch">
+          <label class="foption"><input type="checkbox" data-f="category" value="Picture Books" onchange="applyFilters()"> Picture Books</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Middle Grade" onchange="applyFilters()"> Middle Grade</label>
+        </div>
+
+        <div class="cat-parent" onclick="toggleSub(this,'sub-sp')">
+          <span>Special Interest</span><span class="cp-arr">▶</span>
+        </div>
+        <div class="sub-opts" id="sub-sp">
+          <label class="foption"><input type="checkbox" data-f="category" value="Religion" onchange="applyFilters()"> Religion</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Poetry" onchange="applyFilters()"> Poetry</label>
+        </div>
+
+        <div class="cat-parent" onclick="toggleSub(this,'sub-ac')">
+          <span>Academic / Education</span><span class="cp-arr">▶</span>
+        </div>
+        <div class="sub-opts" id="sub-ac">
+          <label class="foption"><input type="checkbox" data-f="category" value="NCERT" onchange="applyFilters()"> NCERT</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="Competitive Exam" onchange="applyFilters()"> Competitive Exam</label>
+          <label class="foption"><input type="checkbox" data-f="category" value="General Knowledge" onchange="applyFilters()"> General Knowledge</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTHOR -->
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)">
+        <span>Author</span><span class="farr">▼</span>
+      </div>
+      <div class="fsec-body open">
+        <label class="foption"><input type="checkbox" data-f="author" value="Amish Tripathi" onchange="applyFilters()"> Amish Tripathi</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="James Clear" onchange="applyFilters()"> James Clear</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="J.K. Rowling" onchange="applyFilters()"> J.K. Rowling</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="Paulo Coelho" onchange="applyFilters()"> Paulo Coelho</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="Yuval Noah Harari" onchange="applyFilters()"> Yuval Noah Harari</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="Penguin Books" onchange="applyFilters()"> Penguin Books</label>
+        <label class="foption"><input type="checkbox" data-f="author" value="Morgan Housel" onchange="applyFilters()"> Morgan Housel</label>
+      </div>
+    </div>
+
+    <!-- LANGUAGE -->
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)">
+        <span>Language</span><span class="farr">▼</span>
+      </div>
+      <div class="fsec-body open">
+        <label class="foption"><input type="checkbox" data-f="language" value="English" onchange="applyFilters()"> English</label>
+        <label class="foption"><input type="checkbox" data-f="language" value="Malayalam" onchange="applyFilters()"> Malayalam</label>
+        <label class="foption"><input type="checkbox" data-f="language" value="Telugu" onchange="applyFilters()"> Telugu</label>
+        <label class="foption"><input type="checkbox" data-f="language" value="Tamil" onchange="applyFilters()"> Tamil</label>
+        <label class="foption"><input type="checkbox" data-f="language" value="Hindi" onchange="applyFilters()"> Hindi</label>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PRICE SLIDER  —  Image 2 style
+         max = ₹3000  (as requested)
+    ══════════════════════════════════════ -->
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)">
+        <span>Price (₹)</span><span class="farr">▼</span>
+      </div>
+      <div class="fsec-body open">
+        <div class="price-slider-wrap">
+          <!-- top row: 💵💵 | range value -->
+          <div class="price-range-labels">
+            <span class="money-emoji">💵💵</span>
+            <span id="priceLabel" class="range-val">0 – ₹3,000</span>
+          </div>
+          <!-- slider: 0 to 3000 -->
+          <input
+            type="range"
+            id="priceSlider"
+            class="price-slider"
+            min="0" max="3000" step="50" value="3000"
+            oninput="onSlider(this)"
+          >
+          <!-- green Apply button -->
+          <button class="price-apply-btn" onclick="applyFilters()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMAT -->
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)">
+        <span>Format</span><span class="farr">▼</span>
+      </div>
+      <div class="fsec-body open">
+        <label class="foption"><input type="checkbox" data-f="format" value="Paper Back" onchange="applyFilters()"> Paper Back</label>
+        <label class="foption"><input type="checkbox" data-f="format" value="Hard Cover" onchange="applyFilters()"> Hard Cover</label>
+        <label class="foption"><input type="checkbox" data-f="format" value="E-Book" onchange="applyFilters()"> E-Book</label>
+      </div>
+    </div>
+
+    <button class="apply-all-btn" onclick="applyFilters()">APPLY FILTERS</button>
+  </aside>
+
+  <!-- ── MAIN AREA ── -->
+  <main class="main-area">
+    <div class="breadcrumb-row">
+      <a href="/home">home</a><span>›</span><span class="cur">shop</span>
+    </div>
+
+    <div class="shop-h1">Shop</div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="tb-chip" id="chip-popular" onclick="toggleChip('popular')">✨ Popular</button>
+      <button class="tb-chip" id="chip-ratings" onclick="toggleChip('ratings')">⭐ Ratings</button>
+      <button class="tb-chip active" id="chip-new" onclick="toggleChip('new')">🆕 New</button>
+      <select class="tb-sort" id="sortSel" onchange="applyFilters()">
+        <option value="">Sort by</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="az">Name: A → Z</option>
+        <option value="za">Name: Z → A</option>
+      </select>
+      <div class="tb-spacer"></div>
+      <span class="tb-count">Found <strong id="totalCount">0</strong> items</span>
+    </div>
+
+    <div class="books-grid" id="booksGrid"></div>
+
+    <div class="no-res" id="noRes" style="display:none">
+      <div class="nr-ico">📭</div>
+      <h4>No books found</h4>
+      <p style="font-size:.85rem">Try adjusting your filters or search term.</p>
+    </div>
+
+    <div class="pg-wrap" id="pgWrap"></div>
+  </main>
+</div>
+
+<!-- FOOTER — same as home page -->
+<footer class="site-footer">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5>Get In Touch</h5>
+        <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+        <p><small>support@litheaven.com</small></p>
+        <p><small>+98765 43210</small></p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/home">Home</a></li>
+          <li><a href="/shop">Shop Books</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Account</h5>
+        <ul class="list-unstyled">
+          <li><a href="/profile">Settings</a></li>
+          <li><a href="/orders">Orders</a></li>
+          <li><a href="/address">Address</a></li>
+          <li><a href="/wallet">Wallet</a></li>
+          <li><a href="#" id="footerLogout">Log out</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 text-md-end">
+        <h5>LitHeaven ⭐</h5>
+        <p><small>Litheaven is an online bookstore where you can easily explore and buy your favorite books.</small></p>
+        <p><small>Read, learn, and enjoy stories that inspire every reader.</small></p>
+      </div>
+    </div>
+    <div class="text-center mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.2)">
+      <small>© 2025 LITHEAVEN. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// ════════════════════════════════════════
+// BOOK DATA
+// ════════════════════════════════════════
+const ALL_BOOKS = [
+  {id:1,  title:"Hacking Health: The Only Book You'll Ever Need",  author:"Mukesh Bansal",       price:279,  mrp:399,  rating:5, format:"Paper Back", language:"English",   category:"Self Help",        discount:30, reviews:12},
+  {id:2,  title:"Bipin: The Man Behind the Uniform",               author:"Rawat Rachna",         price:303,  mrp:399,  rating:4, format:"Hard Cover", language:"English",   category:"Biography",        discount:24, reviews:8},
+  {id:3,  title:"Bhagwatgita Through Rhymes",                      author:"Ankit Kumar S.",       price:319,  mrp:399,  rating:4, format:"Paper Back", language:"English",   category:"Religion",         discount:12, reviews:0},
+  {id:4,  title:"Psalm 23 for Kids: My First Prayer",              author:"Penguin Books",        price:167,  mrp:249,  rating:5, format:"Hard Cover", language:"English",   category:"Picture Books",    discount:33, reviews:5},
+  {id:5,  title:"Arihant NCERT Solutions Class 11 Physics",        author:"Mukesh Kumar",         price:178,  mrp:199,  rating:4, format:"Paper Back", language:"English",   category:"NCERT",            discount:12, reviews:0},
+  {id:6,  title:"Purvavalokan Paryavaran Bhag-6",                  author:"Ssgcp Group",          price:214,  mrp:240,  rating:4, format:"Paper Back", language:"Hindi",     category:"NCERT",            discount:11, reviews:0},
+  {id:7,  title:"The Chola Tigers: Avengers of Somnath",           author:"Amish Tripathi",       price:319,  mrp:499,  rating:5, format:"Hard Cover", language:"English",   category:"Thriller",         discount:36, reviews:0},
+  {id:8,  title:"The Israel Decree",                               author:"Amir Tsarfati",        price:570,  mrp:792,  rating:5, format:"Hard Cover", language:"English",   category:"Thriller",         discount:28, reviews:0},
+  {id:9,  title:"Little Tales Big Values: Kiki is a Messy Painter",author:"Penguin Books",        price:155,  mrp:250,  rating:5, format:"Paper Back", language:"English",   category:"Picture Books",    discount:38, reviews:0},
+  {id:10, title:"Great Big Beautiful Life",                        author:"Emily Henry",          price:620,  mrp:899,  rating:0, format:"Paper Back", language:"English",   category:"Romance",          discount:31, reviews:0},
+  {id:11, title:"Assam General Knowledge (GK) 2025",              author:"Anshuman Go.",         price:377,  mrp:549,  rating:0, format:"Paper Back", language:"English",   category:"General Knowledge",discount:31, reviews:0},
+  {id:12, title:"Atomic Habits",                                   author:"James Clear",          price:399,  mrp:599,  rating:5, format:"Paper Back", language:"English",   category:"Self Help",        discount:33, reviews:22},
+  {id:13, title:"The Alchemist",                                   author:"Paulo Coelho",         price:199,  mrp:299,  rating:5, format:"Paper Back", language:"English",   category:"Fantasy",          discount:33, reviews:30},
+  {id:14, title:"Harry Potter and the Sorcerer's Stone",           author:"J.K. Rowling",         price:349,  mrp:499,  rating:5, format:"Hard Cover", language:"English",   category:"Fantasy",          discount:30, reviews:55},
+  {id:15, title:"Wings of Fire",                                   author:"A.P.J. Abdul Kalam",   price:199,  mrp:350,  rating:5, format:"Paper Back", language:"English",   category:"Biography",        discount:43, reviews:40},
+  {id:16, title:"Devlok with Devdutt Pattanaik",                   author:"Devdutt Pattanaik",    price:290,  mrp:399,  rating:4, format:"Paper Back", language:"Hindi",     category:"Religion",         discount:27, reviews:10},
+  {id:17, title:"The Midnight Library",                            author:"Matt Haig",            price:349,  mrp:499,  rating:4, format:"Paper Back", language:"English",   category:"Fantasy",          discount:30, reviews:18},
+  {id:18, title:"Ponniyin Selvan",                                 author:"Kalki Krishnamurthy",  price:450,  mrp:699,  rating:5, format:"Hard Cover", language:"Tamil",     category:"Thriller",         discount:36, reviews:25},
+  {id:19, title:"Manorama Year Book 2025",                         author:"Manorama",             price:299,  mrp:399,  rating:4, format:"Paper Back", language:"Malayalam", category:"General Knowledge",discount:25, reviews:7},
+  {id:20, title:"Sherlock Holmes Collection",                      author:"Arthur Conan Doyle",   price:599,  mrp:899,  rating:5, format:"Hard Cover", language:"English",   category:"Thriller",         discount:33, reviews:45},
+  {id:21, title:"Telugu Basha Sahityam",                           author:"Pandit Ravi",          price:245,  mrp:350,  rating:4, format:"Paper Back", language:"Telugu",    category:"Poetry",           discount:30, reviews:6},
+  {id:22, title:"CBSE Class 10 Science NCERT",                     author:"NCERT",                price:120,  mrp:150,  rating:4, format:"Paper Back", language:"English",   category:"NCERT",            discount:20, reviews:9},
+  {id:23, title:"Rich Dad Poor Dad",                               author:"Morgan Housel",        price:299,  mrp:450,  rating:5, format:"Paper Back", language:"English",   category:"Business",         discount:34, reviews:60},
+  {id:24, title:"Sapiens",                                         author:"Yuval Noah Harari",    price:499,  mrp:799,  rating:5, format:"Hard Cover", language:"English",   category:"History",          discount:38, reviews:35},
+  {id:25, title:"The Fault in Our Stars",                          author:"John Green",           price:249,  mrp:349,  rating:4, format:"Paper Back", language:"English",   category:"Romance",          discount:29, reviews:28},
+];
+
+const EMOJIS    = ["📗","📘","📕","📙","📓","📔","📒","📚","🔖","📖","📜","📃"];
+const BG_COLORS = ["#f9f5ff","#e0f2fe","#fef3c7","#fce7f3","#d1fae5","#fee2e2","#e0e7ff","#fff7ed"];
+
+let currentPage   = 1;
+const PER_PAGE    = 9;
+let filteredBooks = [...ALL_BOOKS];
+let activeChips   = new Set(['new']);
+let cartCount     = 0;
+let sliderMax     = 3000;   // ← max ₹3000 as requested
+
+// ══════════════════════════════════════
+// PRICE SLIDER
+// ══════════════════════════════════════
+function onSlider(el){
+  sliderMax = parseInt(el.value);
+  // Update label
+  document.getElementById('priceLabel').textContent =
+    `0 – ₹${sliderMax.toLocaleString('en-IN')}`;
+  // Update filled track colour
+  const pct = (sliderMax / 3000) * 100;
+  el.style.background =
+    `linear-gradient(to right, #6f2b67 0%, #6f2b67 ${pct}%, #e2d6ef ${pct}%, #e2d6ef 100%)`;
+}
+// Run once on load so thumb shows correctly
+(function initSlider(){
+  const sl = document.getElementById('priceSlider');
+  sl.style.background = 'linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%)';
+})();
+
+// ══════════════════════════════════════
+// SEARCH  —  🔍 left  |  typing shows ✕
+// ══════════════════════════════════════
+function onSearchType(inp){
+  // show/hide ✕ cancel button
+  const btn = document.getElementById('cancelBtn');
+  btn.classList.toggle('show', inp.value.length > 0);
+  applyFilters();
+}
+
+function cancelSearch(){
+  const inp = document.getElementById('searchInput');
+  inp.value = '';
+  document.getElementById('cancelBtn').classList.remove('show');
+  inp.focus();
+  applyFilters();
+}
+
+// ══════════════════════════════════════
+// STARS
+// ══════════════════════════════════════
+function starsHTML(r){
+  if(!r) return `<div class="bcard-norev">No Review Yet</div>`;
+  let s = '';
+  for(let i=1;i<=5;i++) s += i<=r ? '⭐' : '☆';
+  return `<div class="bcard-stars">${s}</div>`;
+}
+
+// ══════════════════════════════════════
+// CARD
+// ══════════════════════════════════════
+function renderCard(b){
+  const bg = BG_COLORS[b.id % BG_COLORS.length];
+  const em = EMOJIS[b.id % EMOJIS.length];
+  return `
+  <div class="bcard" onclick="viewBook(${b.id})">
+    ${b.discount ? `<span class="disc-badge">${b.discount}%</span>` : ''}
+    <button class="wish-btn" onclick="event.stopPropagation();toggleWish(this)">🤍</button>
+    <div class="bcard-ph" style="background:${bg}">${em}</div>
+    <div class="bcard-body">
+      <div class="bcard-title">${b.title}</div>
+      <div class="bcard-author">${b.author}</div>
+      ${starsHTML(b.rating)}
+      <div class="bcard-prices">
+        <span class="bcard-new">₹${b.price}</span>
+        ${b.mrp ? `<span class="bcard-old">₹${b.mrp}</span>` : ''}
+      </div>
+      <button class="bcard-add" onclick="event.stopPropagation();addToCart(${b.id})">
+        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+      </button>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// RENDER GRID
+// ══════════════════════════════════════
+function renderGrid(){
+  const grid    = document.getElementById('booksGrid');
+  const noRes   = document.getElementById('noRes');
+  const countEl = document.getElementById('totalCount');
+  countEl.textContent = filteredBooks.length;
+  if(!filteredBooks.length){
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    document.getElementById('pgWrap').innerHTML = '';
+    return;
+  }
+  noRes.style.display = 'none';
+  const start = (currentPage-1)*PER_PAGE;
+  grid.innerHTML = filteredBooks.slice(start, start+PER_PAGE).map(renderCard).join('');
+  renderPagination();
+}
+
+function renderPagination(){
+  const total = Math.ceil(filteredBooks.length/PER_PAGE);
+  const wrap  = document.getElementById('pgWrap');
+  if(total<=1){ wrap.innerHTML=''; return; }
+  let h = `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=total;i++){
+    if(total>6 && i>3 && i<total){ if(i===4) h+=`<span class="pg-dots">…</span>`; continue; }
+    h += `<button class="pg-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  h += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>›</button>`;
+  wrap.innerHTML = h;
+}
+
+function goPage(p){
+  const t = Math.ceil(filteredBooks.length/PER_PAGE);
+  if(p<1||p>t) return;
+  currentPage = p;
+  renderGrid();
+  window.scrollTo({top:220,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════
+// APPLY ALL FILTERS (combined)
+// ══════════════════════════════════════
+function applyFilters(){
+  const search  = document.getElementById('searchInput').value.toLowerCase().trim();
+  const maxP    = sliderMax;
+  const sortVal = document.getElementById('sortSel').value;
+
+  const cats    = [...document.querySelectorAll('[data-f="category"]:checked')].map(e=>e.value);
+  const langs   = [...document.querySelectorAll('[data-f="language"]:checked')].map(e=>e.value);
+  const fmts    = [...document.querySelectorAll('[data-f="format"]:checked')].map(e=>e.value);
+  const authors = [...document.querySelectorAll('[data-f="author"]:checked')].map(e=>e.value);
+
+  let books = ALL_BOOKS.filter(b => {
+    if(search && !b.title.toLowerCase().includes(search) && !b.author.toLowerCase().includes(search)) return false;
+    if(b.price > maxP)                                    return false;
+    if(cats.length    && !cats.includes(b.category))      return false;
+    if(langs.length   && !langs.includes(b.language))     return false;
+    if(fmts.length    && !fmts.includes(b.format))        return false;
+    if(authors.length && !authors.includes(b.author))     return false;
+    if(activeChips.has('popular') && b.reviews < 10)      return false;
+    if(activeChips.has('ratings') && b.rating  < 4)       return false;
+    return true;
+  });
+
+  if(sortVal==='price-asc')       books.sort((a,b)=>a.price-b.price);
+  else if(sortVal==='price-desc') books.sort((a,b)=>b.price-a.price);
+  else if(sortVal==='az')         books.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(sortVal==='za')         books.sort((a,b)=>b.title.localeCompare(a.title));
+
+  filteredBooks = books;
+  currentPage   = 1;
+  renderTags(cats,langs,fmts,authors);
+  renderGrid();
+}
+
+function renderTags(cats,langs,fmts,authors){
+  const all = [...cats,...langs,...fmts,...authors];
+  document.getElementById('activeTags').innerHTML =
+    all.map(v=>`<span class="atag">${v}<button onclick="removeTag('${v}')">✕</button></span>`).join('');
+}
+
+function removeTag(val){
+  const el = document.querySelector(`[data-f][value="${val}"]`);
+  if(el) el.checked = false;
+  applyFilters();
+}
+
+// ══════════════════════════════════════
+// CHIPS
+// ══════════════════════════════════════
+function toggleChip(type){
+  const btn = document.getElementById('chip-'+type);
+  if(activeChips.has(type)){ activeChips.delete(type); btn.classList.remove('active'); }
+  else                      { activeChips.add(type);   btn.classList.add('active'); }
+  applyFilters();
+}
+
+// ══════════════════════════════════════
+// CLEAR ALL
+// ══════════════════════════════════════
+function clearAll(){
+  document.querySelectorAll('[data-f]').forEach(e=>e.checked=false);
+
+  // Reset slider to max (3000)
+  const sl = document.getElementById('priceSlider');
+  sl.value = 3000;
+  sliderMax = 3000;
+  onSlider(sl);
+
+  document.getElementById('sortSel').value = '';
+  cancelSearch();   // clears input + hides ✕
+
+  activeChips = new Set(['new']);
+  document.querySelectorAll('.tb-chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('chip-new').classList.add('active');
+  document.getElementById('activeTags').innerHTML = '';
+  filteredBooks = [...ALL_BOOKS];
+  currentPage   = 1;
+  renderGrid();
+}
+
+// ══════════════════════════════════════
+// SIDEBAR ACCORDION
+// ══════════════════════════════════════
+function toggleFsec(el){
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+function toggleSub(el,id){
+  el.classList.toggle('open');
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ══════════════════════════════════════
+// WISHLIST & CART
+// ══════════════════════════════════════
+function toggleWish(btn){
+  btn.classList.toggle('wishlisted');
+  btn.textContent = btn.classList.contains('wishlisted') ? '❤️' : '🤍';
+  // Backend: POST /wishlist/toggle { bookId }
+}
+
+function addToCart(id){
+  cartCount++;
+  document.getElementById('cartBadge').textContent = cartCount;
+  // Backend: POST /cart/add { bookId: id }
+  const b = ALL_BOOKS.find(x=>x.id===id);
+  Swal.fire({
+    toast:true, position:'top-end', icon:'success',
+    title:'Added to cart! 🛒',
+    html:`<small style="color:#555">${b.title.substring(0,40)}…</small>`,
+    showConfirmButton:false, timer:2200, timerProgressBar:true,
+    background:'#fff'
+  });
+}
+
+function viewBook(id){
+  window.location.href = '/product/'+id;
+}
+
+// ══════════════════════════════════════
+// LOGOUT — exact same as home page
+// ══════════════════════════════════════
+function doLogout(e){
+  e.preventDefault();
+  Swal.fire({
+    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html:`
+      <p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+      <p style="font-size:13px;color:#888">You can login again anytime.</p>
+    `,
+    imageUrl:"/images/go-out-thro-removebg-preview.png",
+    imageWidth:130, imageHeight:130, imageAlt:"Logout illustration",
+    showCancelButton:true,
+    confirmButtonText:"🚪 Logout",
+    cancelButtonText:"Stay Here",
+    confirmButtonColor:"#6f2b67",
+    cancelButtonColor:"#d6c3d3",
+    reverseButtons:true,
+    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
+    backdrop:"rgba(0,0,0,0.6)",
+    showClass:{ popup:'animate__animated animate__fadeInUp'    },
+    hideClass:{ popup:'animate__animated animate__fadeOutDown' }
+  }).then(r=>{ if(r.isConfirmed) window.location.href="/logout"; });
+}
+document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+document.getElementById('footerLogout')?.addEventListener('click', doLogout);
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+applyFilters();
+</script>
+</body>
+</html>

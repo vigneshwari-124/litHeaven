@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>My Orders – LitHeaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    :root{--purple:#6f2b67;--light:#8e4a86;--muted:#6c6c6c;--border:#b88ab4;--sale:#e8412e;--ink:#1a0f18;--success:#2e7d32;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"DM Sans",sans-serif;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;min-height:100vh;}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes modalIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── TOP BAR ── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;}
+
+    /* ── HEADER ── */
+    header.navbar-area{background:var(--purple);padding:12px 0;width:100%;}
+    .navbar-container{padding:0 20px;}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s;}
+    .brand:hover{transform:scale(1.04);}
+    .logo-circle{position:relative;width:56px;height:56px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite;}
+    .book-logo{width:32px;filter:brightness(0)invert(1);}
+    .logo-text{position:absolute;bottom:4px;font-size:6.5px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase;}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.6px;color:#fff;}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative;text-decoration:none;}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%);}
+    .main-nav .nav-link:hover::after{width:80%;}
+    .main-nav .nav-link:hover{color:#f3dff1;}
+    .header-icons{display:flex;gap:16px;align-items:center;}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none;}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite;}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px;}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s;}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;}
+    .dropdown-item i{color:#6f2b67;}.dropdown-item:hover i{color:#fff;}
+    .hamburger-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;width:42px;height:42px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin-left:10px;}
+    .mobile-menu{background:var(--purple);display:none;flex-direction:column;padding:10px 0;border-top:1px solid rgba(255,255,255,.2);}
+    .mobile-menu.open{display:flex!important;}
+    .mobile-nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);transition:all .25s;}
+    .mobile-nav-link:hover{background:rgba(255,255,255,.15);padding-left:32px;}
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb-wrap{background:#fff;padding:12px 20px;border-bottom:1px solid #f0e5f5;}
+    .breadcrumb{margin:0;font-size:13px;}
+    .breadcrumb-item a{color:var(--purple);text-decoration:none;font-weight:600;}
+    .breadcrumb-item.active{color:#999;}
+
+    /* ── PAGE TITLE ── */
+    .page-title-strip{background:linear-gradient(135deg,var(--purple) 0%,var(--light) 100%);padding:28px 20px;text-align:center;position:relative;overflow:hidden;}
+    .page-title-strip::before{content:'📦';font-size:130px;position:absolute;right:-10px;top:50%;transform:translateY(-50%);opacity:.08;pointer-events:none;}
+    .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s;}
+    .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;}
+
+    /* ── MAIN WRAP ── */
+    .orders-wrap{max-width:1100px;margin:0 auto;padding:32px 20px 60px;}
+
+    /* ── SECTION CARD (same as checkout theme) ── */
+    .section-card{position:relative;border-radius:20px;padding:24px;background:radial-gradient(ellipse 55% 45% at 8% 12%,rgba(196,130,210,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 50% at 92% 85%,rgba(111,43,103,.13) 0%,transparent 65%),linear-gradient(145deg,#faf4fd 0%,#f2e8f9 35%,#ede0f5 65%,#f5edfb 100%);border:1.5px solid rgba(184,138,180,.30);box-shadow:0 2px 0 rgba(255,255,255,.85) inset,0 8px 32px rgba(111,43,103,.10);overflow:hidden;margin-bottom:20px;}
+    .section-card::before{content:'';position:absolute;inset:0;border-radius:20px;background-image:radial-gradient(circle,rgba(111,43,103,.06) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;z-index:0;}
+    .section-card>*{position:relative;z-index:1;}
+
+    /* ── SEARCH + FILTER ── */
+    .search-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+    .search-box{flex:1;min-width:200px;position:relative;}
+    .search-box input{width:100%;border:1.5px solid rgba(184,138,180,.5);border-radius:12px;padding:10px 14px 10px 40px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:rgba(255,255,255,.9);outline:none;transition:all .3s;}
+    .search-box input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(111,43,103,.08);}
+    .search-box i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--border);font-size:14px;}
+    .filter-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;}
+    .filter-tab{border:1.5px solid rgba(184,138,180,.45);background:rgba(255,255,255,.85);color:var(--muted);font-size:12.5px;font-weight:700;padding:7px 18px;border-radius:30px;cursor:pointer;transition:all .25s;white-space:nowrap;}
+    .filter-tab:hover:not(.active){border-color:var(--purple);color:var(--purple);background:rgba(243,232,242,.9);}
+    .filter-tab.active{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:0 3px 10px rgba(111,43,103,.25);}
+
+    /* ── TABLE ── */
+    .table-wrap{overflow-x:auto;border-radius:14px;border:1.5px solid rgba(184,138,180,.18);}
+    table.ord-table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.88);}
+    table.ord-table thead tr{background:linear-gradient(135deg,rgba(111,43,103,.07),rgba(142,74,134,.04));}
+    table.ord-table thead th{padding:13px 16px;font-size:11.5px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;border-bottom:2px solid rgba(184,138,180,.2);}
+    table.ord-table tbody tr{border-bottom:1px solid rgba(184,138,180,.1);transition:background .2s;}
+    table.ord-table tbody tr:last-child{border-bottom:none;}
+    table.ord-table tbody tr:hover{background:rgba(243,232,242,.4);}
+    table.ord-table td{padding:14px 16px;vertical-align:middle;}
+    .prod-cell{display:flex;align-items:center;gap:11px;}
+    .prod-thumb{width:44px;height:56px;border-radius:7px;object-fit:cover;border:1.5px solid rgba(184,138,180,.3);flex-shrink:0;}
+    .prod-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:14px;color:var(--ink);line-height:1.3;}
+    .prod-more{font-size:11px;color:var(--muted);margin-top:2px;}
+    .oid-cell{font-weight:700;font-size:12.5px;color:var(--purple);}
+    .date-cell{font-size:12px;color:var(--muted);white-space:nowrap;}
+    .total-cell{font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap;}
+
+    /* ── STATUS BADGES ── */
+    .sbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 13px;border-radius:30px;white-space:nowrap;}
+    .sb-processing{background:rgba(230,81,0,.11);color:#e65100;}
+    .sb-shipped    {background:rgba(21,101,192,.11);color:#1565c0;}
+    .sb-delivered  {background:rgba(46,125,50,.11);color:#2e7d32;}
+    .sb-cancelled  {background:rgba(198,40,40,.11);color:#c62828;}
+    .sb-returned   {background:rgba(106,27,154,.11);color:#6a1b9a;}
+    .pbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 13px;border-radius:30px;white-space:nowrap;}
+    .pb-cod    {background:rgba(46,125,50,.11);color:#2e7d32;}
+    .pb-pending{background:rgba(230,81,0,.11);color:#e65100;}
+    .pb-paid   {background:rgba(46,125,50,.11);color:#2e7d32;}
+    .pb-failed {background:rgba(198,40,40,.11);color:#c62828;}
+    .pb-refund {background:rgba(106,27,154,.11);color:#6a1b9a;}
+
+    /* ── DETAILS BUTTON ── */
+    .btn-details{background:transparent;color:var(--purple);border:1.5px solid rgba(111,43,103,.35);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:all .25s;white-space:nowrap;}
+    .btn-details:hover{background:var(--purple);color:#fff;border-color:var(--purple);}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;padding:48px 20px;}
+    .empty-state img{width:95px;opacity:.7;animation:float 3s ease-in-out infinite;margin-bottom:14px;}
+    .empty-state h4{font-family:'Playfair Display',serif;color:var(--ink);font-size:1.1rem;margin-bottom:5px;}
+    .empty-state p{color:var(--muted);font-size:13px;}
+    .btn-shop-now{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:12px;padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;margin-top:12px;text-decoration:none;}
+    .btn-shop-now:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(111,43,103,.3);color:#fff;}
+
+    /* ══════════════════════════════════
+       DETAIL MODAL — clean white style
+       (like Image 2 & 3)
+    ══════════════════════════════════ */
+    .detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px 30px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .detail-overlay.open{opacity:1;pointer-events:all;}
+
+    .detail-modal{
+      background:#fff;
+      border-radius:16px;
+      width:100%;max-width:680px;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+      overflow:hidden;
+      animation:modalIn .3s ease;
+    }
+
+    /* modal top bar — purple */
+    .dm-topbar{
+      background:var(--purple);
+      padding:14px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .dm-topbar-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:#fff;}
+    .dm-topbar-close{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0;}
+    .dm-topbar-close:hover{background:rgba(255,255,255,.35);}
+
+    /* modal scrollable content */
+    .dm-content{padding:20px;max-height:calc(90vh - 130px);overflow-y:auto;}
+
+    /* ── Order Info section ── */
+    .dm-section{margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #eee;}
+    .dm-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+    .dm-section-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:12px;}
+    .dm-section-title-icon{font-size:16px;}
+
+    .dm-info-row{display:flex;padding:5px 0;font-size:13px;}
+    .dm-info-label{color:var(--muted);width:140px;flex-shrink:0;font-weight:600;}
+    .dm-info-val{color:var(--ink);font-weight:600;}
+
+    /* ── Product rows ── */
+    .dm-product{
+      display:flex;align-items:center;gap:12px;
+      background:#f8f5fb;
+      border-radius:12px;
+      padding:12px 14px;
+      margin-bottom:10px;
+    }
+    .dm-product:last-child{margin-bottom:0;}
+    .dm-prod-img{width:52px;height:64px;border-radius:8px;object-fit:cover;border:1px solid #e0d0e0;flex-shrink:0;}
+    .dm-prod-info{flex:1;min-width:0;}
+    .dm-prod-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:14px;color:var(--ink);}
+    .dm-prod-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+    .dm-prod-price{font-size:13px;font-weight:800;color:var(--purple);margin-top:3px;}
+    .dm-prod-status{display:inline-flex;font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;margin-top:4px;}
+
+    /* per-product action button */
+    .btn-prod-cancel{border:1.5px solid rgba(198,40,40,.4);background:#fff;color:#c62828;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .btn-prod-cancel:hover{background:#fff0f0;border-color:#c62828;}
+    .btn-prod-return{border:1.5px solid rgba(106,27,154,.4);background:#fff;color:#6a1b9a;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .btn-prod-return:hover{background:#f5eeff;border-color:#6a1b9a;}
+    .cancelled-tag{font-size:11px;font-weight:700;color:#c62828;background:rgba(198,40,40,.08);padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+    .returned-tag{font-size:11px;font-weight:700;color:#6a1b9a;background:rgba(106,27,154,.08);padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+
+    /* ── Shipping address ── */
+    .dm-addr-name{font-weight:700;font-size:13px;color:var(--ink);}
+    .dm-addr-line{font-size:12.5px;color:var(--muted);line-height:1.8;}
+
+    /* ── Modal bottom action bar ── */
+    .dm-footer{
+      padding:14px 20px;
+      border-top:1px solid #eee;
+      display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;
+      background:#fafafa;
+    }
+    .btn-dm-invoice{background:#2e7d32;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;}
+    .btn-dm-invoice:hover{background:#1b5e20;transform:translateY(-1px);}
+    .btn-dm-close{background:#6c757d;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;}
+    .btn-dm-close:hover{background:#495057;}
+    .btn-dm-cancel-order{background:transparent;color:#c62828;border:1.5px solid rgba(198,40,40,.4);border-radius:10px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;}
+    .btn-dm-cancel-order:hover{background:#fff0f0;}
+    .btn-dm-return-order{background:transparent;color:#6a1b9a;border:1.5px solid rgba(106,27,154,.4);border-radius:10px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;}
+    .btn-dm-return-order:hover{background:#f5eeff;}
+
+    /* ── CANCEL / RETURN REASON MODALS ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,15,24,.5);backdrop-filter:blur(4px);z-index:1100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal-box{background:linear-gradient(145deg,#faf4fd,#f2e8f9);border-radius:20px;padding:26px;width:90%;max-width:400px;border:1.5px solid rgba(184,138,180,.3);box-shadow:0 20px 60px rgba(111,43,103,.25);transform:scale(.9) translateY(20px);transition:all .35s;position:relative;}
+    .modal-overlay.open .modal-box{transform:scale(1) translateY(0);}
+    .modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .modal-x{position:absolute;top:13px;right:13px;width:26px;height:26px;border:none;background:rgba(111,43,103,.1);border-radius:50%;color:var(--purple);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+    .modal-x:hover{background:var(--purple);color:#fff;}
+    .r-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--purple);margin-bottom:7px;display:block;}
+    .r-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+    .r-chip{border:1.5px solid rgba(184,138,180,.5);background:rgba(255,255,255,.8);color:var(--muted);font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;transition:all .2s;}
+    .r-chip.sel{background:var(--purple);color:#fff;border-color:var(--purple);}
+    .r-ta{width:100%;border:1.5px solid rgba(184,138,180,.5);border-radius:10px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.8);outline:none;resize:vertical;min-height:68px;transition:all .3s;}
+    .r-ta:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(111,43,103,.08);}
+    .r-err{font-size:11px;color:var(--sale);margin-top:4px;display:none;}
+    .modal-btns{display:flex;gap:9px;margin-top:13px;}
+    .btn-mc{flex:1;background:linear-gradient(135deg,var(--purple),var(--light));color:#fff;border:none;border-radius:11px;padding:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;}
+    .btn-mc:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(111,43,103,.3);}
+    .btn-mk{flex:1;border:2px solid var(--border);background:rgba(255,255,255,.8);color:var(--purple);border-radius:11px;padding:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;}
+    .btn-mk:hover{border-color:var(--purple);}
+
+    /* ── FOOTER ── */
+    .site-footer{background:var(--purple);color:#fff;padding:40px 20px;}
+    .site-footer a{color:#fff;text-decoration:none;}.site-footer a:hover{color:#f3dff1;}
+
+    @media(max-width:680px){
+      .main-nav{display:none;}
+      .orders-wrap{padding:20px 12px 50px;}
+      .dm-footer{justify-content:stretch;}
+      .dm-footer button{flex:1;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="row align-items-center g-0">
+      <div class="col-6 d-flex align-items-center gap-3">
+        <a class="brand" href="/">
+          <div class="logo-circle">
+            <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+            <div class="logo-text">LitHeaven</div>
+          </div>
+          <div class="txt">LitHeaven</div>
+        </a>
+        <nav class="main-nav d-none d-lg-flex gap-1">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/shop">Shop</a>
+          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/contact">Contact</a>
+        </nav>
+      </div>
+      <div class="col-6 d-flex justify-content-end align-items-center">
+        <div class="header-icons">
+          <a class="icon-btn position-relative" href="/wishlist"><i class="fa-solid fa-heart"></i><div class="icon-badge">2</div></a>
+          <a class="icon-btn position-relative" href="/cart"><i class="fa-solid fa-cart-shopping"></i><div class="icon-badge">3</div></a>
+          <div class="dropdown">
+            <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown"><i class="fa-regular fa-user"></i></div>
+            <ul class="dropdown-menu dropdown-menu-end p-2">
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/profile"><i class="fa-regular fa-id-badge"></i> Profile</a></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/orders"><i class="fa-solid fa-box-open"></i> My Orders</a></li>
+              <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+          </div>
+          <button class="hamburger-btn d-lg-none" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="mobileMenu" class="mobile-menu d-lg-none">
+  <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
+  <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
+  <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+  <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+</div>
+
+<div class="breadcrumb-wrap">
+  <nav><ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+    <li class="breadcrumb-item active">My Orders</li>
+  </ol></nav>
+</div>
+
+<div class="page-title-strip">
+  <h2>📦 My Orders</h2>
+  <p>Track, manage and review your book orders</p>
+</div>
+
+<div class="orders-wrap">
+  <div class="section-card">
+
+    <!-- Search -->
+    <div class="search-row">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search by Order ID or book title…" oninput="renderOrders()">
+      </div>
+    </div>
+
+    <!-- Filter pills -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-tab" onclick="setFilter('Processing',this)">Processing</button>
+      <button class="filter-tab" onclick="setFilter('Shipped',this)">Shipped</button>
+      <button class="filter-tab" onclick="setFilter('Delivered',this)">Delivered</button>
+      <button class="filter-tab" onclick="setFilter('Cancelled',this)">Cancelled</button>
+      <button class="filter-tab" onclick="setFilter('Returned',this)">Returned</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap" id="tableWrap"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DETAIL MODAL (simple white, Image style)
+══════════════════════════════════════ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetailIfBg(event)">
+  <div class="detail-modal" id="detailModal">
+
+    <!-- purple top bar -->
+    <div class="dm-topbar">
+      <div class="dm-topbar-title" id="dmTopTitle">Order Details</div>
+      <button class="dm-topbar-close" onclick="closeDetail()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- scrollable content -->
+    <div class="dm-content" id="dmContent">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- footer buttons -->
+    <div class="dm-footer" id="dmFooter">
+      <!-- filled by JS -->
+    </div>
+
+  </div>
+</div>
+
+<!-- CANCEL REASON MODAL -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal('cancelModal')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-title" id="cancelTitle"><i class="fa-solid fa-circle-xmark" style="color:#c62828"></i> Cancel</div>
+    <label class="r-label">Reason <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</span></label>
+    <div class="r-chips" id="cancelChips">
+      <span class="r-chip" onclick="toggleChip(this,'cancel')">Changed my mind</span>
+      <span class="r-chip" onclick="toggleChip(this,'cancel')">Found better price</span>
+      <span class="r-chip" onclick="toggleChip(this,'cancel')">Ordered by mistake</span>
+      <span class="r-chip" onclick="toggleChip(this,'cancel')">Delivery too long</span>
+    </div>
+    <textarea class="r-ta" id="cancelTa" placeholder="Any other reason… (optional)"></textarea>
+    <div class="modal-btns">
+      <button class="btn-mk" onclick="closeModal('cancelModal')">Keep</button>
+      <button class="btn-mc" style="background:linear-gradient(135deg,#c62828,#e53935)" onclick="confirmCancel()"><i class="fa-solid fa-xmark me-1"></i>Confirm Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RETURN REASON MODAL -->
+<div class="modal-overlay" id="returnModal">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal('returnModal')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-title" id="returnTitle"><i class="fa-solid fa-rotate-left" style="color:#6a1b9a"></i> Return</div>
+    <label class="r-label">Reason <span style="color:var(--sale)">* required</span></label>
+    <div class="r-chips" id="returnChips">
+      <span class="r-chip" onclick="toggleChip(this,'return')">Damaged item</span>
+      <span class="r-chip" onclick="toggleChip(this,'return')">Wrong book sent</span>
+      <span class="r-chip" onclick="toggleChip(this,'return')">Not as described</span>
+      <span class="r-chip" onclick="toggleChip(this,'return')">Quality issue</span>
+    </div>
+    <textarea class="r-ta" id="returnTa" placeholder="Describe your reason… (required)"></textarea>
+    <div class="r-err" id="returnErr"><i class="fa-solid fa-circle-exclamation me-1"></i>Please provide a reason</div>
+    <div class="modal-btns">
+      <button class="btn-mk" onclick="closeModal('returnModal')">Cancel</button>
+      <button class="btn-mc" style="background:linear-gradient(135deg,#6a1b9a,#8e24aa)" onclick="confirmReturn()"><i class="fa-solid fa-rotate-left me-1"></i>Submit Return</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-md-4"><h5>Get In Touch</h5><p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p></div>
+      <div class="col-md-4"><h5>Quick Links</h5><ul class="list-unstyled"><li><a href="/">Home</a></li><li><a href="/shop">Shop Books</a></li><li><a href="/about">About Us</a></li></ul></div>
+      <div class="col-md-4 text-md-end"><h5>LitHeaven</h5><p><small>Read, learn, and enjoy stories that inspire every reader.</small></p></div>
+    </div>
+    <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+/* ════ DEMO DATA ════ */
+let orders = [
+  { _id:'o1', orderId:'LH-2025-00101', date:'2025-07-01',
+    orderStatus:'Delivered', paymentStatus:'COD', payment:'Cash on Delivery',
+    address:{fullName:'Varsha K',line1:'Ayya Samy Nagar',city:'Coimbatore',state:'Tamil Nadu',zip:'641018',country:'India'},
+    items:[
+      {_id:'p1',title:'The Midnight Library',author:'Matt Haig',format:'Paperback',qty:1,price:399,mrp:499,status:'Delivered',image:'https://covers.openlibrary.org/b/isbn/9780525559474-M.jpg'},
+      {_id:'p2',title:'Atomic Habits',author:'James Clear',format:'Hardcover',qty:2,price:549,mrp:699,status:'Delivered',image:'https://covers.openlibrary.org/b/isbn/9780735211292-M.jpg'},
+    ], subtotal:1497,discount:249,gst:225,delivery:0,total:1473 },
+
+  { _id:'o2', orderId:'LH-2025-00098', date:'2025-06-25',
+    orderStatus:'Shipped', paymentStatus:'COD', payment:'Cash on Delivery',
+    address:{fullName:'Vigneshwari N',line1:'Themanallur',city:'Coimbatore',state:'Tamil Nadu',zip:'641109',country:'India'},
+    items:[
+      {_id:'p3',title:'Ikigai',author:'Héctor García',format:'Paperback',qty:1,price:249,mrp:299,status:'Shipped',image:'https://covers.openlibrary.org/b/isbn/9780143130727-M.jpg'},
+    ], subtotal:299,discount:50,gst:45,delivery:0,total:294 },
+
+  { _id:'o3', orderId:'LH-2025-00091', date:'2025-06-18',
+    orderStatus:'Processing', paymentStatus:'Pending', payment:'Cash on Delivery',
+    address:{fullName:'Varsha K',line1:'Ayya Samy Nagar',city:'Coimbatore',state:'Tamil Nadu',zip:'641018',country:'India'},
+    items:[
+      {_id:'p4',title:'Rich Dad Poor Dad',author:'Robert Kiyosaki',format:'Paperback',qty:1,price:299,mrp:399,status:'Processing',image:'https://covers.openlibrary.org/b/isbn/9781612680194-M.jpg'},
+      {_id:'p5',title:'The Alchemist',author:'Paulo Coelho',format:'Paperback',qty:1,price:199,mrp:250,status:'Processing',image:'https://covers.openlibrary.org/b/isbn/9780062315007-M.jpg'},
+      {_id:'p6',title:'Deep Work',author:'Cal Newport',format:'Hardcover',qty:1,price:449,mrp:550,status:'Processing',image:'https://covers.openlibrary.org/b/isbn/9781455586691-M.jpg'},
+    ], subtotal:1199,discount:251,gst:126,delivery:0,total:1074 },
+
+  { _id:'o4', orderId:'LH-2025-00085', date:'2025-06-10',
+    orderStatus:'Cancelled', paymentStatus:'Refunded', payment:'Cash on Delivery',
+    cancelReason:'Changed my mind',
+    address:{fullName:'Varsha K',line1:'Ayya Samy Nagar',city:'Coimbatore',state:'Tamil Nadu',zip:'641018',country:'India'},
+    items:[
+      {_id:'p7',title:'Think and Grow Rich',author:'Napoleon Hill',format:'Paperback',qty:1,price:199,mrp:250,status:'Cancelled',image:'https://covers.openlibrary.org/b/isbn/9780593236406-M.jpg'},
+    ], subtotal:250,discount:51,gst:36,delivery:0,total:235 },
+];
+
+/* ════ STATE ════ */
+let activeFilter='all', pendingAction=null, currentDetailId=null;
+
+window.onload=()=>{
+  orders.forEach(o=>o.items.forEach(it=>{if(!it.status)it.status=o.orderStatus;}));
+  renderOrders();
+};
+
+/* ════ BADGE HELPERS ════ */
+function orderBadge(s){
+  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned'};
+  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️'};
+  return `<span class="sbadge ${cls[s]||'sb-processing'}">${ico[s]||'📦'} ${s}</span>`;
+}
+function payBadge(s){
+  const cls={COD:'pb-cod',Pending:'pb-pending',Paid:'pb-paid',Failed:'pb-failed',Refunded:'pb-refund'};
+  const lbl={COD:'💵 COD',Pending:'⏳ Pending',Paid:'✅ Paid',Failed:'❌ Failed',Refunded:'↩️ Refunded'};
+  return `<span class="pbadge ${cls[s]||'pb-pending'}">${lbl[s]||s}</span>`;
+}
+function itemBadge(s){
+  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned'};
+  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️'};
+  return `<span class="sbadge ${cls[s]||'sb-processing'}" style="font-size:10px;padding:3px 9px">${ico[s]||'📦'} ${s}</span>`;
+}
+
+/* ════ RENDER TABLE ════ */
+function renderOrders(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const wrap=document.getElementById('tableWrap');
+  const filtered=orders.filter(o=>{
+    const mf=activeFilter==='all'||o.orderStatus===activeFilter;
+    const ms=!q||o.orderId.toLowerCase().includes(q)||o.items.some(i=>i.title.toLowerCase().includes(q));
+    return mf&&ms;
+  });
+  if(!filtered.length){
+    wrap.innerHTML=`<div class="empty-state"><img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png"><h4>No orders found</h4><p>${q?'Try different keywords':'No orders in this category'}</p><a href="/shop" class="btn-shop-now"><i class="fa-solid fa-store"></i> Browse Books</a></div>`;
+    return;
+  }
+  wrap.innerHTML=`
+    <table class="ord-table">
+      <thead><tr>
+        <th>Product</th><th>Order ID</th><th>Date</th>
+        <th>Order Status</th><th>Payment Status</th><th>Total</th><th>Action</th>
+      </tr></thead>
+      <tbody>${filtered.map(buildRow).join('')}</tbody>
+    </table>`;
+}
+function buildRow(o){
+  const first=o.items[0];
+  const extra=o.items.length-1;
+  const d=new Date(o.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  return `
+    <tr>
+      <td><div class="prod-cell">
+        <img src="${first.image}" class="prod-thumb" onerror="this.src='https://via.placeholder.com/44x56/f3e8f2/6f2b67?text=📖'">
+        <div>
+          <div class="prod-name">${first.title}</div>
+          ${extra>0?`<div class="prod-more">+${extra} more item${extra>1?'s':''}</div>`:''}
+        </div>
+      </div></td>
+      <td><div class="oid-cell">${o.orderId}</div></td>
+      <td><div class="date-cell">${d}</div></td>
+      <td>${orderBadge(o.orderStatus)}</td>
+      <td>${payBadge(o.paymentStatus)}</td>
+      <td><div class="total-cell">₹${o.total}</div></td>
+      <td><button class="btn-details" onclick="openDetail('${o._id}')"><i class="fa-solid fa-eye me-1"></i>Details</button></td>
+    </tr>`;
+}
+
+/* ════ FILTER ════ */
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderOrders();
+}
+
+/* ════ OPEN DETAIL MODAL ════ */
+function openDetail(id){
+  const o=orders.find(x=>x._id===id);
+  if(!o)return;
+  currentDetailId=id;
+
+  /* top bar title */
+  document.getElementById('dmTopTitle').textContent=`Order ${o.orderId}`;
+
+  /* ── content ── */
+  const d=new Date(o.date).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  /* can cancel whole order */
+  const orderCanCancel=o.orderStatus==='Processing'||o.orderStatus==='Shipped';
+  /* can return whole order (all items delivered) */
+  const orderCanReturn=o.orderStatus==='Delivered'&&o.items.every(it=>it.status==='Delivered');
+
+  /* product rows */
+  const prodRows=o.items.map(it=>{
+    const isCancelled=it.status==='Cancelled';
+    const isReturned =it.status==='Returned';
+    const canCancelItem=orderCanCancel && !isCancelled;
+    const canReturnItem=o.orderStatus==='Delivered' && it.status==='Delivered';
+
+    /* right side button/tag */
+    let rightEl='';
+    if(isCancelled) rightEl=`<div class="cancelled-tag"><i class="fa-solid fa-xmark me-1"></i>Cancelled</div>`;
+    else if(isReturned) rightEl=`<div class="returned-tag"><i class="fa-solid fa-rotate-left me-1"></i>Returned</div>`;
+    else if(canReturnItem) rightEl=`<button class="btn-prod-return" onclick="openReturnModal('${o._id}','${it._id}')"><i class="fa-solid fa-rotate-left me-1"></i>Return</button>`;
+    else if(canCancelItem) rightEl=`<button class="btn-prod-cancel" onclick="openCancelModal('${o._id}','${it._id}')"><i class="fa-solid fa-xmark me-1"></i>Cancel</button>`;
+
+    return `
+      <div class="dm-product" style="${isCancelled||isReturned?'opacity:.6':''}">
+        <img src="${it.image}" class="dm-prod-img" onerror="this.src='https://via.placeholder.com/52x64/f3e8f2/6f2b67?text=📖'" style="${isCancelled?'filter:grayscale(1)':''}">
+        <div class="dm-prod-info">
+          <div class="dm-prod-name">${it.title}</div>
+          <div class="dm-prod-meta">${it.author} · ${it.format} · Qty: ${it.qty}</div>
+          <div class="dm-prod-price">₹${it.price*it.qty} <span style="font-size:11px;color:#bbb;text-decoration:line-through;font-weight:400">₹${it.mrp*it.qty}</span></div>
+          <div style="margin-top:4px">${itemBadge(it.status)}</div>
+        </div>
+        ${rightEl}
+      </div>`;
+  }).join('');
+
+  document.getElementById('dmContent').innerHTML=`
+    <!-- Order Info -->
+    <div class="dm-section">
+      <div class="dm-section-title"><span class="dm-section-title-icon">🧾</span> Order Info</div>
+      <div class="dm-info-row"><span class="dm-info-label">Order ID</span><span class="dm-info-val">${o.orderId}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Payment Method</span><span class="dm-info-val">${o.payment}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Order Status</span><span class="dm-info-val">${orderBadge(o.orderStatus)}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Payment Status</span><span class="dm-info-val">${payBadge(o.paymentStatus)}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Total Amount</span><span class="dm-info-val" style="color:var(--purple);font-size:14px">₹${o.total}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Discount</span><span class="dm-info-val" style="color:var(--success)">−₹${o.discount}</span></div>
+      <div class="dm-info-row"><span class="dm-info-label">Date</span><span class="dm-info-val">${d}</span></div>
+      ${o.cancelReason?`<div class="dm-info-row"><span class="dm-info-label">Cancel Reason</span><span class="dm-info-val" style="color:#c62828">${o.cancelReason}</span></div>`:''}
+      ${o.returnReason ?`<div class="dm-info-row"><span class="dm-info-label">Return Reason</span><span class="dm-info-val" style="color:#6a1b9a">${o.returnReason}</span></div>`:''}
+    </div>
+
+    <!-- Products -->
+    <div class="dm-section">
+      <div class="dm-section-title"><span class="dm-section-title-icon">📦</span> Products</div>
+      ${prodRows}
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="dm-section">
+      <div class="dm-section-title"><span class="dm-section-title-icon">🏠</span> Shipping Address</div>
+      <div class="dm-addr-name">${o.address.fullName}</div>
+      <div class="dm-addr-line">${o.address.line1}<br>${o.address.city}, ${o.address.state} – ${o.address.zip}<br>${o.address.country}</div>
+    </div>`;
+
+  /* ── footer buttons ── */
+  let footerHtml='';
+  if(orderCanCancel)
+    footerHtml+=`<button class="btn-dm-cancel-order" onclick="openCancelModal('${o._id}',null)"><i class="fa-solid fa-xmark"></i> Cancel Order</button>`;
+  if(orderCanReturn)
+    footerHtml+=`<button class="btn-dm-return-order" onclick="openReturnModal('${o._id}',null)"><i class="fa-solid fa-rotate-left"></i> Return Order</button>`;
+  footerHtml+=`<button class="btn-dm-invoice" onclick="downloadInvoice('${o._id}')"><i class="fa-solid fa-file-pdf"></i> Download Invoice</button>`;
+  footerHtml+=`<button class="btn-dm-close" onclick="closeDetail()">Close</button>`;
+  document.getElementById('dmFooter').innerHTML=footerHtml;
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  currentDetailId=null;
+}
+function closeDetailIfBg(e){
+  if(e.target===document.getElementById('detailOverlay'))closeDetail();
+}
+
+/* ════ CANCEL ════ */
+function openCancelModal(orderId,itemId=null){
+  pendingAction={type:'cancel',orderId,itemId};
+  document.getElementById('cancelTitle').innerHTML=itemId
+    ?'<i class="fa-solid fa-circle-xmark" style="color:#c62828"></i> Cancel This Item'
+    :'<i class="fa-solid fa-circle-xmark" style="color:#c62828"></i> Cancel Order';
+  document.querySelectorAll('#cancelChips .r-chip').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('cancelTa').value='';
+  document.getElementById('cancelModal').classList.add('open');
+}
+async function confirmCancel(){
+  const reason=getReason('cancel');
+  const{orderId,itemId}=pendingAction;
+  closeModal('cancelModal');
+  const o=orders.find(x=>x._id===orderId);
+  if(!o)return;
+  if(itemId){
+    const it=o.items.find(i=>i._id===itemId);
+    if(it)it.status='Cancelled';
+    if(o.items.every(i=>i.status==='Cancelled')){
+      o.orderStatus='Cancelled';o.paymentStatus='Refunded';o.cancelReason=reason||'';
+      await showToast('All items cancelled — order cancelled','success');
+    } else {
+      await showToast('Item cancelled','success');
+    }
+  } else {
+    o.orderStatus='Cancelled';o.paymentStatus='Refunded';o.cancelReason=reason||'';
+    o.items.forEach(i=>i.status='Cancelled');
+    await showToast('Order cancelled','success');
+  }
+  renderOrders();
+  if(currentDetailId)openDetail(currentDetailId);
+}
+
+/* ════ RETURN ════ */
+function openReturnModal(orderId,itemId=null){
+  pendingAction={type:'return',orderId,itemId};
+  document.getElementById('returnTitle').innerHTML=itemId
+    ?'<i class="fa-solid fa-rotate-left" style="color:#6a1b9a"></i> Return This Item'
+    :'<i class="fa-solid fa-rotate-left" style="color:#6a1b9a"></i> Return Order';
+  document.querySelectorAll('#returnChips .r-chip').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('returnTa').value='';
+  document.getElementById('returnErr').style.display='none';
+  document.getElementById('returnModal').classList.add('open');
+}
+async function confirmReturn(){
+  const reason=getReason('return');
+  if(!reason){document.getElementById('returnErr').style.display='block';return;}
+  document.getElementById('returnErr').style.display='none';
+  const{orderId,itemId}=pendingAction;
+  closeModal('returnModal');
+  const o=orders.find(x=>x._id===orderId);
+  if(!o)return;
+  if(itemId){
+    const it=o.items.find(i=>i._id===itemId);
+    if(it){it.status='Returned';it.returnReason=reason;}
+    if(o.items.every(i=>i.status==='Returned')){
+      o.orderStatus='Returned';o.returnReason=reason;
+      await showToast('All items returned — order returned','success');
+    } else {
+      await showToast('Return request submitted for item','success');
+    }
+  } else {
+    o.orderStatus='Returned';o.returnReason=reason;
+    o.items.forEach(i=>{ i.status='Returned';i.returnReason=reason; });
+    await showToast('Return request submitted!','success');
+  }
+  renderOrders();
+  if(currentDetailId)openDetail(currentDetailId);
+}
+
+/* ════ HELPERS ════ */
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function toggleChip(el,type){
+  document.querySelectorAll(`#${type}Chips .r-chip`).forEach(c=>c.classList.remove('sel'));
+  el.classList.toggle('sel');
+}
+function getReason(type){
+  const chip=document.querySelector(`#${type}Chips .r-chip.sel`);
+  const ta=document.getElementById(`${type}Ta`).value.trim();
+  return ta||chip?.textContent||'';
+}
+function showToast(msg,icon='success'){
+  return Swal.fire({toast:true,position:'top-end',icon,title:msg,showConfirmButton:false,timer:2200,timerProgressBar:true});
+}
+
+/* ════ INVOICE PDF ════ */
+function downloadInvoice(orderId){
+  const o=orders.find(x=>x._id===orderId);
+  if(!o)return;
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const d=new Date(o.date).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  doc.setFillColor(111,43,103);doc.rect(0,0,W,32,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(22);doc.setFont('helvetica','bold');doc.text('LitHeaven',15,14);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Your Literary Escape',15,20);doc.text('litheaven.com  |  support@litheaven.com',15,26);
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('TAX INVOICE',W-15,14,{align:'right'});
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(`Order: ${o.orderId}`,W-15,20,{align:'right'});doc.text(`Date: ${d}`,W-15,26,{align:'right'});
+  doc.setTextColor(50,50,50);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text('Deliver To:',15,42);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(o.address.fullName,15,48);doc.text(`${o.address.line1}, ${o.address.city}`,15,54);doc.text(`${o.address.state} - ${o.address.zip}, ${o.address.country}`,15,60);
+  doc.setFont('helvetica','bold');doc.text('Payment:',W/2+5,42);doc.setFont('helvetica','normal');doc.text(o.payment,W/2+5,48);
+  doc.setDrawColor(184,138,180);doc.setLineWidth(0.4);doc.line(15,65,W-15,65);
+  doc.autoTable({startY:70,head:[['#','Title','Author','Format','Qty','MRP','Price','Amount']],body:o.items.map((it,i)=>[i+1,it.title,it.author,it.format,it.qty,`Rs.${it.mrp}`,`Rs.${it.price}`,`Rs.${it.price*it.qty}`]),styles:{font:'helvetica',fontSize:8,cellPadding:3,textColor:[50,50,50]},headStyles:{fillColor:[111,43,103],textColor:[255,255,255],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[249,244,253]},columnStyles:{0:{cellWidth:8,halign:'center'},1:{cellWidth:48},2:{cellWidth:28},3:{cellWidth:20},4:{cellWidth:10,halign:'center'},5:{cellWidth:18,halign:'right'},6:{cellWidth:18,halign:'right'},7:{cellWidth:20,halign:'right'}},margin:{left:15,right:15}});
+  const ay=doc.lastAutoTable.finalY+8,bx=W-80;
+  doc.setFillColor(250,244,253);doc.roundedRect(bx,ay,65,48,4,4,'F');doc.setDrawColor(184,138,180);doc.roundedRect(bx,ay,65,48,4,4,'S');
+  [['Subtotal',`Rs.${o.subtotal}`],['Discount',`-Rs.${o.discount}`],['GST (18%)',`Rs.${o.gst}`],['Delivery',o.delivery===0?'FREE':`Rs.${o.delivery}`]].forEach(([l,v],i)=>{const y=ay+9+i*8;doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);doc.setFontSize(8);doc.text(l,bx+4,y);doc.setFont('helvetica','bold');doc.setTextColor(50,50,50);doc.text(v,bx+61,y,{align:'right'});});
+  doc.setDrawColor(111,43,103);doc.line(bx+4,ay+39,bx+61,ay+39);
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(111,43,103);doc.text('Total',bx+4,ay+46);doc.text(`Rs.${o.total}`,bx+61,ay+46,{align:'right'});
+  const fy=ay+62;doc.setFillColor(111,43,103);doc.rect(0,fy,W,18,'F');doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('Thank you for shopping with LitHeaven!  |  support@litheaven.com',W/2,fy+7,{align:'center'});
+  doc.text('LitHeaven Company, Gandhipuram Road, Coimbatore - 641018',W/2,fy+13,{align:'center'});
+  doc.save(`LitHeaven_Invoice_${o.orderId}.pdf`);
+  showToast('Invoice downloaded!','success');
+}
+
+/* ════ MOBILE MENU + LOGOUT ════ */
+const menuToggle=document.getElementById('menuToggle'),mobileMenu=document.getElementById('mobileMenu');
+menuToggle?.addEventListener('click',function(){mobileMenu.classList.toggle('open');const ic=this.querySelector('i');ic.classList.toggle('fa-bars');ic.classList.toggle('fa-xmark');});
+document.addEventListener('click',function(e){if(mobileMenu&&menuToggle&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target)){mobileMenu.classList.remove('open');const ic=menuToggle.querySelector('i');if(ic){ic.classList.add('fa-bars');ic.classList.remove('fa-xmark');}}});
+document.getElementById('logoutBtn')?.addEventListener('click',function(e){e.preventDefault();Swal.fire({title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",html:`<p style="font-size:14px;color:#555">Sure? 💜</p>`,showCancelButton:true,confirmButtonText:'🚪 Logout',cancelButtonText:'Stay',confirmButtonColor:'#6f2b67',reverseButtons:true,background:'linear-gradient(135deg,#f6eef6,#efe3f0)'}).then(r=>{if(r.isConfirmed)window.location.href='/logout';});});
+</script>
+</body>
+</html>

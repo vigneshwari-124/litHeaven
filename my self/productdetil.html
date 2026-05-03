@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>LitHeaven – Product Detail</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+
+ .tag-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.tag-pill {
+  padding: 10px 20px;
+  border: 2px solid #cfc5d9;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+.tag-pill:hover {
+  border-color: #6f2b67;
+}
+
+.tag-pill.selected {
+  background-color: #6f2b67;
+  color: white;
+  border-color: #6f2b67;
+  transform: scale(1.05);
+}
+
+.tag-pill.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.stock-text {
+  color: red;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.single-language {
+  margin-top: 15px;
+  font-size: 15px;
+}
+    :root{--purple:#6f2b67;--light:#8e4a86}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Inter","Segoe UI",Arial;background:linear-gradient(135deg,#f5f0f6,#e8dff0,#f0e5f5);color:#222;overflow-x:hidden}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes scanLine{0%{top:-4px}100%{top:calc(100% + 4px)}}
+    @keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.5)}70%{transform:scale(.88)}100%{transform:scale(1)}}
+    @keyframes rippleOut{0%{transform:scale(0);opacity:.6}100%{transform:scale(3.5);opacity:0}}
+    @keyframes shimmerSlide{0%{left:-100%}100%{left:160%}}
+    @keyframes cartBounce{0%{transform:translateY(0) rotate(0)}30%{transform:translateY(-5px) rotate(-10deg)}60%{transform:translateY(2px) rotate(5deg)}100%{transform:translateY(0) rotate(0)}}
+    @keyframes recSlideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── NAVBAR ── */
+    .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .5s}
+    header.navbar-area{background:var(--purple);padding:12px 0;animation:fadeDown .7s}
+    .navbar-container{padding:0 16px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;transition:transform .3s}
+    .brand:hover{transform:scale(1.04)}
+    .logo-circle{position:relative;width:58px;height:58px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 3s ease-in-out infinite}
+    .book-logo{width:32px;filter:brightness(0)invert(1)}
+    .logo-text{position:absolute;bottom:5px;font-size:6.5px;font-weight:800;color:#fff;letter-spacing:.8px;text-transform:uppercase}
+    .brand .txt{font-weight:800;font-size:20px;letter-spacing:.5px;color:#fff}
+    .main-nav .nav-link{color:#fff;font-weight:600;padding:8px 12px;transition:all .3s;position:relative;text-decoration:none;display:inline-block}
+    .main-nav .nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#fff;transition:all .3s;transform:translateX(-50%)}
+    .main-nav .nav-link:hover::after,.main-nav .nav-link.active-link::after{width:80%}
+    .main-nav .nav-link:hover,.main-nav .nav-link.active-link{color:#f3dff1;transform:translateY(-2px)}
+    .header-icons{display:flex;gap:15px;align-items:center}
+    .icon-btn{color:#fff;font-size:20px;position:relative;cursor:pointer;transition:all .3s;text-decoration:none;background:none;border:none;padding:0;display:inline-flex;align-items:center}
+    .icon-btn:hover{transform:scale(1.2) rotate(5deg);color:#fff}
+    .icon-badge{position:absolute;top:-6px;right:-8px;background:#fff;color:var(--purple);font-weight:700;font-size:11px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;animation:pulse 2s infinite}
+    .dropdown-menu{border-radius:12px;border:none;box-shadow:0 10px 30px rgba(111,43,103,.25);padding:8px}
+    .dropdown-item{border-radius:8px;padding:10px 14px;font-weight:600;color:#333;transition:all .25s}
+    .dropdown-item:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;transform:translateX(5px)}
+    .dropdown-item i{color:#6f2b67;transition:color .25s}
+    .dropdown-item:hover i{color:#fff}
+
+    .search-wrap{display:flex;justify-content:center;padding:16px;background:#fff;border-bottom:1px solid #ede0f0}
+    .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:9px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px rgba(111,43,103,.10);border:1.5px solid #d8cfe0;transition:all .3s}
+    .search-box:focus-within{border-color:#702767;box-shadow:0 5px 20px rgba(111,43,103,.18)}
+    .s-emoji{font-size:1.1rem;flex-shrink:0;user-select:none}
+    .search-box input{flex:1;border:0;background:0 0;outline:0;color:#333;font-size:14.5px;font-family:inherit}
+    .search-box input::placeholder{color:#aaa;font-size:14px}
+    .s-cancel{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;padding:0;flex-shrink:0;display:none}
+    .s-cancel.show{display:block}
+
+    .page-wrap{max-width:1160px;margin:0 auto;padding:24px 16px 60px;animation:fadeUp .5s}
+    .breadcrumb-row{font-size:.77rem;color:#aaa;margin-bottom:10px}
+    .breadcrumb-row a{color:#aaa;text-decoration:none}
+    .breadcrumb-row a:hover{color:var(--purple)}
+    .breadcrumb-row .cur{color:#555;font-weight:600}
+    .page-title{font-size:1.3rem;font-weight:800;color:#1a0a28;margin-bottom:18px}
+    .product-section{display:flex;gap:28px;background:#fff;border-radius:20px;padding:26px;box-shadow:0 6px 24px rgba(111,43,103,.08);border:1px solid #ede0f0;margin-bottom:28px}
+
+    /* ══════════════════════════════════════════
+       IMAGE COLUMN — bracket zoom cursor + pan
+    ══════════════════════════════════════════ */
+    .img-column{display:flex;flex-direction:column;gap:12px;flex:0 0 340px;min-width:0}
+
+    .main-img-wrap{
+      border: 2px solid #6f2b67;
+     border-radius:16px;
+      width:100%;height:380px;overflow:hidden;
+      background:#f5f0f6;
+      position:relative;user-select:none;
+      cursor:none;
+    }
+    .main-img-wrap img{
+      width:100%;height:100%;object-fit:cover;display:block; border-radius:16px;
+      transition:transform .55s cubic-bezier(.23,1,.32,1);
+      pointer-events:none;transform-origin:center center;will-change:transform;
+    }
+
+    /* 4-corner bracket cursor */
+    .mag-cursor{
+      position:absolute;width:46px;height:46px;
+      pointer-events:none;opacity:0;z-index:20;
+      transform:translate(-50%,-50%);transition:opacity .18s;
+    }
+    .main-img-wrap:hover .mag-cursor{opacity:1}
+    .mag-cursor .c{
+      position:absolute;width:12px;height:12px;
+      border-color:var(--purple);border-style:solid;
+      transition:all .2s cubic-bezier(.34,1.56,.64,1);
+    }
+    .mag-cursor .c.tl{top:0;left:0;border-width:2.5px 0 0 2.5px;border-radius:2px 0 0 0}
+    .mag-cursor .c.tr{top:0;right:0;border-width:2.5px 2.5px 0 0;border-radius:0 2px 0 0}
+    .mag-cursor .c.bl{bottom:0;left:0;border-width:0 0 2.5px 2.5px;border-radius:0 0 0 2px}
+    .mag-cursor .c.br{bottom:0;right:0;border-width:0 2.5px 2.5px 0;border-radius:0 0 2px 0}
+    .mag-cursor .ch{position:absolute;height:1px;width:100%;top:50%;left:0;transform:translateY(-50%);background:rgba(111,43,103,.28)}
+    .mag-cursor .cv{position:absolute;width:1px;height:100%;left:50%;top:0;transform:translateX(-50%);background:rgba(111,43,103,.28)}
+    .mag-cursor .dot{position:absolute;top:50%;left:50%;width:4px;height:4px;border-radius:50%;background:var(--purple);opacity:.7;transform:translate(-50%,-50%)}
+    .main-img-wrap.zoomed .mag-cursor .c{width:16px;height:16px}
+
+    /* scan sweep on hover enter */
+    .img-scan{
+      position:absolute;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,rgba(111,43,103,.55),transparent);
+      pointer-events:none;z-index:8;top:-4px;opacity:0;
+    }
+    .main-img-wrap.scan-run .img-scan{opacity:1;animation:scanLine .6s ease forwards}
+
+    /* zoom hint */
+    .zoom-hint{
+      position:absolute;bottom:10px;right:12px;
+      background:rgba(26,10,40,.7);color:#fff;
+      font-size:.66rem;padding:5px 12px;border-radius:50px;
+      pointer-events:none;font-weight:700;
+      display:flex;align-items:center;gap:6px;z-index:5;
+      transition:opacity .25s;letter-spacing:.3px;
+    }
+    .main-img-wrap:hover .zoom-hint{opacity:0}
+
+    .thumb-strip{display:flex;flex-direction:row;gap:10px;width:100%}
+    .thumb-item {
+  border: 3px solid #6f2b67;
+  border-radius: 8px;
+  padding: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+   }
+
+    .thumb-item.active {border: 3px solid #000;}
+    .thumb-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+    .thumb-item:hover img{transform:scale(1.07)}
+    /* .thumb-item.active{border-color:var(--purple);box-shadow:0 0 0 2px var(--purple)} */
+
+    /* INFO PANEL */
+    .info-panel{flex:1;min-width:0}
+    .prod-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .prod-title{font-size:1.4rem;font-weight:800;color:#1a0a28;line-height:1.2}
+    .share-btn{display:flex;align-items:center;gap:5px;border:none;background:none;color:var(--purple);font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap;padding:0}
+    .author-link{font-size:.88rem;color:var(--purple);font-weight:600;text-decoration:none;margin-bottom:6px;display:inline-block}
+    .author-link:hover{text-decoration:underline}
+    .rating-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .stars-yellow{color:#f59e0b;font-size:1rem}
+    .rev-count{font-size:.82rem;color:#888}
+    .price-row-info{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+    .new-price{font-size:1.65rem;font-weight:800;color:#222}
+    .old-price{font-size:.95rem;color:#aaa;text-decoration:line-through}
+    .prod-desc{font-size:.84rem;color:#555;line-height:1.65;margin-bottom:12px}
+    .avail-row{font-size:.84rem;margin-bottom:14px}
+    .avail-count{color:#16a34a;font-weight:700}
+    .tag-label{font-size:.77rem;font-weight:700;color:#555;margin-bottom:7px}
+    .tag-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .tag-pill{padding:6px 16px;border-radius:50px;border:1.5px solid #d8cfe0;font-size:.79rem;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:all .2s;user-select:none}
+    .tag-pill:hover{border-color:var(--purple);color:var(--purple)}
+    .tag-pill.selected{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .qty-label{font-size:.77rem;font-weight:700;color:#555;margin-bottom:7px}
+    .qty-wrap{display:flex;align-items:center;width:fit-content;border:1.5px solid #ddd;border-radius:12px;overflow:hidden;margin-bottom:18px}
+    .qty-btn{width:36px;height:36px;border:none;background:#f8f4fc;color:var(--purple);font-size:1.2rem;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center}
+    .qty-btn:hover{background:#ede0f0}
+    .qty-num{width:46px;height:36px;border:none;border-left:1.5px solid #ddd;border-right:1.5px solid #ddd;text-align:center;font-size:.95rem;font-weight:700;color:#222;background:#fff;outline:none;font-family:inherit}
+
+    /* ═══════════════════════════════════════
+       ACTION ROW — unique cart + wishlist
+    ═══════════════════════════════════════ */
+    .action-row{display:flex;gap:12px;margin-bottom:14px;align-items:center}
+
+    /* ADD TO CART — dark gradient pill with shimmer + icon box */
+    .btn-cart{
+      flex:1;position:relative;overflow:hidden;
+      height:52px;border:none;border-radius:16px;cursor:pointer;
+      font-family:inherit;
+      background:linear-gradient(135deg,#1a0a28 0%,#4a1647 45%,#6f2b67 100%);
+      color:#fff;
+      box-shadow:0 6px 20px rgba(111,43,103,.4),inset 0 1px 0 rgba(255,255,255,.1);
+      transition:transform .2s,box-shadow .2s;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      padding:0 22px;
+      font-size:.92rem;font-weight:800;letter-spacing:.3px;
+    }
+    .btn-cart::before{
+      content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.18),transparent);
+      transition:left .5s ease;
+    }
+    .btn-cart:hover::before{left:160%}
+    .btn-cart:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(111,43,103,.5)}
+    .btn-cart:active{transform:scale(.97)}
+    .btn-cart .ci{
+      width:28px;height:28px;border-radius:8px;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.18);
+      display:flex;align-items:center;justify-content:center;font-size:.85rem;
+      transition:transform .3s;flex-shrink:0;
+    }
+    .btn-cart:hover .ci{animation:cartBounce .4s ease}
+    .btn-cart .clabel{display:flex;flex-direction:column;line-height:1.1;text-align:left}
+    .btn-cart .csub{font-size:.62rem;font-weight:500;opacity:.7;letter-spacing:.2px}
+
+    /* WISHLIST — morphing border heart button */
+    .btn-wish{
+      position:relative;overflow:hidden;
+      width:52px;height:52px;border-radius:14px;border:none;cursor:pointer;
+      background:#fff;
+      border:1.5px solid #e0d4e8;
+      color:#bbb;font-size:1.15rem;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .25s;flex-shrink:0;
+    }
+    .btn-wish:hover{border-color:#e11d48;color:#e11d48;background:#fff5f7;transform:scale(1.08)}
+    .btn-wish.wished{border-color:#e11d48;color:#e11d48;background:#fff0f3}
+    .btn-wish.pop{animation:heartPop .38s ease}
+    /* ripple ring */
+    .btn-wish::after{
+      content:'';position:absolute;
+      width:20px;height:20px;border-radius:50%;
+      border:2px solid #e11d48;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%) scale(0);
+      opacity:0;pointer-events:none;
+    }
+    .btn-wish.ripple::after{animation:rippleOut .45s ease forwards}
+
+    .free-ship{font-size:.79rem;color:#555}
+    .free-ship strong{color:var(--purple)}
+
+    /* TABS */
+    .tabs-wrap{background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(111,43,103,.08);border:1px solid #ede0f0;overflow:hidden;margin-bottom:28px}
+    .tab-header{display:flex;border-bottom:1px solid #ede0f0}
+    .tab-btn{flex:1;padding:14px;border:none;background:none;font-size:.9rem;font-weight:700;color:#888;cursor:pointer;transition:all .2s;font-family:inherit;border-bottom:3px solid transparent;margin-bottom:-1px}
+    .tab-btn.active{color:var(--purple);border-bottom-color:var(--purple);background:linear-gradient(to bottom,#fff,#faf5ff)}
+    .tab-body{padding:26px}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+    .desc-section-title{font-weight:700;color:#333;margin-bottom:8px;font-size:.9rem}
+    .desc-text{font-size:.86rem;color:#555;line-height:1.75;margin-bottom:16px}
+    .desc-list{list-style:none;padding:0;margin:0 0 16px}
+    .desc-list li{padding:5px 0;font-size:.85rem;color:#555;display:flex;gap:8px}
+    .desc-list li::before{content:"•";color:var(--purple);font-weight:700;flex-shrink:0}
+    .reviews-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+    .rating-big{text-align:center;min-width:80px}
+    .rating-number{font-size:2.8rem;font-weight:800;color:#1a1a1a;line-height:1}
+    .rating-stars-big{color:#f59e0b;font-size:1.2rem;margin:4px 0}
+    .rating-count{font-size:.78rem;color:#888}
+    .rating-bars{flex:1;min-width:200px}
+    .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+    .bar-lbl{font-size:.77rem;color:#f59e0b;width:14px;text-align:right;flex-shrink:0;font-weight:700}
+    .bar-track{flex:1;height:8px;background:#f0e5f5;border-radius:50px;overflow:hidden}
+    .bar-fill{height:100%;background:#1a1a1a;border-radius:50px}
+    .write-btn{padding:10px 20px;border:1.5px solid #1a1a1a;background:#fff;color:#1a1a1a;border-radius:50px;font-size:.83rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap;align-self:flex-start}
+    .write-btn:hover{background:#1a1a1a;color:#fff}
+    .review-card{border-top:1px solid #f0e5f5;padding:18px 0;animation:fadeUp .35s}
+    .rc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+    .rc-user{display:flex;align-items:center;gap:10px}
+    .rc-avatar{width:36px;height:36px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;flex-shrink:0}
+    .rc-name{font-weight:700;font-size:.87rem;color:#222}
+    .rc-date{font-size:.74rem;color:#bbb}
+    .rc-stars{color:#f59e0b;font-size:.83rem;margin-bottom:4px}
+    .rc-body{font-size:.84rem;color:#555;line-height:1.65}
+    .read-more-btn{background:none;border:none;color:var(--purple);font-weight:700;font-size:.82rem;cursor:pointer;padding:0 0 0 4px;font-family:inherit;display:inline}
+    .read-more-btn:hover{text-decoration:underline}
+    .rc-helpful{font-size:.77rem;color:#888;margin-top:8px;display:flex;align-items:center;gap:6px}
+    .rc-helpful button{background:none;border:1px solid #ddd;border-radius:50px;padding:2px 10px;font-size:.71rem;cursor:pointer;color:#888;transition:all .2s;font-family:inherit}
+    .rc-helpful button:hover{border-color:var(--purple);color:var(--purple)}
+    .extra-reviews{display:none}
+    .extra-reviews.open{display:block}
+    .see-all-wrap{text-align:center;padding-top:16px}
+    .see-all-btn{padding:10px 30px;border:1.5px solid #ddd;background:#fff;border-radius:50px;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .2s;color:#555;font-family:inherit}
+    .see-all-btn:hover,.see-all-btn.open{border-color:var(--purple);color:var(--purple)}
+
+    /* ═══════════════════════════════════════
+       RECOMMENDED — catchy hover overlay
+    ═══════════════════════════════════════ */
+    .rec-section{background:#fff;border-radius:20px;padding:22px;box-shadow:0 6px 24px rgba(111,43,103,.08);border:1px solid #ede0f0}
+    .rec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .rec-title{font-size:1.05rem;font-weight:800;color:#1a0a28}
+    .rec-arrows{display:flex;gap:8px}
+    .rec-arr{width:32px;height:32px;border-radius:50%;border:1.5px solid #ddd;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555;font-size:.9rem;transition:all .2s}
+    .rec-arr:hover{border-color:var(--purple);color:var(--purple)}
+    .rec-grid{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+    .rec-grid::-webkit-scrollbar{height:4px}
+    .rec-grid::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
+
+    .rec-card{
+      flex:0 0 178px;scroll-snap-align:start;
+      border:1.5px solid #ede0f0;border-radius:14px;
+      overflow:hidden;cursor:pointer;background:#fff;
+      position:relative;
+      transition:transform .32s cubic-bezier(.23,1,.32,1),box-shadow .32s,border-color .25s;
+    }
+    .rec-card:hover{
+      transform:translateY(-6px) scale(1.02);
+      box-shadow:0 16px 40px rgba(111,43,103,.22);
+      border-color:var(--purple);
+    }
+    .rec-img{width:100%;height:215px;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.23,1,.32,1)}
+    .rec-card:hover .rec-img{transform:scale(1.07)}
+    .rec-info{padding:10px 12px}
+    .rec-name{font-size:.77rem;font-weight:700;color:#222;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .rec-prices{display:flex;align-items:center;gap:6px}
+    .rec-new{font-size:.84rem;font-weight:800;color:var(--purple)}
+    .rec-old{font-size:.71rem;color:#ccc;text-decoration:line-through}
+
+    /* overlay: purple gradient + staggered buttons sliding up */
+    .rec-overlay{
+      position:absolute;top:0;left:0;right:0;height:215px;
+      background:linear-gradient(to top,rgba(111,43,103,.9) 0%,rgba(26,10,40,.5) 60%,transparent 100%);
+      border-radius:14px 14px 0 0;
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+      padding-bottom:14px;gap:8px;
+      opacity:0;transition:opacity .28s ease;
+      pointer-events:none;
+    }
+    .rec-card:hover .rec-overlay{opacity:1;pointer-events:all}
+
+    /* "View Product" pill */
+    .rec-view-pill{
+      display:flex;align-items:center;gap:7px;
+      background:#fff;color:var(--purple);
+      border:none;cursor:pointer;font-family:inherit;
+      font-size:.76rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+      padding:7px 16px;border-radius:50px;
+      transform:translateY(16px);opacity:0;
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1) .04s,
+                 opacity .22s .04s,
+                 background .2s,box-shadow .2s;
+      box-shadow:0 4px 14px rgba(0,0,0,.22);
+      white-space:nowrap;
+    }
+    .rec-card:hover .rec-view-pill{transform:translateY(0);opacity:1}
+    .rec-view-pill:hover{background:var(--purple);color:#fff;box-shadow:0 6px 18px rgba(111,43,103,.5)}
+    .rec-view-pill i{transition:transform .25s}
+    .rec-view-pill:hover i{transform:translateX(3px)}
+
+    /* mini add-to-cart icon button */
+    .rec-cart-btn{
+      display:flex;align-items:center;justify-content:center;
+      width:34px;height:34px;border-radius:50%;
+      background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.45);
+      color:#fff;font-size:.9rem;cursor:pointer;
+      transform:translateY(16px) scale(.8);opacity:0;
+      transition:transform .28s cubic-bezier(.34,1.56,.64,1) .1s,
+                 opacity .2s .1s,background .2s;
+      position:absolute;top:10px;right:10px;
+      backdrop-filter:blur(4px);
+    }
+    .rec-card:hover .rec-cart-btn{transform:translateY(0) scale(1);opacity:1}
+    .rec-cart-btn:hover{background:rgba(255,255,255,.35)}
+
+    /* discount badge */
+    .rec-badge{
+      position:absolute;top:10px;left:10px;
+      background:linear-gradient(135deg,#e11d48,#be123c);
+      color:#fff;font-size:.65rem;font-weight:800;
+      padding:3px 9px;border-radius:50px;letter-spacing:.3px;
+      pointer-events:none;z-index:2;
+    }
+
+    /* ════════════════════════════════════════
+       CINEMATIC LIGHTBOX
+    ════════════════════════════════════════ */
+    .lb-overlay{
+      position:fixed;inset:0;
+      background:#080310;
+      z-index:99999;opacity:0;pointer-events:none;
+      transition:opacity .35s ease;
+      display:flex;align-items:center;justify-content:center;
+      cursor:none;
+    }
+    .lb-overlay.show{opacity:1;pointer-events:all}
+    .lb-topbar{
+      position:fixed;top:0;left:0;right:0;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 22px;
+      background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent);
+      z-index:10;
+    }
+    .lb-counter{font-size:.74rem;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.45);text-transform:uppercase}
+    .lb-close{
+      width:40px;height:40px;border:1.5px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.07);color:#fff;font-size:1.1rem;
+      cursor:pointer;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;backdrop-filter:blur(6px);
+    }
+    .lb-close:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35)}
+    .lb-stage{
+      position:relative;
+      width:min(78vw,780px);height:min(82vh,740px);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;
+    }
+    .lb-stage img{
+      width:100%;height:100%;object-fit:contain;
+      transform:scale(1) translate(0,0);
+      transform-origin:center center;
+      transition:transform .07s linear;
+      pointer-events:none;user-select:none;will-change:transform;
+    }
+    /* scan line on load */
+    .lb-scan{
+      position:absolute;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,rgba(111,43,103,.75),transparent);
+      pointer-events:none;z-index:5;
+      top:-4px;opacity:0;
+    }
+    .lb-scan.run{opacity:1;animation:scanLine .65s ease forwards}
+    /* custom crosshair cursor */
+    .lb-cur{position:fixed;pointer-events:none;z-index:20;transform:translate(-50%,-50%);opacity:0;transition:opacity .15s}
+    .lb-overlay.show .lb-cur{opacity:1}
+    .lb-cur-h{position:absolute;height:1px;width:52px;background:linear-gradient(90deg,transparent,rgba(111,43,103,.85),transparent);top:50%;left:50%;transform:translate(-50%,-50%)}
+    .lb-cur-v{position:absolute;width:1px;height:52px;background:linear-gradient(180deg,transparent,rgba(111,43,103,.85),transparent);top:50%;left:50%;transform:translate(-50%,-50%)}
+    .lb-cur-c{position:absolute;width:9px;height:9px;border-color:rgba(255,255,255,.8);border-style:solid}
+    .lb-cur-c.tl{top:-13px;left:-13px;border-width:1.5px 0 0 1.5px}
+    .lb-cur-c.tr{top:-13px;right:-13px;border-width:1.5px 1.5px 0 0}
+    .lb-cur-c.bl{bottom:-13px;left:-13px;border-width:0 0 1.5px 1.5px}
+    .lb-cur-c.br{bottom:-13px;right:-13px;border-width:0 1.5px 1.5px 0}
+    .lb-nav{
+      position:fixed;top:50%;transform:translateY(-50%);
+      width:46px;height:46px;border:1.5px solid rgba(255,255,255,.13);
+      background:rgba(255,255,255,.05);color:#fff;font-size:1.6rem;
+      cursor:pointer;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      transition:all .2s;z-index:10;backdrop-filter:blur(8px);
+    }
+    .lb-nav:hover{background:rgba(111,43,103,.45);border-color:rgba(111,43,103,.7)}
+    .lb-prev{left:18px}
+    .lb-next{right:18px}
+    .lb-dots{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
+    .lb-dot{width:28px;height:3px;border-radius:2px;background:rgba(255,255,255,.2);cursor:pointer;transition:all .25s}
+    .lb-dot.active{background:var(--purple);width:42px}
+    .lb-zoom-bar{position:fixed;left:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,.05);z-index:10}
+    .lb-zoom-fill{position:absolute;bottom:0;left:0;right:0;background:var(--purple);transition:height .15s ease}
+    .lb-hint{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);font-size:.68rem;letter-spacing:.8px;text-transform:uppercase;font-weight:700;color:rgba(255,255,255,.32);z-index:10;pointer-events:none;transition:opacity .5s}
+    .lb-hint.hide{opacity:0}
+
+    /* MODALS */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s}
+    .modal-overlay.show{opacity:1;pointer-events:all}
+    .modal-box{background:#fff;border-radius:20px;padding:32px;max-width:460px;width:90%;text-align:center;transform:translateY(20px);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.18);position:relative}
+    .modal-overlay.show .modal-box{transform:translateY(0)}
+    .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#aaa}
+    .modal-close:hover{color:#333}
+    .modal-img{width:110px;height:110px;object-fit:contain;margin-bottom:14px}
+    .modal-title{font-size:1.05rem;font-weight:800;color:#1a1a1a;margin-bottom:8px}
+    .modal-sub{font-size:.86rem;color:#777}
+    .review-modal{max-width:500px;text-align:left}
+    .review-modal h3{font-size:1rem;font-weight:800;margin-bottom:14px;color:#1a1a1a}
+    .star-rate-wrap{display:flex;gap:6px;margin-bottom:18px}
+    .star-rate-wrap .sr{font-size:1.9rem;color:#ddd;transition:color .15s;cursor:pointer}
+    .star-rate-wrap .sr.lit{color:#f59e0b}
+    .review-textarea{width:100%;height:110px;border:1.5px solid #ddd;border-radius:12px;padding:12px;font-size:.86rem;font-family:inherit;resize:none;outline:none;transition:border-color .2s;margin-bottom:10px}
+    .review-textarea:focus{border-color:var(--purple)}
+    .review-title-inp{width:100%;border:1.5px solid #ddd;border-radius:12px;padding:10px 14px;font-size:.86rem;font-family:inherit;outline:none;transition:border-color .2s}
+    .review-title-inp:focus{border-color:var(--purple)}
+    .submit-review-btn{margin-top:14px;width:100%;padding:12px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+    .submit-review-btn:hover{background:var(--light)}
+
+    .site-footer{background:var(--purple);color:#fff;padding:38px 16px}
+    .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
+    .site-footer a:hover{color:#f3dff1}
+    .site-footer li{margin-bottom:6px}
+
+    @media(max-width:900px){.product-section{flex-wrap:wrap}.img-column{flex:none;width:100%}.main-img-wrap{height:280px;cursor:crosshair}.lb-nav{display:none}}
+    @media(max-width:640px){.product-section{padding:14px}.rec-card{flex:0 0 145px}.main-img-wrap{height:240px}}
+  </style>
+</head>
+<body>
+
+<div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
+
+<header class="navbar-area">
+  <div class="navbar-container">
+    <div class="row align-items-center g-0">
+      <div class="col-6 d-flex align-items-center gap-3">
+        <a class="brand" href="/home">
+          <div class="logo-circle">
+            <img src="https://cdn-icons-png.flaticon.com/512/2702/2702134.png" class="book-logo" alt="Book">
+            <div class="logo-text">LitHeaven</div>
+          </div>
+          <div class="txt">LitHeaven</div>
+        </a>
+        <nav class="main-nav d-none d-lg-flex">
+          <a class="nav-link" href="/home">Home</a>
+          <a class="nav-link active-link" href="/shop">Shop</a>
+          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/contact">Contact</a>
+        </nav>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <div class="header-icons">
+          <a href="/wishlist" class="icon-btn"><i class="fa-regular fa-heart"></i></a>
+          <a href="/cart" class="icon-btn position-relative">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <div class="icon-badge" id="cartBadge">0</div>
+          </a>
+
+         
+          <% if(!isLoggedIn) { %>
+            <a href="/login" class="icon-btn" title="Login">
+              <i class="fa-regular fa-user"></i>
+            </a>
+          <% } else { %>
+            <div class="dropdown">
+              <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-regular fa-user"></i>
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end p-2">
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
+                    <i class="fa-regular fa-id-badge"></i> Profile
+                  </a>
+                </li>
+                <li>
+                  <a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          <% } %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="s-emoji">🔍</span>
+    <input type="text" id="searchInput" placeholder="What are you looking for?" oninput="onSearchType(this)" autocomplete="off">
+    <button class="s-cancel" id="cancelBtn" onclick="cancelSearch()">✕</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div class="breadcrumb-row">
+    <a href="/home">home</a> › <a href="/shop">shop</a> › <span class="cur">product details</span>
+  </div>
+  <div class="page-title">Product Detail</div>
+
+   <div class="product-section">
+    <div class="img-column">
+      <!-- Main image: bracket cursor + hover pan zoom + click → lightbox -->
+      <div class="main-img-wrap" id="mainImgWrap">
+      <img id="mainImg"
+           src="<%= product.variants[0].thumbnail?.url || '/placeholder.png' %>"
+           alt="<%= product.title %>">
+      </div>
+        <!-- bracket cursor -->
+        <div class="mag-cursor" id="magCursor">
+          <div class="c tl"></div><div class="c tr"></div>
+          <div class="c bl"></div><div class="c br"></div>
+          <div class="ch"></div><div class="cv"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="img-scan" id="imgScan"></div>
+        <div class="zoom-hint"><i class="fa-solid fa-expand"></i>&nbsp;Hover · Click to expand</div>
+      </div>
+
+<div class="thumb-strip">
+  <% product.variants[0].subImages.forEach((img, index) => { %>
+    <div class="thumb-item <%= index === 0 ? 'active' : '' %>"
+         onclick="swapImages(this)">
+      <img src="<%= img.url %>" alt="thumb">
+    </div>
+  <% }) %>
+</div>
+
+    </div>
+
+    <div class="info-panel">
+      <div class="prod-title-row">
+        <h1 class="prod-title"><%= product.title %></h1>
+        <!-- <button class="share-btn" onclick="shareProduct()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Share</button> -->
+      </div>
+      <a href="#" class="author-link"> By: <%= product.author.name %></a>
+      <div class="rating-row">
+        <span class="stars-yellow">★★★★★</span>
+        <!-- <span class="rev-count">(568 reviews)</span> -->
+      </div>
+      <div class="price-row-info">
+        <div class="price-row-info"><span class="new-price">₹<%= minPrice %></span></div>
+      </div>
+      <p class="prod-desc"><%= product.description %></p>
+      <div class="avail-row">
+        <strong style="color:#dc2626">Available :</strong> <span class="avail-count"><%= totalStock %> In Stock</span>
+      </div>
+
+
+     <% if(product.variants && product.variants.length > 0){ %>
+
+  <% if(product.variants.length === 1){ %>
+    
+    <!-- 🔹 Single Language -->
+    <div class="single-language">
+      <strong>Language:</strong>
+      <span><%= product.variants[0].language.languageName %></span>
+    </div>
+
+  <% } else { %>
+
+    <!-- 🔹 Multiple Languages -->
+    <div class="tag-label">Language</div>
+    <div class="tag-group">
+      <% product.variants.forEach((variant, index) => { %>
+        <span class="tag-pill <%= index === 0 ? 'selected' : '' %>">
+          <%= variant.language.languageName %>
+        </span>
+      <% }) %>
+    </div>
+
+  <% } %>
+
+<% } %>
+
+
+<div class="tag-label">Format</div>
+<div class="tag-group">
+
+<%
+  const formatsAvailable = product.variants[0].formats;
+  const paperback = formatsAvailable.find(f => f.format === "paperback");
+  const hardcover = formatsAvailable.find(f => f.format === "hardcover");
+%>
+
+<!-- PAPERBACK -->
+<span 
+  class="tag-pill <%= !paperback ? 'disabled' : '' %>"
+  <%= paperback ? `onclick="selectFormat('paperback', this, ${paperback.stock})"` : '' %>
+>
+  Paperback
+  <% if(paperback && paperback.stock === 0){ %>
+    <small class="stock-text">(Out of Stock)</small>
+  <% } %>
+</span>
+
+<!-- HARDCOVER -->
+<span 
+  class="tag-pill <%= !hardcover ? 'disabled' : '' %>"
+  <%= hardcover ? `onclick="selectFormat('hardcover', this, ${hardcover.stock})"` : '' %>
+>
+  Hardcover
+  <% if(hardcover && hardcover.stock === 0){ %>
+    <small class="stock-text">(Out of Stock)</small>
+  <% } %>
+</span>
+
+</div>
+
+
+      <div class="qty-label">Quantity</div>
+      <div class="qty-wrap">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <input class="qty-num" type="text" id="qtyInput" value="1" readonly>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+
+      <!-- UNIQUE ACTION BUTTONS -->
+      <div class="action-row">
+        <!-- Dark gradient Add to Cart with shimmer + animated cart icon -->
+        <button class="btn-cart" onclick="addToCart()">
+          <div class="ci"><i class="fa-solid fa-cart-plus"></i></div>
+          <div class="clabel">
+            <span>Add to Cart</span>
+            <span class="csub">Free shipping above ₹300</span>
+          </div>
+        </button>
+        <!-- Morphing heart wishlist icon button -->
+        <button class="btn-wish" id="wishBtn" onclick="toggleWish()" title="Add to Wishlist">
+          <i class="fa-regular fa-heart"></i>
+        </button>
+      </div>
+      <p class="free-ship"><strong>Free shipping & returns:</strong> On all orders over ₹300!</p>
+    </div>
+  </div>
+
+ 
+  <!-- TABS -->
+  <div class="tabs-wrap">
+    <div class="tab-header">
+      <button class="tab-btn" id="tab-desc" onclick="switchTab('desc')">Description</button>
+      <button class="tab-btn active" id="tab-rev" onclick="switchTab('rev')">Customer Reviews</button>
+    </div>
+    <div class="tab-body">
+      <div class="tab-pane" id="pane-desc">
+        <p class="desc-section-title">About the Product:</p>
+        <p class="desc-text">Steelbird SBA-21 is a premium Bluetooth full-face helmet engineered for the modern rider. Featuring a built-in Bluetooth 5.0 module, 48-hour standby battery, and ISI certification.</p>
+        <p class="desc-section-title">Description:</p>
+        <p class="desc-text">Whether you're commuting daily or hitting the highway, the SBA-21 keeps you connected while keeping you protected.</p>
+        <ul class="desc-list">
+          <li><span><strong>Material:</strong> ABS Thermoplastic Shell</span></li>
+          <li><span><strong>Connectivity:</strong> Bluetooth 5.0</span></li>
+          <li><span><strong>Battery:</strong> 800 mAh — 48 hour standby</span></li>
+          <li><span><strong>Certification:</strong> ISI Certified</span></li>
+          <li><span><strong>Visor:</strong> Dual visor (clear + smoke)</span></li>
+          <li><span><strong>Weight:</strong> 1.35 kg</span></li>
+          <li><span><strong>Warranty:</strong> 1 Year Manufacturer Warranty</span></li>
+        </ul>
+        <p class="desc-section-title">Terms of Sale:</p>
+        <p class="desc-text">All sales are final unless the product is damaged or defective. Returns accepted within 7 days of delivery.</p>
+      </div>
+      <div class="tab-pane active" id="pane-rev">
+        <div class="reviews-header">
+          <div class="rating-big">
+            <div class="rating-number">4.8</div>
+            <div class="rating-stars-big">★★★★★</div>
+            <div class="rating-count">(759 Ratings)</div>
+          </div>
+          <div class="rating-bars">
+            <div class="bar-row"><span class="bar-lbl">5</span><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div></div>
+            <div class="bar-row"><span class="bar-lbl">4</span><div class="bar-track"><div class="bar-fill" style="width:52%"></div></div></div>
+            <div class="bar-row"><span class="bar-lbl">3</span><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div></div>
+            <div class="bar-row"><span class="bar-lbl">2</span><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div></div>
+            <div class="bar-row"><span class="bar-lbl">1</span><div class="bar-track"><div class="bar-fill" style="width:5%"></div></div></div>
+          </div>
+          <button class="write-btn" onclick="openWriteReview()">Write a Review</button>
+        </div>
+        <div id="visibleReviews">
+          <div class="review-card">
+            <div class="rc-head"><div class="rc-user"><div class="rc-avatar">M</div><div><div class="rc-name">Michle Jhon</div><div class="rc-stars">★★★★★</div></div></div><div class="rc-date">15 January 2025</div></div>
+            <div class="rc-body"><span class="rc-short">Excellent helmet with top-notch Bluetooth quality. Call clarity is amazing even at highway speeds...</span><span class="rc-full" style="display:none"> The 48-hour battery claim is accurate. Dual visor is a game changer. Build quality is premium. ISI certification gives peace of mind. Highly recommended!</span><button class="read-more-btn" onclick="toggleRM(this)">Read more</button></div>
+            <div class="rc-helpful">Helpful? <button onclick="markHelpful(this)">👍 6</button></div>
+          </div>
+          <div class="review-card">
+            <div class="rc-head"><div class="rc-user"><div class="rc-avatar" style="background:#e63946">A</div><div><div class="rc-name">Arjun Kumar</div><div class="rc-stars">★★★★☆</div></div></div><div class="rc-date">3 March 2025</div></div>
+            <div class="rc-body"><span class="rc-short">Great helmet overall. Bluetooth pairing is quick and music quality is good...</span><span class="rc-full" style="display:none"> Water resistance tested in rain and held up perfectly. Ventilation could be slightly better in peak summer but overall very satisfied.</span><button class="read-more-btn" onclick="toggleRM(this)">Read more</button></div>
+            <div class="rc-helpful">Helpful? <button onclick="markHelpful(this)">👍 4</button></div>
+          </div>
+        </div>
+        <div class="extra-reviews" id="extraReviews">
+          <div class="review-card">
+            <div class="rc-head"><div class="rc-user"><div class="rc-avatar" style="background:#0ea5e9">P</div><div><div class="rc-name">Priya Nair</div><div class="rc-stars">★★★★★</div></div></div><div class="rc-date">12 April 2025</div></div>
+            <div class="rc-body"><span class="rc-short">Best helmet I've owned. The smart controls are intuitive to use even with gloves...</span><span class="rc-full" style="display:none"> GPS navigation audio through the helmet is crisp. After 3 months of daily use, still feels brand new.</span><button class="read-more-btn" onclick="toggleRM(this)">Read more</button></div>
+            <div class="rc-helpful">Helpful? <button onclick="markHelpful(this)">👍 9</button></div>
+          </div>
+          <div class="review-card">
+            <div class="rc-head"><div class="rc-user"><div class="rc-avatar" style="background:#10b981">R</div><div><div class="rc-name">Rahul Sharma</div><div class="rc-stars">★★★★★</div></div></div><div class="rc-date">20 May 2025</div></div>
+            <div class="rc-body"><span class="rc-short">Absolutely worth the price. Bluetooth range up to 10 meters from phone...</span><span class="rc-full" style="display:none"> Noise cancellation on calls is impressive. Productivity during commute has improved significantly. Padding is comfortable and removable for washing.</span><button class="read-more-btn" onclick="toggleRM(this)">Read more</button></div>
+            <div class="rc-helpful">Helpful? <button onclick="markHelpful(this)">👍 12</button></div>
+          </div>
+        </div>
+        <div class="see-all-wrap">
+          <button class="see-all-btn" id="seeAllBtn" onclick="toggleSeeAll()">See All Reviews</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDED -->
+  <div class="rec-section">
+    <div class="rec-header">
+      <div class="rec-title">Recommended Products</div>
+      <div class="rec-arrows">
+        <button class="rec-arr" onclick="scrollRec(-1)">‹</button>
+        <button class="rec-arr" onclick="scrollRec(1)">›</button>
+      </div>
+    </div>
+    <div class="rec-grid" id="recGrid"></div>
+  </div>
+</div>
+
+<!-- CINEMATIC LIGHTBOX -->
+<div class="lb-overlay" id="lbOverlay">
+  <div class="lb-cur" id="lbCur">
+    <div class="lb-cur-h"></div><div class="lb-cur-v"></div>
+    <div class="lb-cur-c tl"></div><div class="lb-cur-c tr"></div>
+    <div class="lb-cur-c bl"></div><div class="lb-cur-c br"></div>
+  </div>
+  <div class="lb-topbar">
+    <div class="lb-counter" id="lbCounter">01 / 03</div>
+    <button class="lb-close" id="lbClose">✕</button>
+  </div>
+  <div class="lb-zoom-bar"><div class="lb-zoom-fill" id="lbZoomFill" style="height:0%"></div></div>
+  <div class="lb-stage" id="lbStage">
+    <img id="lbImg" src="" alt="zoom">
+    <div class="lb-scan" id="lbScan"></div>
+  </div>
+  <button class="lb-nav lb-prev" id="lbPrev">&#8249;</button>
+  <button class="lb-nav lb-next" id="lbNext">&#8250;</button>
+  <div class="lb-dots" id="lbDots"></div>
+  <div class="lb-hint" id="lbHint">MOVE TO PAN &nbsp;·&nbsp; SCROLL TO ZOOM &nbsp;·&nbsp; ESC TO CLOSE</div>
+</div>
+
+<!-- NOT PURCHASED MODAL -->
+<div class="modal-overlay" id="notPurchasedModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('notPurchasedModal')">✕</button>
+    <img class="modal-img" src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="">
+    <div class="modal-title">Haven't Purchased this product?</div>
+    <div class="modal-sub">Sorry! You are not allowed to review this product since you haven't bought it on LitHeaven</div>
+  </div>
+</div>
+
+<!-- WRITE REVIEW MODAL -->
+<div class="modal-overlay" id="writeReviewModal">
+  <div class="modal-box review-modal">
+    <button class="modal-close" onclick="closeModal('writeReviewModal')">✕</button>
+    <h3>Rate this product</h3>
+    <div class="star-rate-wrap">
+      <span class="sr" onclick="setRating(1)">★</span><span class="sr" onclick="setRating(2)">★</span>
+      <span class="sr" onclick="setRating(3)">★</span><span class="sr" onclick="setRating(4)">★</span>
+      <span class="sr" onclick="setRating(5)">★</span>
+    </div>
+    <h3>Review this product</h3>
+    <textarea class="review-textarea" id="reviewText" placeholder="Write your review here..."></textarea>
+    <input class="review-title-inp" id="reviewTitle" type="text" placeholder="Review title.....">
+    <button class="submit-review-btn" onclick="submitReview()">SUBMIT</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5>Get In Touch</h5>
+        <p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p>
+        <p><small>support@litheaven.com</small></p>
+        <p><small>+98765 43210</small></p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/home">Home</a></li>
+          <li><a href="/shop">Shop Books</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Account</h5>
+        <ul class="list-unstyled">
+          <li><a href="/profile">Settings</a></li>
+          <li><a href="/orders">Orders</a></li>
+          <li><a href="/address">Address</a></li>
+          <li><a href="/wallet">Wallet</a></li>
+          <li><a href="#" id="footerLogout">Log out</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 text-md-end">
+        <h5>LitHeaven ⭐</h5>
+        <p><small>Your one-stop shop for books and more.</small></p>
+      </div>
+    </div>
+    <div class="text-center mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,.2)">
+      <small>© 2025 LITHEAVEN. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+/* ══ STATE ══ */
+const STATE={isLoggedIn:true,hasPurchased:true,cartCount:0,wished:false,selectedRating:0};
+const IMGS=[
+  "https://images-na.ssl-images-amazon.com/images/I/71mCGNQl0qL._AC_UF1000,1000_QL80_.jpg",
+  "https://m.media-amazon.com/images/I/61pRFBN1+ZL._AC_SX679_.jpg",
+  "https://m.media-amazon.com/images/I/71YkqyaFVEL._AC_SX679_.jpg"
+];
+let currentImgIdx=0;
+
+/* ══ THUMBNAIL ══ */
+function selectThumb(el,idx){
+  document.querySelectorAll('.thumb-item').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');currentImgIdx=idx;
+  const img=document.getElementById('mainImg');
+  img.style.opacity='0';
+  setTimeout(()=>{img.src=IMGS[idx];img.style.transition='opacity .25s';img.style.opacity='1';mainZoom.reset();},130);
+}
+
+/* ══════════════════════════════════════════════
+   MAIN IMAGE — bracket cursor + smooth pan zoom
+══════════════════════════════════════════════ */
+const mainZoom=(()=>{
+  const wrap=document.getElementById('mainImgWrap');
+  const img=document.getElementById('mainImg');
+  const cur=document.getElementById('magCursor');
+  const scan=document.getElementById('imgScan');
+  const ZOOM=2.4;
+  let active=false;
+
+  function reset(){
+    active=false;wrap.classList.remove('zoomed','scan-run');
+    img.style.transition='transform .5s cubic-bezier(.23,1,.32,1)';
+    img.style.transform='scale(1) translate(0,0)';
+  }
+  function enter(){
+    active=true;
+    wrap.classList.add('zoomed');
+    // trigger scan line once
+    wrap.classList.remove('scan-run');
+    void scan.offsetWidth;
+    wrap.classList.add('scan-run');
+    img.style.transition='transform .3s cubic-bezier(.23,1,.32,1)';
+    img.style.transform=`scale(${ZOOM}) translate(0,0)`;
+  }
+  function leave(){reset();}
+  function move(e){
+    const r=wrap.getBoundingClientRect();
+    const cx=e.clientX-r.left,cy=e.clientY-r.top;
+    cur.style.left=cx+'px';cur.style.top=cy+'px';
+    if(!active)return;
+    const nx=cx/r.width,ny=cy/r.height;
+    const maxX=r.width*(ZOOM-1)/(2*ZOOM);
+    const maxY=r.height*(ZOOM-1)/(2*ZOOM);
+    const tx=(0.5-nx)*maxX*2,ty=(0.5-ny)*maxY*2;
+    img.style.transition='transform .07s linear';
+    img.style.transform=`scale(${ZOOM}) translate(${tx/ZOOM}px,${ty/ZOOM}px)`;
+  }
+  wrap.addEventListener('mouseenter',enter);
+  wrap.addEventListener('mouseleave',leave);
+  wrap.addEventListener('mousemove',move);
+  wrap.addEventListener('click',()=>lightbox.open(currentImgIdx));
+  // touch: hold to zoom, release to open lightbox
+  let tActive=false;
+  wrap.addEventListener('touchstart',e=>{tActive=true;enter();e.preventDefault();},{passive:false});
+  wrap.addEventListener('touchmove',e=>{if(tActive)move(e.touches[0]);e.preventDefault();},{passive:false});
+  wrap.addEventListener('touchend',()=>{tActive=false;reset();setTimeout(()=>lightbox.open(currentImgIdx),100);});
+  return{reset};
+})();
+
+/* ══════════════════════════════════════════════
+   LIGHTBOX — crosshair cursor, pan, scroll zoom
+══════════════════════════════════════════════ */
+const lightbox=(()=>{
+  const overlay=document.getElementById('lbOverlay');
+  const stage=document.getElementById('lbStage');
+  const img=document.getElementById('lbImg');
+  const cur=document.getElementById('lbCur');
+  const counter=document.getElementById('lbCounter');
+  const dots=document.getElementById('lbDots');
+  const hint=document.getElementById('lbHint');
+  const scan=document.getElementById('lbScan');
+  const zoomFill=document.getElementById('lbZoomFill');
+  const BASE=3,MIN=1,MAX=5;
+  let wheelScale=1,tx=0,ty=0;
+  let dragging=false,dsx=0,dsy=0,dtx=0,dty=0;
+  let hintTimer;
+
+  function buildDots(){
+    dots.innerHTML=IMGS.map((_,i)=>`<div class="lb-dot ${i===currentImgIdx?'active':''}" data-i="${i}"></div>`).join('');
+    dots.querySelectorAll('.lb-dot').forEach(d=>d.addEventListener('click',e=>{e.stopPropagation();setImg(+d.dataset.i);}));
+  }
+  function syncUI(){
+    const n=String(currentImgIdx+1).padStart(2,'0');
+    counter.textContent=`${n} / ${String(IMGS.length).padStart(2,'0')}`;
+    dots.querySelectorAll('.lb-dot').forEach((d,i)=>d.classList.toggle('active',i===currentImgIdx));
+    document.getElementById('mainImg').src=IMGS[currentImgIdx];
+    document.querySelectorAll('.thumb-item').forEach((t,i)=>t.classList.toggle('active',i===currentImgIdx));
+  }
+  function runScan(){scan.classList.remove('run');void scan.offsetWidth;scan.classList.add('run');setTimeout(()=>scan.classList.remove('run'),700);}
+  function resetT(smooth){
+    tx=0;ty=0;wheelScale=1;
+    img.style.transition=smooth?'transform .4s cubic-bezier(.23,1,.32,1)':'none';
+    img.style.transform=`scale(${BASE}) translate(0,0)`;
+    zoomFill.style.height='0%';
+  }
+  function setImg(idx){
+    currentImgIdx=idx;img.style.opacity='0';resetT(false);
+    setTimeout(()=>{img.src=IMGS[idx];img.style.transition='opacity .2s';img.style.opacity='1';runScan();syncUI();},100);
+  }
+  function onMouseMove(e){
+    cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';
+    if(dragging)return;
+    const r=stage.getBoundingClientRect();
+    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+    const nx=(e.clientX-r.left)/r.width,ny=(e.clientY-r.top)/r.height;
+    const eff=BASE*wheelScale;
+    const maxX=r.width*(eff-1)/(2*eff),maxY=r.height*(eff-1)/(2*eff);
+    tx=(0.5-nx)*maxX*2;ty=(0.5-ny)*maxY*2;
+    img.style.transition='transform .06s linear';
+    img.style.transform=`scale(${eff}) translate(${tx/eff}px,${ty/eff}px)`;
+  }
+  function onWheel(e){
+    e.preventDefault();
+    wheelScale=Math.min(MAX,Math.max(MIN,wheelScale+(e.deltaY<0?.3:-.3)));
+    const eff=BASE*wheelScale;
+    img.style.transition='transform .1s ease';
+    img.style.transform=`scale(${eff}) translate(${tx/eff}px,${ty/eff}px)`;
+    zoomFill.style.height=((wheelScale-MIN)/(MAX-MIN)*100)+'%';
+  }
+  function onDragStart(e){if(wheelScale<=1)return;dragging=true;dsx=e.clientX;dsy=e.clientY;dtx=tx;dty=ty;stage.style.cursor='grabbing';}
+  function onDragMove(e){if(!dragging)return;const eff=BASE*wheelScale;tx=dtx+(e.clientX-dsx)/eff;ty=dty+(e.clientY-dsy)/eff;img.style.transition='none';img.style.transform=`scale(${eff}) translate(${tx}px,${ty}px)`;}
+  function onDragEnd(){dragging=false;stage.style.cursor='';}
+  let t0x=0;
+  stage.addEventListener('touchstart',e=>{t0x=e.touches[0].clientX;},{passive:true});
+  stage.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-t0x;if(Math.abs(dx)>50)navigate(dx<0?1:-1);},{passive:true});
+  function navigate(dir){setImg((currentImgIdx+dir+IMGS.length)%IMGS.length);}
+  function open(idx){
+    currentImgIdx=idx;img.src=IMGS[idx];img.style.opacity='1';
+    buildDots();syncUI();resetT(false);runScan();
+    overlay.classList.add('show');document.body.style.overflow='hidden';
+    hint.classList.remove('hide');clearTimeout(hintTimer);
+    hintTimer=setTimeout(()=>hint.classList.add('hide'),3200);
+  }
+  function close(){overlay.classList.remove('show');document.body.style.overflow='';}
+
+  document.getElementById('lbClose').addEventListener('click',e=>{e.stopPropagation();close();});
+  document.getElementById('lbPrev').addEventListener('click',e=>{e.stopPropagation();navigate(-1);});
+  document.getElementById('lbNext').addEventListener('click',e=>{e.stopPropagation();navigate(1);});
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  overlay.addEventListener('mousemove',onMouseMove);
+  stage.addEventListener('wheel',onWheel,{passive:false});
+  stage.addEventListener('mousedown',onDragStart);
+  window.addEventListener('mousemove',onDragMove);
+  window.addEventListener('mouseup',onDragEnd);
+  document.addEventListener('keydown',e=>{
+    if(!overlay.classList.contains('show'))return;
+    if(e.key==='Escape')close();
+    if(e.key==='ArrowRight')navigate(1);
+    if(e.key==='ArrowLeft')navigate(-1);
+  });
+  return{open};
+})();
+
+/* ══ SEARCH ══ */
+function onSearchType(inp){document.getElementById('cancelBtn').classList.toggle('show',inp.value.length>0);}
+function cancelSearch(){const i=document.getElementById('searchInput');i.value='';document.getElementById('cancelBtn').classList.remove('show');i.focus();}
+function selectTag(el,g){el.closest('.tag-group').querySelectorAll('.tag-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');}
+function changeQty(d){const i=document.getElementById('qtyInput');i.value=Math.min(24,Math.max(1,parseInt(i.value)+d));}
+
+/* ══ ADD TO CART ══ */
+function addToCart(){
+  if(!STATE.isLoggedIn){window.location.href='/login';return;}
+  STATE.cartCount++;
+  document.getElementById('cartBadge').textContent=STATE.cartCount;
+  Swal.fire({toast:true,position:'top-end',icon:'success',title:'Added to cart! 🛒',html:`<small style="color:#555">Steelbird Helmet</small>`,showConfirmButton:false,timer:2200,timerProgressBar:true,background:'#fff'});
+}
+
+/* ══ WISHLIST — unique heart pop + ripple ring ══ */
+function toggleWish(){
+  if(!STATE.isLoggedIn){window.location.href='/login';return;}
+  STATE.wished=!STATE.wished;
+  const btn=document.getElementById('wishBtn');
+  btn.classList.toggle('wished',STATE.wished);
+  btn.classList.add('pop','ripple');
+  btn.innerHTML=STATE.wished?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
+  setTimeout(()=>btn.classList.remove('pop','ripple'),480);
+  Swal.fire({toast:true,position:'top-end',icon:STATE.wished?'success':'info',title:STATE.wished?'❤️ Added to wishlist':'💔 Removed',showConfirmButton:false,timer:1600,background:'#fff'});
+}
+
+function shareProduct(){
+  if(navigator.share){navigator.share({title:'Steelbird Helmet – LitHeaven',url:window.location.href});}
+  else{navigator.clipboard.writeText(window.location.href);Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link copied!',showConfirmButton:false,timer:1600});}
+}
+function switchTab(w){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+w).classList.add('active');
+  document.getElementById('pane-'+w).classList.add('active');
+}
+function toggleRM(btn){
+  const body=btn.closest('.rc-body'),short=body.querySelector('.rc-short'),full=body.querySelector('.rc-full');
+  const open=full.style.display==='inline';
+  short.style.display=open?'inline':'none';full.style.display=open?'none':'inline';
+  btn.textContent=open?'Read more':'Read less';
+}
+function toggleSeeAll(){
+  const extra=document.getElementById('extraReviews'),btn=document.getElementById('seeAllBtn');
+  const open=extra.classList.contains('open');
+  if(!open){extra.classList.add('open');btn.textContent='Show Less ▲';btn.classList.add('open');setTimeout(()=>extra.scrollIntoView({behavior:'smooth',block:'nearest'}),80);}
+  else{extra.classList.remove('open');btn.textContent='See All Reviews';btn.classList.remove('open');}
+}
+function markHelpful(btn){const n=parseInt(btn.textContent.replace('👍 ',''));btn.textContent=`👍 ${n+1}`;btn.disabled=true;btn.style.opacity='.5';}
+function openWriteReview(){
+  if(!STATE.isLoggedIn){window.location.href='/login';return;}
+  if(!STATE.hasPurchased){openModal('notPurchasedModal');return;}
+  STATE.selectedRating=0;document.querySelectorAll('.sr').forEach(s=>s.classList.remove('lit'));
+  document.getElementById('reviewText').value='';document.getElementById('reviewTitle').value='';
+  openModal('writeReviewModal');
+}
+function setRating(val){STATE.selectedRating=val;document.querySelectorAll('.sr').forEach((s,i)=>s.classList.toggle('lit',i<val));}
+function submitReview(){
+  if(!STATE.selectedRating){Swal.fire({toast:true,position:'top-end',icon:'warning',title:'Please select a rating',showConfirmButton:false,timer:1800});return;}
+  const text=document.getElementById('reviewText').value.trim();
+  const title=document.getElementById('reviewTitle').value.trim();
+  if(!text){Swal.fire({toast:true,position:'top-end',icon:'warning',title:'Please write a review',showConfirmButton:false,timer:1800});return;}
+  const stars='★'.repeat(STATE.selectedRating)+'☆'.repeat(5-STATE.selectedRating);
+  const date=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const preview=text.length>80?text.substring(0,80)+'...':text;
+  const card=document.createElement('div');card.className='review-card';
+  card.innerHTML=`<div class="rc-head"><div class="rc-user"><div class="rc-avatar" style="background:var(--purple)">Y</div><div><div class="rc-name">You</div><div class="rc-stars">${stars}</div></div></div><div class="rc-date">${date}</div></div>${title?`<div style="font-weight:700;font-size:.84rem;margin-bottom:5px;color:#333">${title}</div>`:''}<div class="rc-body">${text.length>80?`<span class="rc-short">${preview}</span><span class="rc-full" style="display:none">${text}</span><button class="read-more-btn" onclick="toggleRM(this)">Read more</button>`:`<span>${text}</span>`}</div><div class="rc-helpful">Helpful? <button onclick="markHelpful(this)">👍 0</button></div>`;
+  document.getElementById('visibleReviews').prepend(card);
+  closeModal('writeReviewModal');
+  Swal.fire({toast:true,position:'top-end',icon:'success',title:'Review submitted! 🎉',showConfirmButton:false,timer:2000});
+}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');});});
+
+/* ══ RECOMMENDED — catchy cards with staggered overlay ══ */
+const REC=[
+  {id:8,title:"The Israel Decree",price:570,mrp:792,img:"https://images-na.ssl-images-amazon.com/images/I/81KRYaMSdpL.jpg"},
+  {id:17,title:"Strangers in Time",price:471,mrp:799,img:"https://images-na.ssl-images-amazon.com/images/I/81jTPsnQaUL.jpg"},
+  {id:10,title:"Katabasis",price:433,mrp:699,img:"https://images-na.ssl-images-amazon.com/images/I/91IJ4vMb8KL.jpg"},
+  {id:25,title:"She Was Only Mine",price:246,mrp:270,img:"https://images-na.ssl-images-amazon.com/images/I/81-KB-HFCVL.jpg"},
+  {id:13,title:"The Alchemist",price:199,mrp:299,img:"https://images-na.ssl-images-amazon.com/images/I/81FPzmB14fL.jpg"},
+  {id:23,title:"Rich Dad Poor Dad",price:299,mrp:450,img:"https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg"},
+  {id:24,title:"Sapiens",price:499,mrp:799,img:"https://images-na.ssl-images-amazon.com/images/I/713jIoMO3UL.jpg"},
+];
+function renderRec(){
+  document.getElementById('recGrid').innerHTML=REC.map(b=>{
+    const disc=Math.round((1-b.price/b.mrp)*100);
+    return`<div class="rec-card" onclick="goProduct(${b.id})">
+      <img class="rec-img" src="${b.img}" alt="${b.title}" onerror="this.src='https://placehold.co/178x215/f5f0f6/6f2b67?text=📗'">
+      ${disc>0?`<div class="rec-badge">−${disc}%</div>`:''}
+      <div class="rec-overlay">
+        <button class="rec-cart-btn" title="Add to cart" onclick="recAddCart(event,'${b.title}')">
+          <i class="fa-solid fa-cart-plus"></i>
+        </button>
+        <button class="rec-view-pill" onclick="goProduct(${b.id})">
+          View Product <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">${b.title}</div>
+        <div class="rec-prices"><span class="rec-new">₹${b.price}</span><span class="rec-old">₹${b.mrp}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function recAddCart(e,name){
+  e.stopPropagation();
+  if(!STATE.isLoggedIn){window.location.href='/login';return;}
+  STATE.cartCount++;document.getElementById('cartBadge').textContent=STATE.cartCount;
+  Swal.fire({toast:true,position:'top-end',icon:'success',title:'Added! 🛒',html:`<small style="color:#555">${name}</small>`,showConfirmButton:false,timer:1800,background:'#fff'});
+}
+function goProduct(id){window.location.href='/product/'+id;}
+function scrollRec(d){document.getElementById('recGrid').scrollBy({left:d*195,behavior:'smooth'});}
+
+/* ══ LOGOUT ══ */
+function doLogout(e){
+  e.preventDefault();
+  Swal.fire({
+    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+    showCancelButton:true,confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
+    confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",reverseButtons:true,
+    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",backdrop:"rgba(0,0,0,0.6)"
+  }).then(r=>{if(r.isConfirmed)window.location.href="/logout";});
+}
+document.getElementById('logoutBtn')?.addEventListener('click',doLogout);
+document.getElementById('footerLogout')?.addEventListener('click',doLogout);
+
+renderRec();
+
+function swapImages(clickedThumb) {
+
+  const mainImg = document.getElementById("mainImg");
+  const thumbImg = clickedThumb.querySelector("img");
+
+  // Store main image temporarily
+  const tempSrc = mainImg.src;
+
+  // Swap
+  mainImg.src = thumbImg.src;
+  thumbImg.src = tempSrc;
+
+  // Active border update
+  document.querySelectorAll(".thumb-item").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  clickedThumb.classList.add("active");
+}
+
+
+let selectedFormat = null;
+
+function selectFormat(format, element) {
+
+  selectedFormat = format;
+
+  document.querySelectorAll(".tag-pill").forEach(pill => {
+    pill.classList.remove("selected");
+  });
+
+  element.classList.add("selected");
+
+}
+</script>
+</body>
+</html>
