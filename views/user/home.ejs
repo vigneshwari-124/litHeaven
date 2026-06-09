@@ -221,9 +221,33 @@
     .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
     .site-footer a:hover{color:#f3dff1;transform:translateX(5px);display:inline-block}
     
-    .discount-badge {position: absolute;top: 12px;right: 12px;background: linear-gradient(135deg, #ff416c, #ff4b2b);color: #fff;font-size: 13px;font-weight: 800;padding: 6px 12px;border-radius: 20px;letter-spacing: 0.5px;box-shadow: 0 4px 12px rgba(255, 75, 43, 0.4);animation: popBadge 0.4s ease;}
+    .discount-badge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  left:auto;
+  background:linear-gradient(135deg,#ff416c,#ff4b2b);
+  color:#fff;
+  font-size:.75rem;
+  font-weight:900;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:4;
+  clip-path:none;
+  box-shadow:0 3px 10px rgba(255,65,108,.5);
+  text-align:center;
+  line-height:1;
+  animation:popBadge .4s ease;
+}
 
-    @keyframes popBadge {from {transform: scale(0.6);opacity: 0;}to {transform: scale(1);opacity: 1;}}
+@keyframes popBadge{
+  from{transform:scale(0.6);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
     @media(max-width:992px){.products-grid{grid-template-columns:repeat(2,1fr);gap:20px}.hero h1{font-size:2.2rem}}
     @media(max-width:768px){.main-nav{display:none}.brand .txt{font-size:18px}.logo-circle{width:50px;height:50px}.book-logo{width:28px}.search-wrap{padding:20px 15px}.search-box{padding:10px 18px;max-width:100%}.hero{padding:60px 15px;min-height:400px}.hero h1{font-size:1.8rem}.slider-wrapper{padding:20px 60px}.category-item{min-width:150px}.category-icon{width:100px;height:100px}.category-icon img{width:50px;height:50px}.slider-btn{width:40px;height:40px;font-size:20px}.slider-btn-left{left:15px}.slider-btn-right{right:15px}.products-grid{grid-template-columns:repeat(2,1fr)}.promo{flex:1 1 100%;min-height:350px}}
     @media(max-width:576px){.top-offer{font-size:12px;padding:6px}.products-grid{grid-template-columns:1fr;gap:20px}.product-card img{height:240px}.hero{padding:50px 15px;min-height:350px}.hero h1{font-size:1.6rem}.search-box input{font-size:14px}.search-box .btn{width:36px;height:36px;font-size:14px}.header-icons{gap:12px}.icon-btn{font-size:18px}.promo{flex:1 1 100%;min-height:300px}.promo-content{padding:30px}.categories-section h3{font-size:24px}.bestseller-title{font-size:24px}}
@@ -249,8 +273,7 @@
           <nav class="main-nav d-none d-lg-flex">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/shop">Shop</a>
-            <a class="nav-link" href="/about">About</a>
-            <a class="nav-link" href="/contact">Contact</a>
+          
           </nav>
         </div>
         <div class="col-6 d-flex justify-content-end align-items-center">
@@ -303,8 +326,7 @@
   <div id="mobileMenu" class="mobile-menu d-lg-none">
     <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
     <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-    <a class="mobile-nav-link" href="#"><i class="fa-solid fa-circle-info"></i> About</a>
-    <a class="mobile-nav-link" href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
+
   </div>
 
   <div class="search-wrap">
@@ -544,46 +566,57 @@
   
   <script>
     
-  // const track = document.getElementById('track');
-  // const items = [...track.children];
 
-  // let index = 0;
-
-  // function move(direction) {
-  //   const itemWidth = items[0].offsetWidth + 20;
-  //   const maxIndex = items.length - 1;
-
-  //   index += direction;
-
-  //   if (index < 0) index = 0;
-  //   if (index > maxIndex) index = maxIndex;
-
-  //   track.style.transform = `translateX(-${index * itemWidth}px)`;
-  // }
-
-  // function filterSubCategory(id) {
-  //   window.location.href = `/shop?subCategory=${id}`;
-  // }
-
-
-
-    // Category Slider
     const track = document.getElementById('track');
-    const items = [...track.children];
-    items.forEach(i => track.appendChild(i.cloneNode(true)));
-    let idx = 0, moving = false;
-    function move(dir) {
-      if (moving) return;
-      moving = true;
-      idx += dir;
-      track.style.transform = `translateX(-${idx * 230}px)`;
+const items = [...track.children];
+
+items.forEach(i => track.appendChild(i.cloneNode(true)));
+
+const totalItems = items.length;
+
+let idx = 0;
+let moving = false;
+
+function move(dir) {
+
+  if (moving) return;
+
+  moving = true;
+  idx += dir;
+
+  track.style.transform = `translateX(-${idx * 230}px)`;
+
+  setTimeout(() => {
+
+    if (idx >= totalItems) {
+
+      track.style.transition = 'none';
+      idx = 0;
+      track.style.transform = 'translateX(0)';
+
       setTimeout(() => {
-        if (idx >= 5) { track.style.transition = 'none'; idx = 0; track.style.transform = 'translateX(0)'; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
-        if (idx < 0) { track.style.transition = 'none'; idx = 4; track.style.transform = `translateX(-${idx * 230}px)`; setTimeout(() => track.style.transition = 'transform 0.5s ease', 50); }
-        moving = false;
-      }, 500);
+        track.style.transition = 'transform 0.5s ease';
+      }, 50);
+
     }
 
+    if (idx < 0) {
+
+      track.style.transition = 'none';
+      idx = totalItems - 1;
+      track.style.transform = `translateX(-${idx * 230}px)`;
+
+      setTimeout(() => {
+        track.style.transition = 'transform 0.5s ease';
+      }, 50);
+
+    }
+
+    moving = false;
+
+  }, 500);
+
+}
     function goToCategory(id) {
   window.location.href = `/shop?subcategory=${id}`;
 }
@@ -599,7 +632,6 @@
       icon.classList.toggle('fa-xmark');
     });
 
-    // Close menu when a nav link is clicked
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.remove('open');
@@ -608,7 +640,6 @@
       });
     });
 
-    // Close mobile menu on outside click
     document.addEventListener('click', function (e) {
       if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
         mobileMenu.classList.remove('open');

@@ -199,7 +199,7 @@
     <a href="/admin/productOff" style="background:rgba(111,43,103,0.1);font-weight:600;">Product Offers</a>
   </div>
   <a href="/admin/author"      class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
-  <a href="/admin/admin"       class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+  
   <a href="/admin/customer"    class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
   <a href="/admin/salesReport" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
   <div class="menu-item" onclick="toggleMenu('settMenu')">
@@ -207,7 +207,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+    
     <a href="/admin/language">Language</a>
   </div>
   <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
@@ -1031,33 +1031,25 @@ async function openEditModal(id){
 
     const offer = data.offer;
 
-    // modal open
     document.getElementById('offerModal').classList.add('show');
 
-    // load products first
     await loadProducts();
 
-    // set product
     document.getElementById('productSelect').value = offer.product._id;
 
-    // trigger language load
     onProductChange();
 
     setTimeout(() => {
 
-      // set language
       document.getElementById('languageSelect').value = offer.language;
 
-      // trigger format load
       onLanguageChange();
 
       setTimeout(() => {
 
-        // reset
         document.getElementById('chkPaperback').checked = false;
         document.getElementById('chkHardcover').checked = false;
 
-        // set format
         if(Array.isArray(offer.format)){
           if(offer.format.includes("paperback")){
             document.getElementById('chkPaperback').checked = true;
@@ -1074,14 +1066,12 @@ async function openEditModal(id){
           }
         }
 
-        // show price
         onFormatChange();
 
       }, 200);
 
     }, 200);
 
-    // other fields
     document.getElementById('offerName').value = offer.offerName;
     document.getElementById('discountPct').value = offer.discount;
 
@@ -1109,7 +1099,7 @@ async function deleteOffer(id){
 
   try{
 
-    const res = await fetch(`/admin/productOffer/${id}`, { // ✅ correct route
+    const res = await fetch(`/admin/productOffer/${id}`, { 
       method: "DELETE"
     });
 
@@ -1134,6 +1124,49 @@ async function deleteOffer(id){
     console.log(err);
   }
 }
+
+document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
 
 
 </script>

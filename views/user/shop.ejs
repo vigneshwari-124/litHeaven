@@ -73,6 +73,23 @@
     .atag{display:inline-flex;align-items:center;gap:4px;background:#f3e8ff;color:var(--purple);padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
     .atag button{background:none;border:none;cursor:pointer;color:var(--purple);font-size:.8rem;line-height:1;padding:0 0 0 3px}
 
+    .bcard-prices{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.bcard-left{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.bcard-off{
+  color:#22c55e;
+  font-weight:700;
+  font-size:.75rem;
+}
     .fsec{border-top:1px solid #ebe3f0;padding:10px 0 2px}
     .fsec-title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:.82rem;color:#333;padding-bottom:6px;user-select:none}
     .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa; pointer-events:none;  }
@@ -167,20 +184,28 @@
     .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s}
     .bcard:hover{transform:translateY(-6px);box-shadow:0 16px 38px rgba(111,43,103,.2);border-color:var(--purple)}
    .disc-badge{
-position:absolute;
-top:0;
-left:0;
-background:linear-gradient(135deg,#ff6b35,#f7931e);
-color:#fff;
-font-size:.72rem;
-font-weight:900;
-padding:6px 14px 6px 10px;
-z-index:4;
-letter-spacing:.5px;
-clip-path:polygon(0 0,100% 0,85% 50%,100% 100%,0 100%);
-box-shadow:2px 4px 12px rgba(255,107,53,.5);
-text-shadow:0 1px 3px rgba(0,0,0,.2);
+  position:absolute;
+  top:12px;
+  right:12px;
+  left:auto;          /* left remove பண்ணு */
+  background:linear-gradient(135deg,#ff416c,#ff4b2b);
+  color:#fff;
+  font-size:.75rem;
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:50%;  /* circle shape */
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:4;
+  clip-path:none;     /* polygon remove பண்ணு */
+  box-shadow:0 3px 10px rgba(255,65,108,.5);
+  text-align:center;
+  line-height:1;
 }
+
     .wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
     .wish-btn:hover{transform:scale(1.2)}
  .bcard-ph{
@@ -398,8 +423,7 @@ pointer-events:none;
         <nav class="main-nav d-none d-lg-flex">
           <a class="nav-link" href="/">Home</a>
           <a class="nav-link active-link" href="/shop">Shop</a>
-          <a class="nav-link" href="/about">About</a>
-          <a class="nav-link" href="/contact">Contact</a>
+          
         </nav>
       </div>
       <div class="col-6 d-flex justify-content-end">
@@ -442,8 +466,7 @@ pointer-events:none;
 <div id="mobileMenu" class="mobile-menu d-lg-none">
   <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link" href="#"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link" href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
+  
 </div>
 
 <!-- search -->
@@ -759,8 +782,7 @@ onchange="renderTags()">
         <ul class="list-unstyled">
           <li><a href="/">Home</a></li>
           <li><a href="/shop">Shop Books</a></li>
-          <li><a href="/about">About Us</a></li>
-          <li><a href="/contact">Contact Us</a></li>
+          
           <li><a href="/privacy">Privacy Policy</a></li>
         </ul>
       </div>
@@ -861,24 +883,28 @@ document.getElementById("totalCount").innerText = data.totalCount
 
 }
 
+
 function restoreFromURL(){
 
 const params = new URLSearchParams(window.location.search)
 
 const cats  = params.get("category")?.split(",") || []
+const subcats = params.get("subcategory")?.split(",") || []
 const auths = params.get("author")?.split(",") || []
 const langs = params.get("language")?.split(",") || []
 const fmts  = params.get("format")?.split(",") || []
 
-const all = [...cats,...auths,...langs,...fmts]
+const all = [...cats,...subcats,...auths,...langs,...fmts]
 
 all.forEach(val=>{
+
 document.querySelectorAll(`[data-f][value="${val}"]`).forEach(el=>{
+
 el.checked = true
-})
+
 })
 
-
+})
 
 const price = params.get("price")
 
@@ -894,6 +920,48 @@ onSlider(slider)
 
 }
 
+const search = params.get("search") || ""
+
+document.getElementById("searchInput").value = search
+
+document.getElementById("cancelBtn")
+.classList.toggle("show", search.length > 0)
+
+const sort = params.get("sort") || ""
+
+currentSort = sort
+
+if(sort){
+
+const selected = document.querySelector(`.sort-opt[data-val="${sort}"]`)
+
+if(selected){
+
+document.querySelectorAll(".sort-opt")
+.forEach(o=>o.classList.remove("selected"))
+
+selected.classList.add("selected")
+
+document.getElementById("sortLabel").textContent =
+selected.textContent.trim()
+
+}
+
+}
+
+const chip = params.get("chip") || "new"
+
+chipFilter = chip
+
+;["ratings","new"].forEach(c=>{
+
+document.getElementById("chip-"+c)
+?.classList.remove("active")
+
+})
+
+document.getElementById("chip-"+chip)
+?.classList.add("active")
 
 
 renderTags()
@@ -929,12 +997,22 @@ return `
 <div class="bcard ${!hasStock ? 'out' : ''}" onclick="viewBook('${p._id}')">
 
 ${discount > 0 
-  ? `<div class="disc-badge">${discount}% OFF</div>` 
+  ? `<div class="disc-badge">${discount}% </div>` 
   : ""}  
 
 ${!hasStock 
   ? `<span class="out-badge">Out of Stock</span>` 
   : ""}
+
+ <button class="wish-btn"
+style="top:auto;bottom:105px;right:12px"
+onclick="toggleWishlist(event,'${p._id}')">
+
+<i class="${p.isWishlisted
+? 'fa-solid fa-heart text-danger'
+: 'fa-regular fa-heart'}"></i>
+
+</button>
 
 <div class="bcard-ph">
 <img src="${p.variants?.[0]?.thumbnail?.url || '/images/no-image.png'}" style="height:150px">
@@ -958,6 +1036,7 @@ ${!hasStock
 ${discount > 0 ? `
   <span class="bcard-new">₹${price}</span>
   <span class="bcard-old">₹${original}</span>
+  
 ` : `
   <span class="bcard-new">₹${original}</span>
 `}
@@ -1010,9 +1089,9 @@ ${cat.subCategories.map(sub=>`
 
 <label class="foption">
 <input type="checkbox"
-data-f="category"
-value="${sub._id}"
-onchange="renderTags()">
+  data-f="subcategory"     
+  value="${sub._id}"
+  onchange="renderTags()">
 
 ${sub.name}
 
@@ -1040,7 +1119,7 @@ ${cat.subCategories.map(sub=>`
 
 <label class="foption">
 <input type="checkbox"
-data-f="category"
+data-f="subcategory"
 value="${sub._id}"
 onchange="renderTags()">
 
@@ -1407,10 +1486,65 @@ const observer=new IntersectionObserver((entries)=>{
 document.querySelectorAll('.product-card,.promo,.feature-item').forEach(el=>observer.observe(el));
 
 
+// function applyFilters(){
+
+//   const subcategories =
+//   [...document.querySelectorAll('[data-f="subcategory"]:checked')]
+//   .map(el=>el.value)
+
+// if(subcategories.length)
+//   params.append("subcategory", subcategories.join(","))
+
+//   const authors =
+//   [...document.querySelectorAll('[data-f="author"]:checked')]
+//   .map(el=>el.value)
+
+//   const languages =
+//   [...document.querySelectorAll('[data-f="language"]:checked')]
+//   .map(el=>el.value)
+
+//   const formats =
+//   [...document.querySelectorAll('[data-f="format"]:checked')]
+//   .map(el=>el.value)
+
+//   const params = new URLSearchParams()
+
+ 
+
+//   if(authors.length)
+//   params.append("author", authors.join(","))
+
+//   if(languages.length)
+//   params.append("language", languages.join(","))
+
+//   if(formats.length)
+//   params.append("format", formats.join(","))
+
+//  const max = parseInt(document.getElementById("priceSlider").dataset.max)
+
+// if(sliderMax && sliderMax < max){
+// params.append("price", sliderMax)
+// }
+
+
+//   if(currentSort)
+//   params.append("sort", currentSort)
+
+//   if(chipFilter && chipFilter !== "new")
+//   params.append("chip", chipFilter)
+
+//   params.append("page",1)
+
+//  window.history.pushState({},'',"/shop?"+params.toString())
+//  loadProducts()
+// }
+
+
+
 function applyFilters(){
 
-  const categories =
-  [...document.querySelectorAll('[data-f="category"]:checked')]
+  const subcategories =
+  [...document.querySelectorAll('[data-f="subcategory"]:checked')]
   .map(el=>el.value)
 
   const authors =
@@ -1425,37 +1559,45 @@ function applyFilters(){
   [...document.querySelectorAll('[data-f="format"]:checked')]
   .map(el=>el.value)
 
-  const params = new URLSearchParams()
+  const params = new URLSearchParams(window.location.search)
 
-  if(categories.length)
-  params.append("category", categories.join(","))
+  params.delete("subcategory")
+  params.delete("author")
+  params.delete("language")
+  params.delete("format")
+  params.delete("price")
+  params.delete("sort")
+  params.delete("chip")
+
+  if(subcategories.length)
+    params.set("subcategory", subcategories.join(","))
 
   if(authors.length)
-  params.append("author", authors.join(","))
+    params.set("author", authors.join(","))
 
   if(languages.length)
-  params.append("language", languages.join(","))
+    params.set("language", languages.join(","))
 
   if(formats.length)
-  params.append("format", formats.join(","))
+    params.set("format", formats.join(","))
 
- const max = parseInt(document.getElementById("priceSlider").dataset.max)
+  const max = parseInt(document.getElementById("priceSlider").dataset.max)
 
-if(sliderMax && sliderMax < max){
-params.append("price", sliderMax)
-}
-
+  if(sliderMax && sliderMax < max){
+    params.set("price", sliderMax)
+  }
 
   if(currentSort)
-  params.append("sort", currentSort)
+    params.set("sort", currentSort)
 
   if(chipFilter && chipFilter !== "new")
-  params.append("chip", chipFilter)
+    params.set("chip", chipFilter)
 
-  params.append("page",1)
+  params.set("page",1)
 
- window.history.pushState({},'',"/shop?"+params.toString())
- loadProducts()
+  window.history.pushState({},'',"/shop?"+params.toString())
+
+  loadProducts()
 }
 
 function renderStars(rating){
@@ -1478,6 +1620,11 @@ function renderEmptyStars(){
   return stars;
 }
 
+async function toggleWishlist(event,productId){
+
+event.stopPropagation()
+
+}
 </script>
 </body>
 </html>

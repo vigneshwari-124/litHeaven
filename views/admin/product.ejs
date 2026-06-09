@@ -261,9 +261,7 @@ body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:
     <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="/admin/admin" class="menu-item">
-      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-    </a>
+    
     <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
@@ -279,7 +277,7 @@ body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="/admin/appSetting">App Settings</a>
+      
       <a href="/admin/language">Language</a>
     </div>
     
@@ -333,7 +331,7 @@ body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:
       </table>
     </div>
     <div class="pagination" id="pagination"></div>
-    <h3>total Price: <span id="hello"></span></h3>
+   
   </div>
 </div>
 
@@ -645,13 +643,12 @@ clearErrorOnInput(authorField, authorError, true);
 productForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  if (saveBtn.disabled) return; 
+  if (saveBtn.disabled) return;
 
   saveBtn.disabled = true;
   saveBtn.textContent = "Saving...";
 
   let isValid = true;
-
 
   titleError.textContent = "";
   descriptionError.textContent = "";
@@ -668,43 +665,17 @@ productForm.addEventListener("submit", async function (e) {
   const subCategory = subCategoryField.value;
   const author = authorField.value;
 
-  if (!title) {
-    titleError.textContent = "Product name is required";
-    isValid = false;
-  }
-
+  if (!title) { titleError.textContent = "Product name is required"; isValid = false; }
   if (!shortDescription) {
-    shortDescError.textContent ="Short description is required";
-    isValid = false;
-  }else if(shortDescription.length < 10){
-    shortDescError.textContent = "Minimum 10 characters required";
-    isValid = false;
+    shortDescError.textContent = "Short description is required"; isValid = false;
+  } else if (shortDescription.length < 10) {
+    shortDescError.textContent = "Minimum 10 characters required"; isValid = false;
   }
-
-  if (!description) {
-    descriptionError.textContent = "Description is required";
-    isValid = false;
-  }
-
-  if (!category) {
-    categoryError.textContent = "Category is required";
-    isValid = false;
-  }
-
-  if (!subCategory) {
-    subCategoryError.textContent = "Sub-category is required";
-    isValid = false;
-  }
-
-  if (!author) {
-    authorError.textContent = "Author is required";
-    isValid = false;
-  }
-
-  if (productVariants.length === 0) {
-    variantError.textContent = "At least one variant required";
-    isValid = false;
-  }
+  if (!description) { descriptionError.textContent = "Description is required"; isValid = false; }
+  if (!category) { categoryError.textContent = "Category is required"; isValid = false; }
+  if (!subCategory) { subCategoryError.textContent = "Sub-category is required"; isValid = false; }
+  if (!author) { authorError.textContent = "Author is required"; isValid = false; }
+  if (productVariants.length === 0) { variantError.textContent = "At least one variant required"; isValid = false; }
 
   if (!isValid) {
     saveBtn.disabled = false;
@@ -713,7 +684,6 @@ productForm.addEventListener("submit", async function (e) {
   }
 
   try {
-
     const formData = new FormData();
     formData.append("title", title);
     formData.append("shortDescription", shortDescription);
@@ -721,268 +691,255 @@ productForm.addEventListener("submit", async function (e) {
     formData.append("category", category);
     formData.append("subCategory", subCategory);
     formData.append("author", author);
-    formData.append("variants", JSON.stringify(productVariants));
 
-    productVariants.forEach((variant) => {
-      if (variant.thumbnailFile) {
-        formData.append("thumbnails", variant.thumbnailFile);
-      }
+    const url = editingProductId ? `/admin/products/${editingProductId}` : "/admin/products";
+    const method = editingProductId ? "PUT" : "POST";
 
-      if (variant.subImageFiles) {
-        variant.subImageFiles.forEach(file => {
-          formData.append("subImages", file);
+    if (!editingProductId) {
+      // ═══ ADD MODE ═══
+      const variantsForServer = productVariants.map(v => {
+        const lang = v.langCode;
+        const imgData = lang ? (languageImageData[lang] || {}) : {};
+        const additional = (imgData.additional || []).filter(Boolean);
+        return {
+          language: v.language,
+          formats: v.formats,
+          additionalCount: additional.length
+        };
+      });
+      formData.append("variants", JSON.stringify(variantsForServer));
+
+      // Images: fixed(thumb+sub1+sub2) then additional — per variant order
+      productVariants.forEach((variant) => {
+        const lang = variant.langCode;
+        if (!lang) return;
+        const imgData = languageImageData[lang] || {};
+        const fixed = imgData.fixed || [null, null, null];
+        const additional = (imgData.additional || []).filter(Boolean);
+
+        fixed.forEach(file => { if (file) formData.append("images", file); });
+        additional.forEach(file => { if (file) formData.append("images", file); });
+      });
+
+    } else {
+      // ═══ EDIT MODE ═══
+      const variantsForServer = productVariants.map(v => {
+        const lang = v.langCode;
+        const imgData = lang ? (languageImageData[lang] || {}) : {};
+        const fixed = imgData.fixed || [null, null, null];
+        const additional = (imgData.additional || []);
+
+        // Dummy files = existing (no re-upload), real files = new upload
+        const isNewThumb = fixed[0] &&
+          fixed[0].name !== 'existing_thumb.jpg' &&
+          !fixed[0].name.startsWith('existing') &&
+          fixed[0].size > 1;
+
+       const newSubIndexes = {};
+         [1, 2].forEach((slot, i) => {
+         const f = fixed[slot];
+  
+        const isDummy = !f || f.name.startsWith('existing_sub') || 
+                  f.name === 'existing' || f.size <= 1;
+        newSubIndexes[i] = !isDummy;
         });
-      }
-    });
 
+        // New additional = real files only
+        const newAdditional = additional.filter(
+          f => f && !f.name.startsWith('existing_add') && f.size > 1
+        );
 
-    const url = editingProductId
-  ? `/admin/products/${editingProductId}`
-  : "/admin/products";
+        return {
+          language: v.language,
+          formats: v.formats,
+          existingThumbnail: v.thumbnail || null,
+          existingSubImages: v.subImages || [],
+          existingAdditionalImages: (v.additionalImages || []),
+          newThumbIndex: isNewThumb,
+          newSubIndexes,
+          newAdditionalCount: newAdditional.length
+        };
+      });
+      formData.set("variants", JSON.stringify(variantsForServer));
 
-const method = editingProductId ? "PUT" : "POST";
+      // Images: only NEW files upload (existing skip)
+      productVariants.forEach((variant) => {
+        const lang = variant.langCode;
+        if (!lang) return;
+        const imgData = languageImageData[lang] || {};
+        const fixed = imgData.fixed || [null, null, null];
+        const additional = imgData.additional || [];
 
-if (editingProductId) {
- const variantsForServer = productVariants.map(v => ({
-  language: v.language,
-  formats: v.formats,
-  existingThumbnail: v.thumbnail,
-  existingSubImages: v.subImages,
-  newThumbIndex: !!v.thumbnailFile,
-  subImageCount: v.subImageFiles ? v.subImageFiles.length : 0
-}));
-  formData.set("variants", JSON.stringify(variantsForServer));
-}
+        // Thumb — new only
+        const thumb = fixed[0];
+        if (thumb && !['existing_thumb.jpg','existing'].includes(thumb.name) && thumb.size > 1) {
+          formData.append("images", thumb);
+        }
 
-const res = await fetch(url, {
-  method: method,
-  body: formData
-});
+        // Sub images — new only
+        [1, 2].forEach(slot => {
+          const f = fixed[slot];
+          if (f && !f.name.startsWith('existing_sub') && f.size > 1) {
+            formData.append("images", f);
+          }
+        });
 
+        // Additional — new only
+        additional.forEach(f => {
+          if (f && !f.name.startsWith('existing_add') && f.size > 1) {
+            formData.append("images", f);
+          }
+        });
+      });
+    }
+
+    const res = await fetch(url, { method, body: formData });
     const result = await res.json();
 
     if (!res.ok) {
-      Toast.fire({
-        icon: "error",
-        title: result.message
-      });
+      Toast.fire({ icon: "error", title: result.message });
       return;
     }
 
-    Toast.fire({icon:'success',title:'Product saved successfully!'});
-    
-   closeModal('productModal');
-   loadProducts();
+    Toast.fire({ icon: 'success', title: 'Product saved successfully!' });
+    closeModal('productModal');
+    loadProducts();
 
   } catch (err) {
     console.log(err);
-    Toast.fire({
-      icon: "error",
-      title: "Something went wrong"
-    });
+    Toast.fire({ icon: "error", title: "Something went wrong" });
   } finally {
     saveBtn.disabled = false;
     saveBtn.textContent = "Save Product";
   }
-
 });
-// ── Variant form submit ───────────────────────────────────────────────────
-document.getElementById('variantForm').addEventListener('submit',function(e){
-  e.preventDefault();
 
+
+// ── Variant form submit ───────────────────────────────────────────────────
+document.getElementById('variantForm').addEventListener('submit', function(e) {
+  e.preventDefault();
   let isValid = true;
 
   const selected = LANGS
-.filter(l => {
-    const cb = document.getElementById(`lang_${l.languageCode}`);
-    return cb && cb.checked;
-  })
-  .map(l => l.languageCode);
+    .filter(l => { const cb = document.getElementById(`lang_${l.languageCode}`); return cb && cb.checked; })
+    .map(l => l.languageCode);
 
-const languageError = document.getElementById("languageError");
-languageError.textContent = "";
-
-if (selected.length === 0) {
-  languageError.textContent = "At least choose one language";
-  return;
-}
+  const languageError = document.getElementById("languageError");
+  languageError.textContent = "";
+  if (selected.length === 0) { languageError.textContent = "At least choose one language"; return; }
 
   const all = [];
 
-  for(const lang of selected){
+  for (const lang of selected) {
+    // Clear errors
+    const subErr = document.getElementById(`${lang}_sub_error`);
+    const fmtErr = document.getElementById(`${lang}_format_error`);
+    if (subErr) subErr.textContent = "";
+    if (fmtErr) fmtErr.textContent = "";
 
-    // CLEAR OLD ERRORS
-    document.getElementById(`${lang}_thumb_error`).textContent = "";
-    document.getElementById(`${lang}_sub_error`).textContent = "";
-    document.getElementById(`${lang}_format_error`).textContent = "";
+    const imgData = languageImageData[lang] || {};
+    const fixed = imgData.fixed || [null, null, null];
 
-   const thumb = languageImageData[lang]?.thumbnailFile;
-   const subs = languageImageData[lang]?.subImageFiles || [];
-
-    if(!thumb){
-      document.getElementById(`${lang}_thumb_error`).textContent =
-        "Thumbnail is required";
+    // Thumbnail check
+    if (!fixed[0]) {
+      Toast.fire({ icon:'error', title:`${lang.toUpperCase()}: Thumbnail required` });
       isValid = false;
     }
 
-    if(subs.length < 3){
-      document.getElementById(`${lang}_sub_error`).textContent =
-        "3 sub images required";
+    // Sub images check (index 1 and 2)
+    if (!fixed[1] || !fixed[2]) {
+      if (subErr) subErr.textContent = "Both sub images required";
       isValid = false;
     }
 
-    const pb=document.getElementById(`${lang}_paperback`).checked;
-    const hc=document.getElementById(`${lang}_hardcover`).checked;
-
-    if(!pb && !hc){
-      document.getElementById(`${lang}_format_error`).textContent =
-        "Select at least one format";
+    // Format check
+    const pb = document.getElementById(`${lang}_paperback`).checked;
+    const hc = document.getElementById(`${lang}_hardcover`).checked;
+    if (!pb && !hc) {
+      if (fmtErr) fmtErr.textContent = "Select at least one format";
       isValid = false;
     }
 
-const existingVariant = productVariants.find(
- v => v.language === LANGS.find(l => l.languageCode === lang)._id
-);
+    const existingVariant = productVariants.find(
+      v => v.language === LANGS.find(l => l.languageCode === lang)?._id
+    );
+    let formats = existingVariant ? [...existingVariant.formats] : [];
 
-let formats = existingVariant ? [...existingVariant.formats] : [];
+    if (pb) {
+      const priceInput = document.getElementById(`${lang}_paperback_price`);
+      const stockInput = document.getElementById(`${lang}_paperback_stock`);
+      const price = priceInput.value.trim();
+      const stock = stockInput.value.trim();
+      if (!price || Number(price) <= 0) {
+        document.getElementById(`${lang}_paperback_price_error`).textContent = "Valid price required";
+        priceInput.style.border = "1px solid red"; isValid = false;
+      }
+      if (!stock || Number(stock) < 0) {
+        document.getElementById(`${lang}_paperback_stock_error`).textContent = "Valid stock required";
+        stockInput.style.border = "1px solid red"; isValid = false;
+      }
+      if (price && stock) {
+        const idx = formats.findIndex(f => f.format === "paperback");
+        if (idx > -1) { formats[idx].price = Number(price); formats[idx].stock = Number(stock); }
+        else formats.push({ format:"paperback", price:Number(price), stock:Number(stock) });
+      }
+    } else { formats = formats.filter(f => f.format !== "paperback"); }
 
-if(pb){
+    if (hc) {
+      const priceInput = document.getElementById(`${lang}_hardcover_price`);
+      const stockInput = document.getElementById(`${lang}_hardcover_stock`);
+      const price = priceInput.value.trim();
+      const stock = stockInput.value.trim();
+      if (!price || Number(price) <= 0) {
+        document.getElementById(`${lang}_hardcover_price_error`).textContent = "Valid price required";
+        priceInput.style.border = "1px solid red"; isValid = false;
+      }
+      if (!stock || Number(stock) < 0) {
+        document.getElementById(`${lang}_hardcover_stock_error`).textContent = "Valid stock required";
+        stockInput.style.border = "1px solid red"; isValid = false;
+      }
+      if (price && stock) {
+        const idx = formats.findIndex(f => f.format === "hardcover");
+        if (idx > -1) { formats[idx].price = Number(price); formats[idx].stock = Number(stock); }
+        else formats.push({ format:"hardcover", price:Number(price), stock:Number(stock) });
+      }
+    } else { formats = formats.filter(f => f.format !== "hardcover"); }
 
-  const priceInput = document.getElementById(`${lang}_paperback_price`);
-  const stockInput = document.getElementById(`${lang}_paperback_stock`);
-
-  const price = priceInput.value.trim();
-  const stock = stockInput.value.trim();
-
-  if(!price || Number(price) <= 0){
-    document.getElementById(`${lang}_paperback_price_error`).textContent = "Valid price required";
-    priceInput.style.border = "1px solid red";
-    isValid = false;
+    if (formats.length) {
+      all.push({
+        language: LANGS.find(l => l.languageCode === lang)._id,
+        formats,
+        langCode: lang
+      });
+    }
   }
 
-  if(!stock || Number(stock) < 0){
-    document.getElementById(`${lang}_paperback_stock_error`).textContent = "Valid stock required";
-    stockInput.style.border = "1px solid red";
-    isValid = false;
-  }
+  if (!isValid) return;
 
-  if(price && stock){
+  all.forEach(newVar => {
+    const idx = productVariants.findIndex(v => v.language === newVar.language);
+ if (idx > -1) {
+  productVariants[idx] = {
+    ...productVariants[idx],
 
-  const idx = formats.findIndex(f => f.format === "paperback");
+    ...newVar,
 
-  if(idx > -1){
+    thumbnail:
+      productVariants[idx].thumbnail || null,
 
-    formats[idx].price = Number(price);
-    formats[idx].stock = Number(stock);
-  }else{
-   
-    formats.push({
-      format:"paperback",
-      price:Number(price),
-      stock:Number(stock)
-    });
-  }
+    subImages:
+      productVariants[idx].subImages || [],
 
+    additionalImages:
+      productVariants[idx].additionalImages || []
+  };
 }
-}else{
-  formats = formats.filter(f => f.format !== "paperback");
-}
-
-
-if(hc){
-
-  const priceInput = document.getElementById(`${lang}_hardcover_price`);
-  const stockInput = document.getElementById(`${lang}_hardcover_stock`);
-
-  const price = priceInput.value.trim();
-  const stock = stockInput.value.trim();
-
-  if(!price || Number(price) <= 0){
-    document.getElementById(`${lang}_hardcover_price_error`).textContent = "Valid price required";
-    priceInput.style.border = "1px solid red";
-    isValid = false;
-  }
-
-  if(!stock || Number(stock) < 0){
-    document.getElementById(`${lang}_hardcover_stock_error`).textContent = "Valid stock required";
-    stockInput.style.border = "1px solid red";
-    isValid = false;
-  }
-
-  if(price && stock){
-
-  const idx = formats.findIndex(f => f.format === "hardcover");
-
-  if(idx > -1){
-    formats[idx].price = Number(price);
-    formats[idx].stock = Number(stock);
-  }else{
-    formats.push({
-      format:"hardcover",
-      price:Number(price),
-      stock:Number(stock)
-    });
-  }
-
-}
-}else{
- formats = formats.filter(f => f.format !== "hardcover");
-}
-
-
-if(formats.length && languageImageData[lang]){
-
-  all.push({
-    language: LANGS.find(l => l.languageCode === lang)._id,
-    formats: formats,
-    thumbnailFile: languageImageData[lang]?.thumbnailFile,
-    subImageFiles: languageImageData[lang]?.subImageFiles
+    else productVariants.push(newVar);
   });
-
-}
-     
-  }
-
-  if(!isValid) return;
-
-  const selectedLangIds = selected.map(langCode => {
-  const found = LANGS.find(l => l.languageCode === langCode);
-  return found ? found._id : null;
-}).filter(Boolean);
-
-all.forEach(newVar => {
-
-  const idx = productVariants.findIndex(
-    v => v.language === newVar.language
-  );
-
-  if(idx > -1){
-    productVariants[idx] = newVar; // update existing
-  }else{
-    productVariants.push(newVar); // add new
-  }
-
-});
-
-all.forEach(newVar => {
-
-  const idx = productVariants.findIndex(
-    v => v.language === newVar.language
-  );
-
-  if(idx > -1){
-    productVariants[idx] = newVar; // update existing
-  }else{
-    productVariants.push(newVar); // add new
-  }
-
-});
 
   updateVariantsList();
   closeModal('variantModal');
 });
-
-
 
 
 // ──  language  ──────────────────────────────────────────
@@ -1003,70 +960,77 @@ async function loadLanguagesFromDB() {
     console.error("Language load error:", error);
   }
 }
-
 function buildLanguageUI() {
-
   const sel = document.getElementById('langSelection');
   const sec = document.getElementById('langSections');
-
   sel.innerHTML = "";
   sec.innerHTML = "";
 
   LANGS.forEach(langObj => {
-
     const lang = langObj.languageCode;
     const name = langObj.languageName;
 
     sel.innerHTML += `
       <div class="lang-checkbox" id="lc_${lang}" onclick="toggleLanguage('${lang}')">
-       <input type="checkbox" id="lang_${lang}" value="${langObj._id}">
+        <input type="checkbox" id="lang_${lang}" value="${langObj._id}">
         <label for="lang_${lang}">${name}</label>
-      </div>
-    `;
+      </div>`;
 
     sec.innerHTML += `
       <div class="lang-section" id="${lang}Section">
         <h3>${name} Book Details</h3>
 
         <div class="form-group">
-          <label class="form-label">Thumbnail *</label>
-          <div class="thumb-upload" id="${lang}_thumb"
-            onclick="openImageCrop('${lang}','thumb')">
-            <i class="fas fa-image"></i>
-            <div class="upload-text">Add Thumbnail</div>
+          <label class="form-label">Thumbnail * (First image = cover)</label>
+          <div id="${lang}_img_0" onclick="pickImage('${lang}',0)"
+            style="width:130px;height:170px;border:2px dashed #6f2b67;border-radius:10px;
+                   display:flex;flex-direction:column;align-items:center;justify-content:center;
+                   cursor:pointer;background:rgba(111,43,103,.05);position:relative;overflow:hidden">
+            <i class="fas fa-image" style="font-size:30px;color:#6f2b67"></i>
+            <div style="font-size:10px;color:#6f2b67;margin-top:6px">Thumbnail</div>
           </div>
-          <small id="${lang}_thumb_error"></small>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Sub Images *</label>
-          <div class="sub-images-grid">
-            ${[0,1,2].map(i=>`
-              <div class="sub-image-box"
-                id="${lang}_sub_${i}"
-                onclick="openImageCrop('${lang}','sub',${i})">
-                <i class="fas fa-plus"></i>
-              </div>
-            `).join('')}
+          <label class="form-label">Sub Images * (exactly 2 required)</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+            ${[1,2].map(i=>`
+              <div id="${lang}_img_${i}" onclick="pickImage('${lang}',${i})"
+                style="width:100px;height:100px;border:2px dashed #6f2b67;border-radius:10px;
+                       display:flex;flex-direction:column;align-items:center;justify-content:center;
+                       cursor:pointer;background:rgba(111,43,103,.05);position:relative;overflow:hidden">
+                <i class="fas fa-plus" style="font-size:20px;color:#6f2b67"></i>
+                <div style="font-size:10px;color:#6f2b67;margin-top:4px">Sub ${i}</div>
+              </div>`).join('')}
           </div>
-          <small id="${lang}_sub_error"></small>
+          <small id="${lang}_sub_error" style="color:red;font-size:12px"></small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Additional Images (optional, unlimited)</label>
+          <div id="${lang}_additional_grid"
+            style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-bottom:8px">
+          </div>
+          <button type="button" onclick="addAdditionalSlot('${lang}')"
+            style="background:rgba(111,43,103,.1);border:1px dashed #6f2b67;color:#6f2b67;
+                   padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
+            <i class="fas fa-plus"></i> Add More Images
+          </button>
         </div>
 
         <div class="form-group">
           <label class="form-label">Book Format *</label>
           <div class="format-checkboxes">
             <div class="format-checkbox">
-              <input type="checkbox" id="${lang}_paperback"
-                onchange="toggleFormatFields('${lang}','paperback')">
+              <input type="checkbox" id="${lang}_paperback" onchange="toggleFormatFields('${lang}','paperback')">
               <label>Paper Back</label>
             </div>
             <div class="format-checkbox">
-              <input type="checkbox" id="${lang}_hardcover"
-                onchange="toggleFormatFields('${lang}','hardcover')">
+              <input type="checkbox" id="${lang}_hardcover" onchange="toggleFormatFields('${lang}','hardcover')">
               <label>Hard Cover</label>
             </div>
           </div>
-          <small id="${lang}_format_error"></small>
+          <small id="${lang}_format_error" style="color:red;font-size:12px"></small>
         </div>
 
         ${['paperback','hardcover'].map(fmt=>`
@@ -1074,22 +1038,80 @@ function buildLanguageUI() {
             <h4>${fmt}</h4>
             <div class="form-group">
               <label>Price *</label>
-              <input type="number" class="form-input"
-                id="${lang}_${fmt}_price">
-              <small id="${lang}_${fmt}_price_error"></small>
+              <input type="number" class="form-input" id="${lang}_${fmt}_price">
+              <small id="${lang}_${fmt}_price_error" style="color:red;font-size:12px"></small>
             </div>
             <div class="form-group">
               <label>Stock *</label>
-              <input type="number" class="form-input"
-                id="${lang}_${fmt}_stock">
-              <small id="${lang}_${fmt}_stock_error"></small>
+              <input type="number" class="form-input" id="${lang}_${fmt}_stock">
+              <small id="${lang}_${fmt}_stock_error" style="color:red;font-size:12px"></small>
             </div>
-          </div>
-        `).join('')}
-
-      </div>
-    `;
+          </div>`).join('')}
+      </div>`;
   });
+}
+
+function addAdditionalSlot(lang) {
+  if (!languageImageData[lang]) languageImageData[lang] = { fixed: [null,null,null], additional: [] };
+  if (!languageImageData[lang].additional) languageImageData[lang].additional = [];
+
+  const idx = languageImageData[lang].additional.length;
+  languageImageData[lang].additional.push(null);
+
+  const grid = document.getElementById(`${lang}_additional_grid`);
+  const slotId = `${lang}_add_${idx}`;
+
+  const div = document.createElement('div');
+  div.id = slotId;
+  div.style.cssText = `position:relative;width:80px;height:80px`;
+  div.innerHTML = `
+    <div onclick="pickAdditional('${lang}',${idx})"
+      style="width:80px;height:80px;border:2px dashed #6f2b67;border-radius:8px;
+             display:flex;flex-direction:column;align-items:center;justify-content:center;
+             cursor:pointer;background:rgba(111,43,103,.05);overflow:hidden;position:relative"
+      id="${slotId}_box">
+      <i class="fas fa-plus" style="font-size:16px;color:#6f2b67"></i>
+      <div style="font-size:9px;color:#6f2b67;margin-top:3px">Click to add</div>
+    </div>
+    <button type="button" onclick="removeAdditionalSlot('${lang}',${idx})"
+      style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;
+             background:#dc3545;color:#fff;border:none;cursor:pointer;font-size:10px;
+             display:flex;align-items:center;justify-content:center;line-height:1">×</button>`;
+  grid.appendChild(div);
+}
+
+function removeAdditionalSlot(lang, idx) {
+  if (languageImageData[lang]?.additional) {
+    languageImageData[lang].additional[idx] = null;
+  }
+  const slot = document.getElementById(`${lang}_add_${idx}`);
+  if (slot) slot.remove();
+}
+
+function pickAdditional(lang, idx) {
+  const fi = document.getElementById('cropFileInput');
+  fi.value = '';
+  fi.click();
+  fi.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      Toast.fire({ icon:'error', title:'Only images allowed' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const ci = document.getElementById('cropImage');
+      ci.src = ev.target.result;
+      document.getElementById('cropModal').classList.add('show');
+      if (cropper) { cropper.destroy(); cropper = null; }
+      // Additional images = free crop
+      cropper = new Cropper(ci, { aspectRatio: NaN, viewMode: 2, autoCropArea: 0.85 });
+      // Store where to save after crop
+      currentCropTarget = { language: lang, type: 'additional', index: idx };
+    };
+    reader.readAsDataURL(file);
+  };
 }
 // __ drop down options ______________________________________________________
 
@@ -1356,28 +1378,56 @@ function toggleFormatFields(lang,fmt){
 
 // ── Image crop ────────────────────────────────────────────────────────────
 
-function openImageCrop(language, type, index=null){
-  currentCropTarget = {language, type, index};
+// function openImageCrop(language, type, index=null){
+//   currentCropTarget = {language, type, index};
 
+//   const fi = document.getElementById('cropFileInput');
+//   fi.value = '';
+//   fi.click();
+
+//   fi.onchange = function(e){
+//     const file = e.target.files[0];
+//     if(!file) return;
+//     if(!file.type.startsWith("image/")){
+//       Toast.fire({icon:'error', title:'Only images allowed'});
+//       return;
+//     }
+//     const reader = new FileReader();
+//     reader.onload = function(ev){
+//       const ci = document.getElementById('cropImage');
+//       ci.src = ev.target.result;
+//       document.getElementById('cropModal').classList.add('show');
+//       if(cropper){ cropper.destroy(); cropper = null; }
+//       cropper = new Cropper(ci, {
+//         aspectRatio: NaN,
+//         viewMode: 2,
+//         autoCropArea: 0.85
+//       });
+//     };
+//     reader.readAsDataURL(file);
+//   };
+// }
+
+function pickImage(language, index) {
+  currentCropTarget = { language, index, type: 'fixed' };
   const fi = document.getElementById('cropFileInput');
   fi.value = '';
   fi.click();
-
-  fi.onchange = function(e){
+  fi.onchange = function(e) {
     const file = e.target.files[0];
-    if(!file) return;
-    if(!file.type.startsWith("image/")){
-      Toast.fire({icon:'error', title:'Only images allowed'});
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      Toast.fire({ icon:'error', title:'Only images allowed' });
       return;
     }
     const reader = new FileReader();
-    reader.onload = function(ev){
+    reader.onload = function(ev) {
       const ci = document.getElementById('cropImage');
       ci.src = ev.target.result;
       document.getElementById('cropModal').classList.add('show');
-      if(cropper){ cropper.destroy(); cropper = null; }
+      if (cropper) { cropper.destroy(); cropper = null; }
       cropper = new Cropper(ci, {
-        aspectRatio: NaN,
+        aspectRatio: index === 0 ? 3/4 : NaN,
         viewMode: 2,
         autoCropArea: 0.85
       });
@@ -1414,31 +1464,56 @@ function closeCropModal(){
   currentCropTarget=null;
 }
 
-function applyCrop(){
-  if(!cropper || !currentCropTarget) return;
+// function applyCrop(){
+//   if(!cropper || !currentCropTarget) return;
 
+//   const canvas = cropper.getCroppedCanvas();
+
+//   canvas.toBlob(function(blob){
+//     const file = new File([blob], Date.now()+".jpg", {type:"image/jpeg"});
+//     const {language, type, index} = currentCropTarget;
+
+//     if(!languageImageData[language]) languageImageData[language] = {};
+
+//     if(type === 'thumb'){
+//       languageImageData[language].thumbnailFile = file;
+//       document.getElementById(`${language}_thumb`).innerHTML =
+//         `<img src="${URL.createObjectURL(file)}">`;
+//     } else {
+//       if(!languageImageData[language].subImageFiles)
+//         languageImageData[language].subImageFiles = [];
+//       languageImageData[language].subImageFiles[index] = file;
+//       document.getElementById(`${language}_sub_${index}`).innerHTML =
+//         `<img src="${URL.createObjectURL(file)}">`;
+//     }
+
+//     closeCropModal();
+//     Toast.fire({icon:'success', title:'Image cropped successfully!'});
+//   }, "image/jpeg", 0.9);
+// }
+function applyCrop() {
+  if (!cropper || !currentCropTarget) return;
   const canvas = cropper.getCroppedCanvas();
+  canvas.toBlob(function(blob) {
+    const file = new File([blob], Date.now() + ".jpg", { type: "image/jpeg" });
+    const { language, index, type } = currentCropTarget;
 
-  canvas.toBlob(function(blob){
-    const file = new File([blob], Date.now()+".jpg", {type:"image/jpeg"});
-    const {language, type, index} = currentCropTarget;
+    if (!languageImageData[language]) languageImageData[language] = { fixed: [null,null,null], additional: [] };
+    if (!languageImageData[language].fixed) languageImageData[language].fixed = [null,null,null];
+    if (!languageImageData[language].additional) languageImageData[language].additional = [];
 
-    if(!languageImageData[language]) languageImageData[language] = {};
-
-    if(type === 'thumb'){
-      languageImageData[language].thumbnailFile = file;
-      document.getElementById(`${language}_thumb`).innerHTML =
-        `<img src="${URL.createObjectURL(file)}">`;
+    if (type === 'additional') {
+      languageImageData[language].additional[index] = file;
+      const box = document.getElementById(`${language}_add_${index}_box`);
+      if (box) box.innerHTML = `<img src="${URL.createObjectURL(file)}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
     } else {
-      if(!languageImageData[language].subImageFiles)
-        languageImageData[language].subImageFiles = [];
-      languageImageData[language].subImageFiles[index] = file;
-      document.getElementById(`${language}_sub_${index}`).innerHTML =
-        `<img src="${URL.createObjectURL(file)}">`;
+      // fixed: 0=thumb, 1,2=sub
+      languageImageData[language].fixed[index] = file;
+      const box = document.getElementById(`${language}_img_${index}`);
+      if (box) box.innerHTML = `<img src="${URL.createObjectURL(file)}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
     }
-
     closeCropModal();
-    Toast.fire({icon:'success', title:'Image cropped successfully!'});
+    Toast.fire({ icon:'success', title:'Image added!' });
   }, "image/jpeg", 0.9);
 }
 
@@ -1476,11 +1551,9 @@ function updateVariantsList(){
         <div class="language-content">
           ${grouped[langId].map(v => {
 
-            // ── thumbnail: new file இருந்தா blob, இல்லன்னா cloudinary url ──
-            const thumbSrc = v.thumbnailFile
-              ? URL.createObjectURL(v.thumbnailFile)
-              : (v.thumbnail?.url || '');
-
+            const thumbSrc = v.files?.[0]
+  ? URL.createObjectURL(v.files[0])
+  : (v.thumbnail?.url || '')
             return `
               <div class="variant-item">
                 <div class="variant-thumbnail">
@@ -1523,7 +1596,7 @@ async function openDetailModal(productId) {
           </div>
 
           <!-- Images Row -->
-          <div style="display:flex;gap:10px;margin-bottom:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;flex-wrap:wrap">
             <!-- Thumbnail -->
             ${v.thumbnail?.url ? `
               <div style="flex-shrink:0;width:90px;height:120px;border-radius:10px;overflow:hidden;
@@ -1531,16 +1604,33 @@ async function openDetailModal(productId) {
                 <img src="${v.thumbnail.url}" style="width:100%;height:100%;object-fit:cover">
               </div>` : ''}
             <!-- Sub Images -->
-            <div style="display:flex;flex-direction:column;gap:8px;flex:1">
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                ${(v.subImages || []).map(img => `
-                  <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;
-                       box-shadow:0 3px 10px rgba(111,43,103,.15);border:1.5px solid rgba(111,43,103,.15)">
-                    <img src="${img.url}" style="width:100%;height:100%;object-fit:cover">
-                  </div>`).join('')}
-              </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start">
+              ${(v.subImages || []).map(img => `
+                <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;
+                     box-shadow:0 3px 10px rgba(111,43,103,.15);border:1.5px solid rgba(111,43,103,.15)">
+                  <img src="${img.url}" style="width:100%;height:100%;object-fit:cover">
+                </div>`).join('')}
             </div>
           </div>
+
+          <!-- Additional Images -->
+          ${(v.additionalImages || []).length > 0 ? `
+          <div style="margin-bottom:16px">
+            <div style="font-size:11px;font-weight:600;color:rgba(111,43,103,.55);
+                 text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;
+                 display:flex;align-items:center;gap:6px">
+              <i class="fas fa-images" style="font-size:12px"></i>
+              Additional Images (${v.additionalImages.length})
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${v.additionalImages.map(img => `
+                <div style="width:72px;height:72px;border-radius:8px;overflow:hidden;
+                     border:1.5px solid rgba(111,43,103,.15);
+                     box-shadow:0 2px 8px rgba(111,43,103,.1)">
+                  <img src="${img.url}" style="width:100%;height:100%;object-fit:cover">
+                </div>`).join('')}
+            </div>
+          </div>` : ''}
 
           <!-- Formats -->
           <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -1653,24 +1743,145 @@ async function openEditModal(productId) {
 
     document.getElementById('authorSelect').value = p.author?._id || '';
 
-    // Load existing variants as edit-ready objects
-    // We store existing variants with cloudinary URLs (no files — edit will keep existing images unless replaced)
-    productVariants = (p.variants || []).map(v => ({
-      language: v.language?._id || v.language,
-      languageName: v.language?.languageName || '',
-      thumbnail: v.thumbnail,           // existing cloudinary data
-      thumbnailFile: null,              // null = no new file, keep existing
-      subImages: v.subImages || [],     // existing cloudinary data
-      subImageFiles: [],                // null slots = keep existing
-      formats: v.formats.map(f => ({
-        format: f.format,
-        price: f.price,
-        stock: f.stock,
-        sold: f.sold || 0
-      }))
-    }));
+    await loadLanguagesFromDB();
+
+productVariants = [];
+
+(p.variants || []).forEach(v => {
+
+  const langCode = v.language?.languageCode;
+
+  // DB data save
+  productVariants.push({
+    language: v.language?._id || v.language,
+    languageName: v.language?.languageName || '',
+    langCode,
+
+    thumbnail: v.thumbnail,
+
+    subImages: v.subImages || [],
+
+    additionalImages: v.additionalImages || [],
+
+    formats: v.formats.map(f => ({
+      format: f.format,
+      price: f.price,
+      stock: f.stock,
+      sold: f.sold || 0
+    }))
+  });
+
+  // Existing image tracking
+  languageImageData[langCode] = {
+
+    fixed: [
+
+      // thumbnail
+      v.thumbnail
+        ? new File(["existing"], "existing_thumb.jpg")
+        : null,
+
+      // sub image 1
+      v.subImages?.[0]
+        ? new File(["existing"], "existing_sub1.jpg")
+        : null,
+
+      // sub image 2
+      v.subImages?.[1]
+        ? new File(["existing"], "existing_sub2.jpg")
+        : null
+    ],
+
+    // additional images
+    additional: (v.additionalImages || []).map((img, i) =>
+      new File(["existing"], `existing_add_${i}.jpg`)
+    )
+  };
+
+});
+
+(p.variants || []).forEach(v => {
+
+  const langCode = v.language?.languageCode;
+
+  // Thumbnail preview
+  if (v.thumbnail?.url) {
+
+    const thumbBox = document.getElementById(`${langCode}_img_0`);
+
+    if (thumbBox) {
+      thumbBox.innerHTML = `
+        <img 
+          src="${v.thumbnail.url}" 
+          style="width:100%;height:100%;object-fit:cover;
+          position:absolute;top:0;left:0"
+        >
+      `;
+    }
+  }
+
+  // Sub image 1
+  if (v.subImages?.[0]?.url) {
+
+    const sub1 = document.getElementById(`${langCode}_img_1`);
+
+    if (sub1) {
+      sub1.innerHTML = `
+        <img 
+          src="${v.subImages[0].url}" 
+          style="width:100%;height:100%;object-fit:cover;
+          position:absolute;top:0;left:0"
+        >
+      `;
+    }
+  }
+
+  // Sub image 2
+  if (v.subImages?.[1]?.url) {
+
+    const sub2 = document.getElementById(`${langCode}_img_2`);
+
+    if (sub2) {
+      sub2.innerHTML = `
+        <img 
+          src="${v.subImages[1].url}" 
+          style="width:100%;height:100%;object-fit:cover;
+          position:absolute;top:0;left:0"
+        >
+      `;
+    }
+  }
+
+  // Additional images
+  if (v.additionalImages?.length) {
+
+    const grid = document.getElementById(`${langCode}_additional_grid`);
+
+    v.additionalImages.forEach((img, i) => {
+
+      addAdditionalSlot(langCode);
+
+      const box = document.getElementById(`${langCode}_add_${i}_box`);
+
+      if (box) {
+
+        box.innerHTML = `
+          <img 
+            src="${img.url}" 
+            style="width:100%;height:100%;object-fit:cover;
+            position:absolute;top:0;left:0"
+          >
+        `;
+      }
+
+    });
+
+  }
+
+});
 
     updateVariantsListEdit();
+    
     document.getElementById('productModal').classList.add('show');
 
   } catch (err) {
@@ -1760,22 +1971,17 @@ function updateVariantsListEdit() {
 }
 
 //----openEditVariantForm -------------------------------------------------
-
 async function openEditVariantForm(variantIdx) {
   const variant = productVariants[variantIdx];
   if (!variant) return;
 
   await loadLanguagesFromDB();
-
-  document.querySelector('#variantModal .modal-header h2').innerHTML =
-    '<i class="fas fa-edit"></i> Edit Variant';
+  document.querySelector('#variantModal .modal-header h2').innerHTML = '<i class="fas fa-edit"></i> Edit Variant';
 
   const langObj = LANGS.find(l => l._id === variant.language);
   if (!langObj) return;
-
   const lang = langObj.languageCode;
 
-  // Checkbox check + section show
   const cb = document.getElementById(`lang_${lang}`);
   const box = document.getElementById(`lc_${lang}`);
   const sec = document.getElementById(`${lang}Section`);
@@ -1783,72 +1989,139 @@ async function openEditVariantForm(variantIdx) {
   if (box) { box.classList.add('selected'); box.style.opacity='1'; box.style.pointerEvents='auto'; }
   if (sec) sec.style.display = 'block';
 
-  // ── languageImageData ல் existing data set ──
-  if (!languageImageData[lang]) languageImageData[lang] = {};
+  // Init imageData with new structure
+  if (!languageImageData[lang]) languageImageData[lang] = { fixed: [null,null,null], additional: [] };
+  languageImageData[lang].fixed = languageImageData[lang].fixed || [null,null,null];
+  languageImageData[lang].additional = languageImageData[lang].additional || [];
 
-  if (variant.thumbnailFile) {
-    // New file already crop 
-    languageImageData[lang].thumbnailFile = variant.thumbnailFile;
-    document.getElementById(`${lang}_thumb`).innerHTML =
-      `<img src="${URL.createObjectURL(variant.thumbnailFile)}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
-  } else if (variant.thumbnail?.url) {
-    // Existing cloudinary image — fetch  File object 
-    try {
-      const blob = await fetch(variant.thumbnail.url).then(r => r.blob());
-      const file = new File([blob], 'thumb.jpg', { type: 'image/jpeg' });
-      languageImageData[lang].thumbnailFile = file;
-      document.getElementById(`${lang}_thumb`).innerHTML =
-        `<img src="${variant.thumbnail.url}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
-    } catch(e) {
-      // fetch fail ஆனா — dummy file வை, validation skip பண்ண
-      languageImageData[lang].thumbnailFile = new File([''], 'existing.jpg', { type: 'image/jpeg' });
-      document.getElementById(`${lang}_thumb`).innerHTML =
-        `<img src="${variant.thumbnail.url}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
+  setTimeout(() => {
+
+  // Thumbnail
+  const existingThumbUrl = variant.thumbnail?.url;
+
+  if (existingThumbUrl) {
+
+    const thumbBox = document.getElementById(`${lang}_img_0`);
+
+    if (thumbBox) {
+
+      thumbBox.innerHTML = `
+        <img 
+          src="${existingThumbUrl}"
+          style="
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            position:absolute;
+            top:0;
+            left:0;
+          "
+        >
+      `;
     }
+
+    languageImageData[lang].fixed[0] =
+      new File(['x'], 'existing_thumb.jpg', {
+        type:'image/jpeg'
+      });
   }
 
   // Sub images
-  const subFiles = [];
-  for (let i = 0; i < 3; i++) {
-    const existingFile = variant.subImageFiles?.[i];
-    const existingUrl = variant.subImages?.[i]?.url;
+  (variant.subImages || []).forEach((img, i) => {
 
-    if (existingFile) {
-      subFiles[i] = existingFile;
-      document.getElementById(`${lang}_sub_${i}`).innerHTML =
-        `<img src="${URL.createObjectURL(existingFile)}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
-    } else if (existingUrl) {
-      try {
-        const blob = await fetch(existingUrl).then(r => r.blob());
-        const file = new File([blob], `sub_${i}.jpg`, { type: 'image/jpeg' });
-        subFiles[i] = file;
-      } catch(e) {
-        subFiles[i] = new File([''], `existing_sub_${i}.jpg`, { type: 'image/jpeg' });
-      }
-      document.getElementById(`${lang}_sub_${i}`).innerHTML =
-        `<img src="${existingUrl}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
+    if (i > 1) return;
+
+    const subBox =
+      document.getElementById(`${lang}_img_${i + 1}`);
+
+    if (subBox) {
+
+      subBox.innerHTML = `
+        <img 
+          src="${img.url}"
+          style="
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            position:absolute;
+            top:0;
+            left:0;
+          "
+        >
+      `;
     }
-  }
-  languageImageData[lang].subImageFiles = subFiles;
 
-  // Formats pre-fill
-  // First uncheck both
+    languageImageData[lang].fixed[i + 1] =
+      new File(['x'], `existing_sub_${i}.jpg`, {
+        type:'image/jpeg'
+      });
+
+  });
+
+ (variant.additionalImages || []).forEach((img, i) => {
+
+  // current index before slot create
+  const currentIndex =
+    languageImageData[lang].additional.length;
+
+  // create slot
+  addAdditionalSlot(lang);
+
+  // dummy existing file
+  languageImageData[lang].additional[currentIndex] =
+    new File(['x'], `existing_add_${currentIndex}.jpg`, {
+      type:'image/jpeg'
+    });
+
+  // preview set
+  setTimeout(() => {
+
+    const box = document.getElementById(
+      `${lang}_add_${currentIndex}_box`
+    );
+
+    if (box) {
+
+      box.innerHTML = `
+        <img 
+          src="${img.url}"
+          style="
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            position:absolute;
+            top:0;
+            left:0;
+          "
+        >
+      `;
+
+    }
+
+  }, 100);
+
+});
+
+}, 100);
+  // Formats
   ['paperback','hardcover'].forEach(fmt => {
     const fmtCb = document.getElementById(`${lang}_${fmt}`);
-    if (fmtCb) { fmtCb.checked = false; }
-    document.getElementById(`${lang}_${fmt}Fields`).style.display = 'none';
+    if (fmtCb) fmtCb.checked = false;
+    const fmtF = document.getElementById(`${lang}_${fmt}Fields`);
+    if (fmtF) fmtF.style.display = 'none';
   });
-
   variant.formats.forEach(f => {
-    const fmt = f.format;
-    const fmtCb = document.getElementById(`${lang}_${fmt}`);
+    const fmtCb = document.getElementById(`${lang}_${f.format}`);
     if (fmtCb) {
       fmtCb.checked = true;
-      toggleFormatFields(lang, fmt);
-      document.getElementById(`${lang}_${fmt}_price`).value = f.price;
-      document.getElementById(`${lang}_${fmt}_stock`).value = f.stock;
+      toggleFormatFields(lang, f.format);
+      document.getElementById(`${lang}_${f.format}_price`).value = f.price;
+      document.getElementById(`${lang}_${f.format}_stock`).value = f.stock;
     }
   });
+
+  // Make sure variant has langCode for later
+  productVariants[variantIdx].langCode = lang;
 
   document.getElementById('variantModal').classList.add('show');
 }
@@ -1992,4 +2265,4 @@ fetch('/admin/products')
 )
 </script>
 </body>
-</htm
+</html>

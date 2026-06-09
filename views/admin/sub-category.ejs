@@ -270,9 +270,7 @@
     <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="/admin/admin" class="menu-item">
-      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-    </a>
+    
     <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
@@ -288,7 +286,7 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="/admin/appSetting">App Settings</a>
+      
       <a href="/admin/language">Language</a>
     </div>
     
@@ -778,7 +776,25 @@ document.getElementById('limitSelect').addEventListener('change', (e) => {
 
 document.getElementById('imageInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
+  
   if (!file) return;
+
+  const allowedTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp"
+];
+
+if (!allowedTypes.includes(file.type)) {
+  Toast.fire({
+    icon: "error",
+    title: "Only image files are allowed"
+  });
+
+  e.target.value = "";
+  return;
+}
 
   const reader = new FileReader();
   reader.onload = () => {
@@ -886,7 +902,6 @@ document.getElementById('subCategoryForm').addEventListener('submit', async (e) 
   const name = nameInput.value.trim();
   const description = descInput.value.trim();
   const parentCategory = parentInput.value;
-  // REMOVED: status from form
 
   const nameError = document.getElementById("nameError");
   const descError = document.getElementById("descError");
@@ -908,7 +923,7 @@ document.getElementById('subCategoryForm').addEventListener('submit', async (e) 
   formData.append('name', name);
   formData.append('description', description);
   formData.append('parentCategory', parentCategory);
-  // REMOVED: status append
+ 
 
   if (croppedBlob) {
     formData.append('image', croppedBlob, 'cropped-image.jpg');
@@ -991,6 +1006,51 @@ async function loadParentCategories() {
     console.error('Failed to load parent categories', err);
   }
 }
+
+
+document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
 
   </script>
 </body>

@@ -401,8 +401,7 @@ pointer-events:none;
           <nav class="main-nav d-none d-lg-flex">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/shop">Shop</a>
-            <a class="nav-link" href="/about">About</a>
-            <a class="nav-link" href="/contact">Contact</a>
+           
           </nav>
         </div>
         <div class="col-6 d-flex justify-content-end align-items-center">
@@ -436,8 +435,7 @@ pointer-events:none;
   <div id="mobileMenu" class="mobile-menu d-lg-none">
     <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
     <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+    
   </div>
 
   <div class="breadcrumb-wrap">
@@ -507,7 +505,7 @@ pointer-events:none;
           <ul class="list-unstyled">
             <li><a href="/">Home</a></li>
             <li><a href="/shop">Shop Books</a></li>
-            <li><a href="/about">About Us</a></li>
+          
           </ul>
         </div>
         <div class="col-md-4 text-md-end">
@@ -543,7 +541,6 @@ async function loadWishlist(page=1) {
   const countEl   = document.getElementById("wishCountDisplay")
     
 
-  // 🔥 NEW
   const gridWrap  = document.getElementById("wishGridWrap")
   const topbar    = document.getElementById("wishTopbar")
 
@@ -572,10 +569,8 @@ if (badge) {
     return
   }
 
-  // ✅ HAS ITEMS
   empty.style.display = "none"
 
-  // 🔥 SHOW AGAIN
   gridWrap.style.display = "block"
   topbar.style.display   = "flex"
 
@@ -642,7 +637,7 @@ async function removeWish(id) {
 
   document.getElementById("wcard-" + id)?.remove()
 
-  // 🔥 RELOAD DATA (BEST WAY)
+ 
   loadWishlist(1)
 }
 
@@ -679,18 +674,14 @@ function confirmEmptyWish() {
         method: "DELETE"
       })
 
-      // 🔥 CLEAR GRID
       document.getElementById("wishGrid").innerHTML = ""
 
-      // ✅ SHOW EMPTY MESSAGE
       document.getElementById("emptyWishlist").style.display = "block"
 
-      // 🔥 HIDE EVERYTHING ELSE
       document.getElementById("wishGridWrap").style.display = "none"
       document.getElementById("wishTopbar").style.display = "none"
       document.getElementById("pagination").innerHTML = ""
 
-      // 🔥 RESET COUNT
       const countEl = document.getElementById("wishCountDisplay")
       if (countEl) countEl.textContent = "0"
 
@@ -703,7 +694,6 @@ function renderPagination(totalPages, currentPage) {
   const pagination = document.getElementById("pagination")
   pagination.innerHTML = ""
 
-  // 🔥 ALWAYS show PREV
   pagination.innerHTML += `
     <button class="pg-btn ${currentPage === 1 ? 'disabled' : ''}"
       onclick="${currentPage > 1 ? `loadWishlist(${currentPage - 1})` : ''}">
@@ -711,7 +701,6 @@ function renderPagination(totalPages, currentPage) {
     </button>
   `
 
-  // 🔢 Pages
   for (let i = 1; i <= totalPages; i++) {
     pagination.innerHTML += `
       <button class="pg-btn ${i === currentPage ? 'active' : ''}"
@@ -721,7 +710,6 @@ function renderPagination(totalPages, currentPage) {
     `
   }
 
-  // 🔥 ALWAYS show NEXT
   pagination.innerHTML += `
     <button class="pg-btn ${currentPage === totalPages ? 'disabled' : ''}"
       onclick="${currentPage < totalPages ? `loadWishlist(${currentPage + 1})` : ''}">
@@ -806,15 +794,35 @@ async function loadCartCount() {
       }
     })
     document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
-      e.preventDefault()
+      e.preventDefault();
       Swal.fire({
-        title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
-        html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
-        showCancelButton:true, confirmButtonText:"🚪 Logout", cancelButtonText:"Stay Here",
-        confirmButtonColor:"#6f2b67", cancelButtonColor:"#d6c3d3", reverseButtons:true,
-        background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
-      }).then(r => { if (r.isConfirmed) window.location.href = "/logout" })
-    })
+        title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html: `
+          <p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+          <p style="font-size:13px;color:#888">You can login again anytime.</p>
+        `,
+        imageUrl: "/images/go-out-thro-removebg-preview.png",
+        imageWidth: 130,
+        imageHeight: 130,
+        imageAlt: "Logout illustration",
+        showCancelButton: true,
+        confirmButtonText: "🚪 Logout",
+        cancelButtonText: "Stay Here",
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#d6c3d3",
+        reverseButtons: true,
+        background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+        backdrop: "rgba(0,0,0,0.6)",
+        showClass: { popup: 'animate__animated animate__fadeInUp' },
+        hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/logout";
+        }
+      });
+    });
+
+
   </script>
 </body>
 </html>

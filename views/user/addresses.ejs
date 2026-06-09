@@ -263,8 +263,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <nav class="main-nav d-none d-lg-flex">
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/shop">Shop</a>
-        <a class="nav-link" href="/about">About</a>
-        <a class="nav-link" href="/contact">Contact</a>
+       
       </nav>
       <div class="header-icons">
           <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
@@ -287,8 +286,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 <div id="mobileMenuP" class="mobile-menu-p d-lg-none">
   <a class="mobile-nav-link-p" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link-p" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link-p" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link-p" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+ 
 </div>
 
 <div class="search-wrap">
@@ -533,7 +531,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <h5>Quick Links</h5>
       <a href="/">Home</a>
       <a href="/shop">Shop Books</a>
-      <a href="/about">About Us</a>
+     
     </div>
     <div class="footer-section">
       <h5>LitHeaven</h5>
@@ -881,8 +879,6 @@ function setupLiveValidation() {
 
 window.addEventListener('load', () => {
   setupLiveValidation();
-  
-  // Page refresh ஆனதும் modal state check செய்யுங்கள்
   const modalOpen = sessionStorage.getItem('modalOpen');
   const modalMode = sessionStorage.getItem('modalMode');
   
@@ -942,7 +938,6 @@ function closeProfileFilter(){
   document.body.style.overflow = '';
 }
 
-// Drawer logout → reuse existing Swal logic
 document.getElementById('logoutBtnDrawer')?.addEventListener('click', function(e){
   e.preventDefault();
   closeProfileFilter();

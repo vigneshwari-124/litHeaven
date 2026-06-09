@@ -222,8 +222,7 @@
           <nav class="main-nav d-none d-lg-flex">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/shop">Shop</a>
-            <a class="nav-link" href="/about">About</a>
-            <a class="nav-link" href="/contact">Contact</a>
+           
           </nav>
         </div>
         <div class="col-6 d-flex justify-content-end align-items-center">
@@ -257,8 +256,7 @@
   <div id="mobileMenu" class="mobile-menu d-lg-none">
     <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
     <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+    
   </div>
 
   <div class="breadcrumb-wrap">
@@ -335,18 +333,10 @@
   <span class="lbl">Total Amount</span>
   <span class="val">₹<span id="finalAmt">0</span></span>
 </div>
-          <!-- <div class="s-row saving">
-            <span class="lbl">You Save</span>
-            <span class="val" id="summarySavings">− ₹3,482</span>
-          </div> -->
-          <!-- <div class="s-row free">
-            <span class="lbl">Delivery</span>
-            <span class="val">FREE 🎉</span>
-          </div> -->
          
           
           <!-- <div class="savings-banner" id="savingsBanner">🎉 You're saving ₹3,482 on this order!</div> -->
-          <button class="btn-checkout" onclick="window.location.href='/checkout'">
+          <button class="btn-checkout" onclick="window.location.href='/checkout'" id="checkoutBtn">
             <i class="fa-solid fa-lock"></i> Proceed To Checkout
           </button>
           <button class="btn-shop" onclick="window.location.href='/shop'">
@@ -371,7 +361,7 @@
           <ul class="list-unstyled">
             <li><a href="/">Home</a></li>
             <li><a href="/shop">Shop Books</a></li>
-            <li><a href="/about">About Us</a></li>
+           
           </ul>
         </div>
         <div class="col-md-4 text-md-end">
@@ -389,7 +379,16 @@
     /* ═══════════════════════════════════════════
        CART DATA
     ═══════════════════════════════════════════ */
-   
+   window.addEventListener("pageshow", function (event) {
+
+  const navType =
+    performance.getEntriesByType("navigation")[0]?.type;
+
+  if (event.persisted || navType === "back_forward") {
+    window.location.reload();
+  }
+
+});
 
     let cartItems = []
 
@@ -398,13 +397,56 @@ async function loadCart() {
   const res = await fetch("/get-cart")
   const data = await res.json()
 
+  
   cartItems = data.items || []
 
+  updateCheckoutButton(data.items)
   renderCart()
 
   handleEmptyCart() 
   updateSummary()
+
 }
+
+
+function updateCheckoutButton(cartItems){
+
+const hasOutOfStock = cartItems.some(item =>
+item.stock === 0 || item.quantity > item.stock
+)
+
+const checkoutBtn = document.getElementById("checkoutBtn")
+
+if(hasOutOfStock){
+
+checkoutBtn.disabled = true
+
+checkoutBtn.style.opacity = "0.5"
+
+checkoutBtn.style.cursor = "not-allowed"
+
+checkoutBtn.innerHTML = `
+<i class="fa-solid fa-ban"></i>
+ Remove Out Of Stock Item
+`
+
+}else{
+
+checkoutBtn.disabled = false
+
+checkoutBtn.style.opacity = "1"
+
+checkoutBtn.style.cursor = "pointer"
+
+checkoutBtn.innerHTML = `
+<i class="fa-solid fa-lock"></i>
+ Proceed To Checkout
+`
+
+}
+
+}
+
 function handleEmptyCart() {
 
   const emptyCart = document.getElementById("emptyCart")
@@ -460,9 +502,10 @@ function handleEmptyCart() {
     const image = variant?.thumbnail?.url || "/images/default.jpg"
     const title = product?.title || "No Title"
     const author = product?.author?.name || "Unknown"
-    const price = formatData?.price || 0
+    const price = item.offerPrice || formatData?.price || 0
+    const originalPrice = item.originalPrice || formatData?.price || 0
+    const discount = item.discount || 0
     const qty = item.quantity || 1
-
     const total = price * qty
 
     const tr = document.createElement("tr")
@@ -490,7 +533,9 @@ function handleEmptyCart() {
       </td>
 
       <td>
+        ${discount > 0 ? `<div class="price-old">₹${originalPrice}</div>` : ''}
         <div class="price-new">₹${price}</div>
+        ${discount > 0 ? `<div class="price-badge">${discount}% Off</div>` : ''}
       </td>
 
       <td>
@@ -523,64 +568,82 @@ function handleEmptyCart() {
   })
 }
 
-function changeQty(id, delta) {
-
- const item = cartItems.find(i => i._id.toString() === id.toString())
-
-   console.log("ITEM 👉", item) 
-
+async function changeQty(id, delta) {
+  const item = cartItems.find(i => i._id.toString() === id.toString())
   if (!item) return
-         const product = item.productId   // ✅ FIRST define
 
-  console.log("PRODUCT 👉", product)
-
-   console.log("VARIANTS 👉", product?.variants) 
-  
-  let newQty = item.quantity + delta
-
-  // ✅ LIMIT
-  if (newQty < 1) newQty = 1
-  if (newQty > 8) {
-  Swal.fire({
-  icon: "error",
-  title: "Limit Reached 🚫",
-  text: "Maximum 8 items allowed"
-})
-    return
-  }
-
-  item.quantity = newQty
-
-  // ✅ UPDATE UI
-  document.getElementById(`qty-${id}`).innerText = newQty
-
-
+  const product = item.productId
   const variant = product?.variants?.find(
     v => v.language?._id?.toString() === item.languageId?._id?.toString()
   )
+  const formatData = variant?.formats?.find(f => f.format === item.format)
+  const price = item.offerPrice || formatData?.price || 0
+  const stock = item.stock || 0
+  
+  let newQty = item.quantity + delta
 
-  const formatData = variant?.formats?.find(
-    f => f.format === item.format
-  )
+  if (newQty < 1) return
 
-  const price = formatData?.price || 0
+  if (newQty > stock) {
+    Swal.fire({
+      icon: "warning",
+      title: "Stock Limit Reached 📦",
+      text: `Only ${stock} items available in stock!`,
+      confirmButtonColor: "#6f2b67"
+    })
+    return
+  }
+
+  if (newQty > 8) {
+    Swal.fire({
+      icon: "error",
+      title: "Limit Reached 🚫",
+      text: "Maximum 8 items allowed per order",
+      confirmButtonColor: "#6f2b67"
+    })
+    return
+  }
+
+  const res = await fetch("/update-cart-qty", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      productId: item.productId._id,
+      languageId: item.languageId._id,
+      format: item.format,
+      quantity: newQty
+    })
+  })
+
+  const data = await res.json()
+
+  if (data.status === "out-of-stock") {
+    Swal.fire({
+      icon: "warning",
+      title: "Stock Limit Reached 📦",
+      text: `Only ${data.availableStock} items available!`,
+      confirmButtonColor: "#6f2b67"
+    })
+    return
+  }
+
+  if (data.status !== "updated") return
+
+
+  item.quantity = newQty
+  document.getElementById(`qty-${id}`).innerText = newQty
+
   const total = price * newQty
-
   document.getElementById(`total-${id}`).innerText = "₹" + total
 
   updateSummary()
 }
+
     /* ═══════════════════════════════════════════
-       ✅ CHANGE QTY — NO PAGE REFRESH
-       Only updates the 3 elements that changed:
-         1. qty number span
-         2. − / + button disabled state
-         3. row total
-       Then calls updateSummary() for the panel
+    
     ═══════════════════════════════════════════ */
     async function moveToWishlist(productId, languageId, format){
 
-  // 1️ Add to wishlist
   const res = await fetch('/wishlist/toggle',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -599,8 +662,6 @@ function changeQty(id, delta) {
     })
       loadWishlistCount()
 
-
-    // 3 UI update
     cartItems = cartItems.filter(item =>
       !(item.productId._id === productId &&
         item.languageId._id === languageId &&
@@ -610,6 +671,7 @@ function changeQty(id, delta) {
     renderCart()
     updateSummary()
     handleEmptyCart()
+    updateCheckoutButton(cartItems)
   
 
     // 4️ toast
@@ -643,7 +705,7 @@ function changeQty(id, delta) {
       f => f.format === item.format
     )
 
-    const price = formatData?.price || 0
+    const price = item.offerPrice || formatData?.price || 0
 
     totalPrice += price * item.quantity
     totalQty += item.quantity
@@ -685,10 +747,9 @@ function changeQty(id, delta) {
     background: "linear-gradient(135deg,#f6eef6,#efe3f0)"
   }).then(async (result) => {
 
-    //  Cancel
+    
     if (!result.isConfirmed) return
 
-    //  Proceed delete
     const res = await fetch("/remove-cart-item", {
       method: "POST",
       headers: {
@@ -701,7 +762,6 @@ function changeQty(id, delta) {
 
     if (data.status === "removed") {
 
-      // UI remove
       cartItems = cartItems.filter(item =>
         !(
           item.productId._id === productId &&
@@ -713,7 +773,8 @@ function changeQty(id, delta) {
       renderCart()
       updateSummary()
       handleEmptyCart()
-      //  success popup
+      updateCheckoutButton(cartItems)
+    
       Swal.fire({
         icon: "success",
         title: "Removed!",
@@ -826,7 +887,7 @@ async function refreshCartStock() {
 
     const newItems = data.items || []
 
-    // compare stock changes
+  
     newItems.forEach(newItem => {
 
       const oldItem = cartItems.find(i =>
@@ -837,23 +898,20 @@ async function refreshCartStock() {
 
       if (!oldItem) return
 
-      // 🚨 STOCK CHANGED
       if (oldItem.stock !== newItem.stock) {
 
-        // update local
         oldItem.stock = newItem.stock
 
-        //  UPDATE UI ONLY THAT ROW
+        updateCheckoutButton(cartItems)
+    
         const qtyMinus = document.querySelector(`button[onclick*="${oldItem._id}"][onclick*="-1"]`)
         const qtyPlus  = document.querySelector(`button[onclick*="${oldItem._id}"][onclick*="1"]`)
 
         if (newItem.stock === 0) {
 
-          // disable qty
           qtyMinus?.setAttribute("disabled", true)
           qtyPlus?.setAttribute("disabled", true)
 
-          // show OUT OF STOCK
           const row = qtyMinus.closest("tr")
 
           if (!row.innerHTML.includes("Out of Stock")) {
@@ -865,7 +923,7 @@ async function refreshCartStock() {
           }
 
         } else {
-          // enable again
+       
           qtyMinus?.removeAttribute("disabled")
           qtyPlus?.removeAttribute("disabled")
         }
@@ -878,12 +936,18 @@ async function refreshCartStock() {
 }
 
     /* ── LOGOUT ── */
-    document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+   document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
       e.preventDefault();
       Swal.fire({
         title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
-        html: `<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
-               <p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+        html: `
+          <p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+          <p style="font-size:13px;color:#888">You can login again anytime.</p>
+        `,
+        imageUrl: "/images/go-out-thro-removebg-preview.png",
+        imageWidth: 130,
+        imageHeight: 130,
+        imageAlt: "Logout illustration",
         showCancelButton: true,
         confirmButtonText: "🚪 Logout",
         cancelButtonText: "Stay Here",
@@ -891,9 +955,15 @@ async function refreshCartStock() {
         cancelButtonColor: "#d6c3d3",
         reverseButtons: true,
         background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
-      }).then(r => { if (r.isConfirmed) window.location.href = "/logout"; });
+        backdrop: "rgba(0,0,0,0.6)",
+        showClass: { popup: 'animate__animated animate__fadeInUp' },
+        hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/logout";
+        }
+      });
     });
-
 
 
     /* ── INIT ── */

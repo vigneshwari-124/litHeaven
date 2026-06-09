@@ -8,7 +8,7 @@ const productController=require('../../controllers/admin/productController')
 const orderManageController=require('../../controllers/admin/orderAuthController')
 const couponController=require('../../controllers/admin/couponController')
 const offersController=require('../../controllers/admin/offersController')
-
+const salesReportController=require('../../controllers/admin/salesReportController')
 const adminAuth = require('../../middlewares/adminAuth')
 const noCache=require('../../middlewares/noCache')
 const upload = require('../../middlewares/upload');
@@ -24,7 +24,10 @@ router.post('/logout', adminAuth, adminController.logout)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/dashboard', noCache, adminAuth, adminController.adminDashboard)
-
+router.get('/dashboard/chart-data',adminAuth,adminController.getChartData)
+router.get('/dashboard/stats',adminAuth,adminController.getDashboardStats)
+router.get('/dashboard/top-data',adminAuth,adminController.getTopProducts)
+router.get('/dashboard/card-data',adminAuth, adminController.getDashboardCards)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // =
 router.get('/customer', noCache, adminAuth, adminController.getCustomer)
@@ -71,18 +74,22 @@ router.patch('/author/toggle-delete/:id', adminAuth, authorController.toggleAuth
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get('/product',noCache,adminAuth,productController.productPage)
 router.get('/products',adminAuth,productController.getProduct)
-router.post('/products',adminAuth,upload.fields([{ name: 'thumbnails', maxCount: 20 },{ name: 'subImages', maxCount: 60 }]), productController.addProduct)
+// router.post('/products',adminAuth,upload.fields([{ name: 'thumbnails', maxCount: 20 },{ name: 'subImages', maxCount: 60 }]), productController.addProduct)
+router.post('/products', adminAuth, upload.fields([{ name: 'images', maxCount: 30 }]), productController.addProduct)
 router.get('/products/:id', adminAuth, productController.getProductById);
-router.put('/products/:id', adminAuth, upload.fields([{ name: 'thumbnails', maxCount: 20 }, { name: 'subImages', maxCount: 60 }]),productController.updateProduct);
+// router.put('/products/:id', adminAuth, upload.fields([{ name: 'thumbnails', maxCount: 20 }, { name: 'subImages', maxCount: 60 }]),productController.updateProduct);
+router.put('/products/:id', adminAuth, upload.fields([{ name: 'images', maxCount: 30 }]), productController.updateProduct);
 router.patch('/products/:id/toggle-list', adminAuth, productController.toggleProductList);
 
 //========================================================================================================================//
 
 router.get('/order',adminAuth,orderManageController.orderPage)
 router.get('/orders',adminAuth, adminAuth, orderManageController.getOrders)
-router.get('/orders/:id',adminAuth, adminAuth, orderManageController.getSingleOrder)
-router.patch('/orders/:id/status',adminAuth, adminAuth, orderManageController.updateOrderStatus)
-
+router.patch('/orders/:id/status', adminAuth, orderManageController.updateOrderStatus)
+router.get( '/orders/:id',adminAuth,orderManageController.getOrderById);
+router.patch('/orders/:id/item-status',adminAuth,orderManageController.updateItemStatus)
+router.patch('/orders/:orderId/items/:itemId/cancel',adminAuth,orderManageController.cancelSingleItem)
+router.patch('/orders/:orderId/cancel',adminAuth,orderManageController.cancelFullOrder)
 //=========================================================================================================================//
 
 router.get('/coupon',adminAuth,couponController.couponPage)
@@ -120,4 +127,11 @@ router.get('/products-for-offer', adminAuth, offersController.getProductsForOffe
 router.get('/productOffer/:id', adminAuth,offersController.getSingleProductOffer);
 router.put('/productOffer/:id', adminAuth,offersController.updateProductOffer )
 router.delete('/productOffer/:id', adminAuth,offersController.deleteProductOffer);
+
+
+//===========================================================================================================
+
+router.get('/salesReport',adminAuth,salesReportController.salesReport)
+router.get('/salesReport-data',adminAuth,salesReportController.getSalesReport)
+
 module.exports = router

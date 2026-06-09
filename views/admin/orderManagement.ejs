@@ -192,6 +192,8 @@
     .btn-cancel-modal{background:transparent;color:#6f2b67;border:1.5px solid rgba(111,43,103,.35);border-radius:9px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:.25s;}
     .btn-cancel-modal:hover{background:rgba(111,43,103,.08);}
  
+    .swal2-container{z-index:99999 !important;}
+    .swal2-popup{z-index:99999 !important;}
     /* responsive */
     @media(max-width:900px){
       .stats-row{grid-template-columns:1fr 1fr;}
@@ -261,9 +263,7 @@
   <a href="/admin/author" class="menu-item">
     <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
   </a>
-  <a href="/admin/admin" class="menu-item">
-    <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-  </a>
+  
   <a href="/admin/customer" class="menu-item">
     <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
   </a>
@@ -276,7 +276,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+    
     <a href="/admin/language">Language</a>
   </div>
  
@@ -320,6 +320,7 @@
         <option value="Delivered">Delivered</option>
         <option value="Cancelled">Cancelled</option>
         <option value="Returned">Returned</option>
+        <option value="Return Requested">Return Requested</option>
       </select>
  
  
@@ -368,15 +369,39 @@
 /* ════════════════════════════
    DEMO DATA — replace with API
 ════════════════════════════ */
+function getAllowedOptions(current){
 
-function getAllowedOptions(current) {
   const map = {
-    Processing: ["Processing", "Shipped", "Cancelled"],
-    Shipped: ["Shipped", "Delivered", "Cancelled"],
-    Delivered: ["Delivered"],
-    Cancelled: ["Cancelled"],
-    Returned: ["Returned"]
+
+    Processing: [
+     "Processing",
+     "Shipped"
+    ],
+
+    Shipped: [
+     "Shipped",
+     "Delivered"
+    ],
+
+    Delivered: [
+      "Delivered"
+    ],
+
+    Cancelled: [
+      "Cancelled"
+    ],
+
+    Returned: [
+      "Returned"
+    ],
+
+    "Return Requested":[
+      "Return Requested",
+      "Returned",
+      "Delivered"
+    ]
   };
+
   return map[current] || [current];
 }
 
@@ -404,7 +429,6 @@ async function loadOrders(page = 1) {
       return;
     }
 
-    // loadOrders-ல் tbody.innerHTML மாத்துங்கள்
 tbody.innerHTML = list.map((o, idx) => {
   const first = o.items[0] || {};
   const extraCount = o.items.length - 1;
@@ -428,7 +452,17 @@ tbody.innerHTML = list.map((o, idx) => {
       <div class="cust-email">${o.address?.email || ''}</div>
     </td>
     <td class="date-cell">${d}</td>
-    <td>${osBadge(o.orderStatus)}</td>
+   <td>
+
+${o.items.some(i => i.status === "Return Requested")
+
+ ? osBadge("Return Requested")
+
+ : osBadge(o.orderStatus)
+
+}
+
+</td>
     <td>${psBadge(o.paymentStatus)}</td>
     <td class="total-cell">₹${o.totalAmount}</td>
     <td>
@@ -446,6 +480,42 @@ tbody.innerHTML = list.map((o, idx) => {
   }
 }
 
+
+// async function loadOrders(page = 1) {
+ 
+//   const q = document.getElementById('searchInput').value.trim();
+
+
+//   try {
+//     const res = await fetch(`/admin/orders`);
+//     const data = await res.json();
+
+   
+//        const list = data.orders;
+
+//     const tbody = document.getElementById('ordersTbody');
+// tbody.innerHTML = list.map((o, idx) => {
+
+//   return `
+//   <tr>
+//     <td>${idx+1}</td>
+//     <td>${o.items[0]?.name}</td>
+//      <td>${o.orderId}</td>
+//       <td>${o.userId.name}</td>
+//        <td>${new Date(o.createdAt).toLocaleDateString('en-GB')}</td>
+//         <td>${o.orderStatus}</td>
+//          <td>${o.paymentMethod}</td>
+
+   
+//   </tr>`;
+// }).join('');
+
+   
+
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
 
 /* ════ STATE ════ */
 let currentPage=1
@@ -479,8 +549,25 @@ function renderStats(){
  
 /* ════ BADGE HELPERS ════ */
 function osBadge(s){
-  const c={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned'};
-  const i={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️'};
+
+  const c={
+    Processing:'sb-processing',
+    Shipped:'sb-shipped',
+    Delivered:'sb-delivered',
+    Cancelled:'sb-cancelled',
+    Returned:'sb-returned',
+    'Return Requested':'sb-returned'
+  };
+
+  const i={
+    Processing:'⏳',
+    Shipped:'🚚',
+    Delivered:'✅',
+    Cancelled:'❌',
+    Returned:'↩️',
+    'Return Requested':'🕒'
+  };
+
   return `<span class="sbadge ${c[s]||'sb-processing'}">${i[s]||''} ${s}</span>`;
 }
 function psBadge(s){
@@ -508,7 +595,17 @@ function renderPagination(pages){
 }
  
 /* ════ DETAIL MODAL ════ */
-function osClass(s){return {Processing:'os-processing',Shipped:'os-shipped',Delivered:'os-delivered',Cancelled:'os-cancelled',Returned:'os-returned'}[s]||'';}
+function osClass(s){
+  return {
+    Processing:'os-processing',
+    Shipped:'os-shipped',
+    Delivered:'os-delivered',
+    Cancelled:'os-cancelled',
+    Returned:'os-returned',
+    'Return Requested':'os-returned'
+  }[s]||'';
+}
+
 function psClass(s){return {Pending:'ps-pending',Success:'ps-success',Failed:'ps-failed'}[s]||'';}
  
 async function openDetail(id) {
@@ -533,16 +630,113 @@ async function openDetail(id) {
         </option>
       `).join("");
 
-    const prods = o.items.map(it => `
-      <div class="m-prod">
-        <img src="${it.image}" class="m-prod-img" onerror="this.style.display='none'">
-        <div>
-          <div class="m-prod-name">${it.name}</div>
-          <div class="m-prod-meta">Qty: ${it.quantity}</div>
-          <div class="m-prod-price">₹${it.total}</div>
-        </div>
-      </div>
-    `).join('');
+  const prods = o.items.map(it => `
+
+<div class="m-prod">
+
+  <img src="${it.image}" class="m-prod-img"
+    onerror="this.style.display='none'">
+
+  <div style="flex:1">
+
+    <div class="m-prod-name">
+      ${it.name}
+    </div>
+
+    <div class="m-prod-meta">
+      Qty: ${it.quantity}
+    </div>
+
+    <div class="m-prod-price">
+      ₹${it.total}
+    </div>
+
+    <div style="margin-top:8px">
+      ${osBadge(it.status)}
+    </div>
+    <div style="margin-top:8px">
+
+<select
+class="status-sel ${osClass(it.status)}"
+onchange="changeItemStatus(this,'${it._id}')">
+
+${getAllowedOptions(it.status).map(s=>`
+
+<option value="${s}"
+${it.status===s ? "selected" : ""}>
+${s}
+</option>
+
+`).join("")}
+
+</select>
+
+${["Processing","Shipped"].includes(it.status)
+? `
+<button
+onclick="cancelItemAdmin('${it._id}')"
+style="
+margin-top:8px;
+background:#dc3545;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
+">
+
+Cancel Item
+
+</button>
+`
+: ""
+}
+
+</div>
+
+  </div>
+
+  ${it.status === "Return Requested" ? `
+
+  <div style="display:flex;gap:8px">
+
+    <button
+      onclick="approveItemReturn('${it._id}')"
+      style="
+        background:#198754;
+        color:white;
+        border:none;
+        padding:8px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:700;
+      "
+    >
+      Approve
+    </button>
+
+    <button
+      onclick="rejectItemReturn('${it._id}')"
+      style="
+        background:#dc3545;
+        color:white;
+        border:none;
+        padding:8px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:700;
+      "
+    >
+      Reject
+    </button>
+
+  </div>
+
+  ` : ""}
+
+</div>
+
+`).join('');
 
     document.getElementById('modalTitle').textContent = o.orderId;
 
@@ -581,6 +775,27 @@ async function openDetail(id) {
           ${options}
         </select>
 
+        <div style="margin-top:10px">
+
+<button
+onclick="cancelFullOrderAdmin()"
+style="
+background:#dc3545;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:700;
+">
+
+Cancel Full Order
+
+</button>
+
+</div>
+
+
         <div style="margin-top:10px" id="psDisplay">
           ${psBadge(o.paymentStatus)}
         </div>
@@ -601,6 +816,62 @@ async function openDetail(id) {
   } catch (err) {
     console.log(err);
   }
+}
+
+
+async function changeItemStatus(select,itemId){
+
+const status = select.value
+
+try{
+
+const res = await fetch(
+`/admin/orders/${currentDetailId}/item-status`,
+{
+method:"PATCH",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+itemId,
+status
+})
+})
+
+const data = await res.json()
+
+if(data.success){
+
+Swal.fire({
+icon:"success",
+title:"Item status updated",
+timer:1200,
+showConfirmButton:false
+})
+
+select.className =
+`status-sel ${osClass(status)}`
+
+loadOrders(currentPage)
+await openDetail(currentDetailId)
+
+}else{
+
+Swal.fire({
+icon:"error",
+text:data.message
+})
+
+}
+
+}catch(err){
+
+console.log(err)
+
+}
+
 }
 
 /* auto payment status based on order status */
@@ -662,7 +933,214 @@ function closeModal(){
   document.body.style.overflow='';
   currentDetailId=null;pendingChanges={};
 }
- 
+
+async function approveItemReturn(itemId){
+
+  try{
+
+    const res = await fetch(
+      `/admin/orders/${currentDetailId}/status`,
+      {
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          orderStatus:"Returned",
+          itemId
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if(data.success){
+
+      Swal.fire({
+        icon:"success",
+        title:"Return Approved"
+      });
+
+      closeModal();
+
+      loadOrders(currentPage);
+
+    }else{
+
+      Swal.fire({
+        icon:"error",
+        text:data.message
+      });
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+async function rejectItemReturn(itemId){
+
+  try{
+
+    const res = await fetch(
+      `/admin/orders/${currentDetailId}/status`,
+      {
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          orderStatus:"Delivered",
+          itemId
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if(data.success){
+
+      Swal.fire({
+        icon:"success",
+        title:"Return Rejected"
+      });
+
+      closeModal();
+
+      loadOrders(currentPage);
+
+    }else{
+
+      Swal.fire({
+        icon:"error",
+        text:data.message
+      });
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+async function cancelItemAdmin(itemId){
+
+ const { value: reason } = await Swal.fire({
+   title: "Cancel Item",
+   input: "text",
+   inputLabel: "Reason",
+   inputPlaceholder: "Enter cancel reason",
+   showCancelButton: true
+ });
+
+ if(!reason) return;
+
+ try{
+
+   const res = await fetch(
+     `/admin/orders/${currentDetailId}/items/${itemId}/cancel`,
+     {
+       method:"PATCH",
+       headers:{
+         "Content-Type":"application/json"
+       },
+       body:JSON.stringify({ reason })
+     }
+   );
+
+   const data = await res.json();
+
+   if(data.success){
+
+     Swal.fire(
+       "Success",
+       "Item cancelled successfully",
+       "success"
+     );
+
+     await openDetail(currentDetailId);
+     loadOrders(currentPage);
+
+   }else{
+
+     Swal.fire(
+       "Error",
+       data.message,
+       "error"
+     );
+
+   }
+
+ }catch(err){
+
+   console.log(err);
+
+ }
+
+}
+
+async function cancelFullOrderAdmin(){
+
+ const { value: reason } = await Swal.fire({
+   title: "Cancel Order",
+   input: "text",
+   inputLabel: "Reason",
+   inputPlaceholder: "Enter cancel reason",
+   showCancelButton: true
+ });
+
+ if(!reason) return;
+
+ try{
+
+   const res = await fetch(
+     `/admin/orders/${currentDetailId}/cancel`,
+     {
+       method:"PATCH",
+       headers:{
+         "Content-Type":"application/json"
+       },
+       body:JSON.stringify({ reason })
+     }
+   );
+
+   const data = await res.json();
+
+   if(data.success){
+
+     Swal.fire(
+       "Success",
+       "Order cancelled successfully",
+       "success"
+     );
+
+     closeModal();
+     loadOrders(currentPage);
+
+   }else{
+
+     Swal.fire(
+       "Error",
+       data.message,
+       "error"
+     );
+
+   }
+
+ }catch(err){
+
+   console.log(err);
+
+ }
+
+}
 /* close on backdrop */
 document.getElementById('orderModal').addEventListener('click',function(e){
   if(e.target===this)closeModal();

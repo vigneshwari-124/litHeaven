@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/User');
 const Address=require('../../models/Address')
-
-
+const Order=require('../../models/Order')
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getLogin=(req,res)=>{
@@ -74,6 +73,339 @@ req.session.save((err) => {
 
 const adminDashboard=(req,res)=>{
     res.render('admin/dashboard')
+}
+
+
+const getChartData = async (req, res) => {
+  try {
+    const filter = req.query.filter || 'today'
+    const now = new Date()
+    let startDate, endDate
+
+    if (filter === 'today') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+      endDate   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+
+    } else if (filter === 'yesterday') {
+      const y = new Date(now)
+      y.setDate(now.getDate() - 1)
+      startDate = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 0, 0, 0)
+      endDate   = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 23, 59, 59)
+
+    } else if (filter === 'last7days') {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 6); startDate.setHours(0,0,0,0)
+      endDate   = new Date(now); endDate.setHours(23,59,59,999)
+
+    } else if (filter === 'last30days') {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 29); startDate.setHours(0,0,0,0)
+      endDate   = new Date(now); endDate.setHours(23,59,59,999)
+
+    } else if (filter === 'thismonth') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      endDate   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+
+    } else if (filter === 'lastmonth') {
+      startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      endDate   = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59)
+
+    } else if (filter === 'lastyear') {
+      startDate = new Date(now.getFullYear() - 1, 0, 1)
+      endDate   = new Date(now.getFullYear() - 1, 11, 31, 23, 59, 59)
+    }
+
+const orders = await Order.aggregate([
+  {
+    $match: {
+      createdAt: { $gte: startDate, $lte: endDate },
+      orderStatus: "Delivered"
+    }
+  },
+  {
+    $project: {
+      createdAt: 1,
+      netAmount: "$totalAmount"  
+    }
+  }
+])
+    console.log("Orders found:", orders) 
+  
+    const { labels, values } = buildChartData(filter, orders, startDate, endDate, now)
+
+    const totalEarning = values.reduce((a, b) => a + b, 0)
+
+    res.json({ success: true, labels, values, totalEarning })
+
+  } catch (err) {
+    console.log(err)
+    res.json({ success: false })
+  }
+}
+
+
+function buildChartData(filter, orders, startDate, endDate, now) {
+  let labels = []
+  let values = []
+
+  if (filter === 'today' || filter === 'yesterday') {
+  
+    labels = Array.from({length: 24}, (_, i) => `${i}:00`)
+    values = Array(24).fill(0)
+    orders.forEach(o => {
+      const hour = new Date(o.createdAt).getHours()
+      values[hour] += o.netAmount|| 0
+    })
+
+  } else if (filter === 'last7days') {
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now); d.setDate(now.getDate() - i)
+      labels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }))
+      values.push(0)
+    }
+    orders.forEach(o => {
+      const orderDate = new Date(o.createdAt)
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now); d.setDate(now.getDate() - i)
+        if (orderDate.toDateString() === d.toDateString()) {
+          values[6 - i] += o.netAmount || 0
+        }
+      }
+    })
+
+  } else if (filter === 'last30days') {
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now); d.setDate(now.getDate() - i)
+      labels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }))
+      values.push(0)
+    }
+    orders.forEach(o => {
+      const orderDate = new Date(o.createdAt)
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(now); d.setDate(now.getDate() - i)
+        if (orderDate.toDateString() === d.toDateString()) {
+          values[29 - i] += o.netAmount || 0
+        }
+      }
+    })
+
+  } else if (filter === 'thismonth' || filter === 'lastmonth') {
+    const totalDays = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate()
+    labels = Array.from({length: totalDays}, (_, i) => `${i + 1}`)
+    values = Array(totalDays).fill(0)
+    orders.forEach(o => {
+      const day = new Date(o.createdAt).getDate()
+      values[day - 1] += o.netAmount || 0
+    })
+
+  } else if (filter === 'lastyear') {
+    labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    values = Array(12).fill(0)
+    orders.forEach(o => {
+      const month = new Date(o.createdAt).getMonth()
+      values[month] += o.netAmount || 0
+    })
+  }
+
+  return { labels, values }
+}
+
+const getDashboardStats = async (req, res) => {
+  try {
+
+    const orderStatusCounts = await Order.aggregate([
+      {
+        $unwind: '$items' 
+      },
+      {
+        $group: {
+          _id: '$items.status',  
+          count: { $sum: 1 }
+        }
+      }
+    ])
+
+    const statusMap = {
+      Processing: 0,
+      Shipped: 0,
+      Delivered: 0,
+      Cancelled: 0,
+      Returned: 0
+    }
+
+    orderStatusCounts.forEach(s => {
+      if (statusMap.hasOwnProperty(s._id)) {
+        statusMap[s._id] = s.count
+      }
+    })
+
+    res.json({ success: true, statusMap })
+
+  } catch (err) {
+    console.log(err)
+    res.json({ success: false })
+  }
+}
+
+
+const getTopProducts= async (req,res)=>{
+
+  try {
+
+    const topProducts = await Order.aggregate([
+
+      { $unwind:"$items" },
+
+      {
+        $group:{
+
+          _id:"$items.productId",
+
+          productName:{ $first:"$items.name" },
+
+          image:{ $first:"$items.image" },
+
+          price:{ $first:"$items.price" },
+
+          variant:{ $first:"$items.format" },
+
+          totalSold:{
+            $sum:"$items.quantity"
+          }
+
+        }
+      },
+
+      { $sort:{ totalSold:-1 } },
+
+      { $limit:5 }
+
+    ])
+
+
+    const topSubcategories = await Order.aggregate([
+
+  {
+    $unwind:"$items"
+  },
+
+  {
+    $lookup:{
+      from:"products",
+      localField:"items.productId",
+      foreignField:"_id",
+      as:"product"
+    }
+  },
+
+  {
+    $unwind:"$product"
+  },
+
+  {
+    $lookup:{
+      from:"categories",
+      localField:"product.subCategory",
+      foreignField:"_id",
+      as:"subcategory"
+    }
+  },
+
+  {
+    $unwind:"$subcategory"
+  },
+
+  {
+    $match:{
+      "subcategory.parentCategory":{
+        $ne:null
+      }
+    }
+  },
+
+  {
+    $group:{
+
+  _id:"$subcategory._id",
+
+  subcategoryName:{
+    $first:"$subcategory.name"
+  },
+
+  subcategoryImage:{
+    $first:"$subcategory.image.url"
+  },
+
+  totalSold:{
+    $sum:"$items.quantity"
+  }
+
+}
+  },
+
+  {
+    $sort:{
+      totalSold:-1
+    }
+  },
+
+  {
+    $limit:5
+  }
+
+])
+    res.json({
+      success:true,
+      topProducts,
+      topSubcategories
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    res.json({
+      success:false
+    })
+
+  }
+
+}
+
+const getDashboardCards = async (req, res) => {
+  try {
+
+    const totalOrders = await Order.countDocuments()
+
+    const totalUsers = await User.countDocuments()
+
+    const earningResult = await Order.aggregate([
+      { $match: { orderStatus: 'Delivered' } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    ])
+    const totalEarning = earningResult[0]?.total || 0
+
+  
+const salesResult = await Order.aggregate([
+  { 
+    $match: { 
+      orderStatus: { $nin: ['Cancelled', 'Returned'] } 
+    } 
+  },
+  { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+])
+const totalSales = salesResult[0]?.total || 0
+
+    res.json({
+      success: true,
+      totalOrders,
+      totalUsers,
+      totalEarning,
+      totalSales
+    })
+
+  } catch (err) {
+    console.log(err)
+    res.json({ success: false })
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +595,10 @@ module.exports={
     getLogin,
     postAdminLogin,
     adminDashboard,
+    getChartData,
+    getDashboardStats,
+    getTopProducts,
+    getDashboardCards ,
     getCustomer,
     toggleBlockUser,
     searchCustomers,

@@ -6,6 +6,10 @@ node_modules/
 .env
 .env.*
 
+public/uploads/
+backup/
+
+
 # Logs
 *.log
 

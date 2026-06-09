@@ -348,22 +348,44 @@ const addSubCategory = async (req, res) => {
     }
 
 
-   let imageUrl = null; 
+   let imageUrl = null;
 
-    if  (req.file && req.file.path){
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'sub-categories'
-      });
+if (req.file) {
 
-      imageUrl = {
-          url: result.secure_url,
-          public_id: result.public_id
-      };
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp"
+  ];
 
-       if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
+  if (!allowedMimeTypes.includes(req.file.mimetype)) {
+
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
     }
+
+    return res.status(400).json({
+      success: false,
+      message: "Only image files are allowed"
+    });
+  }
+}
+
+if (req.file && req.file.path) {
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    folder: 'sub-categories'
+  });
+
+  imageUrl = {
+    url: result.secure_url,
+    public_id: result.public_id
+  };
+
+  if (fs.existsSync(req.file.path)) {
+    fs.unlinkSync(req.file.path);
+  }
+}
 
 
     const exists = await Category.findOne({
@@ -422,25 +444,43 @@ const updateSubCategory = async (req, res) => {
   
     if (req.file) {
 
-      if (subCategory.image?.public_id) {
-        await cloudinary.uploader.destroy(subCategory.image.public_id)
-      }
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp"
+  ];
 
-       const uploadResult = await cloudinary.uploader.upload(
-        req.file.path,
-        { folder: 'sub-categories' }
-      );
-
-      subCategory.image = {
-        url: uploadResult.secure_url,
-        public_id: uploadResult.public_id
-      }
-    
+  if (!allowedMimeTypes.includes(req.file.mimetype)) {
 
     if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
+      fs.unlinkSync(req.file.path);
     }
+
+    return res.status(400).json({
+      success: false,
+      message: "Only image files are allowed"
+    });
+  }
+
+  if (subCategory.image?.public_id) {
+    await cloudinary.uploader.destroy(subCategory.image.public_id)
+  }
+
+  const uploadResult = await cloudinary.uploader.upload(
+    req.file.path,
+    { folder: 'sub-categories' }
+  );
+
+  subCategory.image = {
+    url: uploadResult.secure_url,
+    public_id: uploadResult.public_id
+  }
+
+  if (fs.existsSync(req.file.path)) {
+    fs.unlinkSync(req.file.path);
+  }
+}
 
 
     await subCategory.save()

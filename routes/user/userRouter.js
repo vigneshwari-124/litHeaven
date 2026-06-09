@@ -9,6 +9,8 @@ const reviewController = require('../../controllers/user/reviewController')
 const wishlistController=require('../../controllers/user/wishlistController')
 const cartController=require('../../controllers/user/cartController')
 const orderController=require('../../controllers/user/orderController')
+const walletController=require('../../controllers/user/walletController')
+
 
 const noCache = require('../../middlewares/noCache');
 const auth=require('../../middlewares/auth');
@@ -103,16 +105,19 @@ router.post("/move-to-cart",wishlistController. moveToCart)
 
 //===================================================================================================================================//
 
-router.get('/cart',auth,cartController.cartPage)
+router.get('/cart',auth,noCache,cartController.cartPage)
 router.post('/add-to-cart',auth,cartController.addToCart)
 router.get('/get-cart',auth,cartController.getCart)
 router.post("/remove-cart-item",auth,cartController.removeCartItem)
 router.post("/clear-cart",auth,cartController.clearCart)
+router.post("/update-cart-qty",auth,cartController.updateCartQty)
 
 
 //=============================================================================================================================================
-router.get('/checkout',auth,orderController.checkoutPage)
-router.post('/place-order', auth, orderController.placeOrder);
+router.get('/checkout',auth,noCache,orderController.checkoutPage)
+router.post('/checkout/place-order', auth, orderController.placeOrder);
+router.post('/verify-payment', auth, orderController.verifyPayment);
+router.post('/payment-failed', auth, orderController.paymentFailed);
 router.get('/coupons',auth,orderController.getAvailableCoupons)
 router.post('/apply-coupon',auth,orderController.applyCoupon)
 router.get('/order',auth,orderController.orderPage)
@@ -121,6 +126,12 @@ router.put("/api/orders/:orderId/cancel-item/:itemId", orderController.cancelSin
 router.put("/api/orders/:orderId/cancel-order", orderController.cancelFullOrder);
 router.put("/api/orders/:orderId/return-item/:itemId", orderController.returnItem);
 router.put("/api/orders/:orderId/return-order", orderController.returnFullOrder);
+router.post("/retry-payment/:orderId",auth,orderController.retryPayment);
 
+//=========================================================================================================================================================
+
+router.get('/wallet',auth,walletController.walletPage)
+router.get('/wallet-data', auth,walletController.getWallet)
+router.post('/wallet/add-success',auth,walletController. addMoneySuccess);
 
 module.exports=router

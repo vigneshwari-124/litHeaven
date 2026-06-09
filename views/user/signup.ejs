@@ -175,6 +175,7 @@ const passwordErr = document.getElementById("passwordErr");
 const signupForm=document.getElementById("signupForm");
 
 nameField.addEventListener("input",()=>{
+  nameField.value = nameField.value.replace(/[^a-zA-Z\s]/g, "")
   if(nameField.value.trim()===""){
     nameErr.innerHTML="Name is required";
   }else{

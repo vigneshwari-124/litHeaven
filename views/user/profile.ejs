@@ -281,8 +281,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <nav class="main-nav d-none d-lg-flex">
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/shop">Shop</a>
-        <a class="nav-link" href="/about">About</a>
-        <a class="nav-link" href="/contact">Contact</a>
+       
       </nav>
       <div class="header-icons">
         <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
@@ -309,8 +308,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 <div id="mobileMenuP" class="mobile-menu-p d-lg-none">
   <a class="mobile-nav-link-p" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link-p" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link-p" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link-p" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+
 </div>
 
 <div class="search-wrap">
@@ -326,7 +324,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <li><a href="/order" class="sidebar-link active"><i class="fa-solid fa-box"></i><span>My Orders</span></a></li>
       <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
       <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
-      <li><a href="#" class="sidebar-link"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
+      <li><a href="/wallet" class="sidebar-link"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
      
       <li class="mt-2"> <button type="button" id="logoutBtn" class="sidebar-link logout-btn"><i class="fa-solid fa-right-from-bracket"></i>
       <span>Logout</span></button></li>
@@ -366,9 +364,26 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
         </div>
         
         <div class="form-group">
-        <label class="form-label">Referral Code</label>
-        <input type="text" class="form-control-profile disabled-input" value="01623V" disabled>
-        </div>
+  <label class="form-label">Referral Code</label>
+
+  <input
+    type="text"
+    id="referralCode"
+    class="form-control-profile disabled-input"
+    value="<%= user.referralCode %>"
+    disabled
+  >
+
+  <button
+    type="button"
+    class="btn btn-password"
+    style="margin-top:10px"
+    onclick="copyReferralCode()">
+
+    <i class="fa-solid fa-copy"></i> Copy Code
+
+  </button>
+</div>
 
 
         <div class="btn-group">
@@ -446,7 +461,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
      <form  id="editProfileForm" action="/profile/edit" method="POST">
         <div class="form-group">
           <label class="form-label">Full Name</label>
-          <input type="text"  name="name" class="form-control-profile"  value="<%= user.name %>"  required>
+          <input type="text"  name="name" id="editName" class="form-control-profile"  value="<%= user.name %>"  required>
         </div>
         <div class="form-group">
           <label class="form-label">Email Address</label>
@@ -467,7 +482,8 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 
         <div class="form-group">
         <label class="form-label">Referral Code</label>
-        <input type="text" class="form-control-profile disabled-input" value="01623V" disabled>
+        <input type="text" class="form-control-profile disabled-input"
+         value="<%= user.referralCode %>" disabled>
         </div>
 
         <div class="btn-group">
@@ -532,7 +548,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <h5>Quick Links</h5>
       <a href="/">Home</a>
       <a href="/shop">Shop Books</a>
-      <a href="/about">About Us</a>
+      
     </div>
     <div class="footer-section">
       <h5>LitHeaven</h5>
@@ -577,6 +593,14 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 <script src="/js/common.js"></script>
 <script>
 let cropper;
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true
+});
 
 // function closeModal(id){const modal = document.getElementById(id);modal.classList.remove('show');}
 function closeCrop() {
@@ -628,6 +652,8 @@ function togglePassword(inputId, icon) {
   }
 }
 
+
+const editName = document.getElementById("editName");
 const editEmail = document.getElementById("editEmail");
 const editPhone = document.getElementById("editPhone");
 
@@ -635,6 +661,12 @@ const editEmailErr = document.getElementById("editEmailErr");
 const editPhoneErr = document.getElementById("editPhoneErr");
 
 
+
+editName.addEventListener("input", () => {
+
+  editName.value = editName.value.replace(/[^a-zA-Z\s]/g, "");
+
+});
 
 editEmail.addEventListener("input", () => {
   const emailRegex = /^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
@@ -824,7 +856,15 @@ function applyCrop() {
       })
 
       const data = await res.json()
+    if (!data.success) {
 
+  Toast.fire({
+    icon: "error",
+    title: data.message || "Only image files are allowed"
+  });
+
+  return;
+}
       if (data.success) {
         document.getElementById('profileImg').src = data.imageUrl
         Swal.fire('Image Updated!', '', 'success')
@@ -853,6 +893,22 @@ function handleChangePasswordClick(){
 
 document.getElementById('fileInput').addEventListener('change',(e)=>{
   const file=e.target.files[0];
+  const allowedTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp"
+];
+
+if (file && !allowedTypes.includes(file.type)) {
+
+  Toast.fire({
+  icon: "error",
+  title: "Only image files are allowed"
+});
+  e.target.value = '';
+  return;
+}
   if(file){
     const reader=new FileReader();
     reader.onload=(e)=>{
@@ -976,6 +1032,20 @@ document.getElementById('logoutBtnDrawer')?.addEventListener('click', function(e
   closeProfileFilter();
   document.getElementById('logoutBtn')?.click();
 });
+function copyReferralCode(){
+
+  const code =
+  document.getElementById("referralCode").value;
+
+  navigator.clipboard.writeText(code);
+
+  Toast.fire({
+    icon: "success",
+    title: "Referral code copied"
+  });
+
+}
+
 </script>
 
 </body>

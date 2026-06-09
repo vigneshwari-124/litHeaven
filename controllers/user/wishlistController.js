@@ -64,19 +64,17 @@ const getWishlist = async (req, res) => {
     const limit = 10
     const skip = (page - 1) * limit
 
-    // 🔥 total count (optional: clean count later)
     const totalItems = await Wishlist.countDocuments({ userId })
     const totalPages = Math.ceil(totalItems / limit)
 
-    // 🔥 populate + filter deleted
     const wishlist = await Wishlist.find({ userId })
       .populate({
         path: "productId",
-        match: { isDeleted: false },   // ✅ product filter
+        match: { isDeleted: false },   
         populate: [
-          { path: "author", match: { isDeleted: false } },      // ✅ author filter
-          { path: "category", match: { isDeleted: false } },    // ✅ category filter
-          { path: "subCategory", match: { isDeleted: false } }, // ✅ subcategory filter
+          { path: "author", match: { isDeleted: false } },      
+          { path: "category", match: { isDeleted: false } },    
+          { path: "subCategory", match: { isDeleted: false } }, 
           { path: "variants.language" }
         ]
       })
@@ -84,10 +82,8 @@ const getWishlist = async (req, res) => {
       .skip(skip)
       .limit(limit)
 
-    // 🔥 remove null (deleted items)
     const validItems = wishlist.filter(item => item.productId !== null)
 
-    // 🔥 map + stock
     const items = validItems.map(item => {
 
       const product = item.productId

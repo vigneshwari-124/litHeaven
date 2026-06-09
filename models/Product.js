@@ -34,8 +34,13 @@ const variantSchema = new mongoose.Schema({
    url: String,
    publicId: String
   }],
+  additionalImages: [{
+   url: String,
+   publicId: String
+  }],
   formats: [formatSchema]
 }, { _id: false });
+
 
 const productSchema = new mongoose.Schema({
   title: {

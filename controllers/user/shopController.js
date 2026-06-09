@@ -56,11 +56,10 @@ filter.$or = [
 
 }
 
-    if (category) {
-      const categories = category.split(",")
-      filter.subCategory = { $in: categories };
-    }
-
+if (category) {
+  const categories = category.split(",")
+  filter.category = { $in: categories };
+}
     if (subcategory) {
   const subcats = subcategory.split(",");
   filter.subCategory = { $in: subcats };
@@ -140,35 +139,6 @@ const skip = (page - 1) * limit
       .populate("variants.language")
 
 
-      const today = new Date()
-
-const offers = await Offer.find({
-  isListed: true,
-  startDate: { $lte: today },
-  endDate: { $gte: today }
-})
-
-const offerMap = {
-  product: {},
-  subcategory: {},
-  category: {}
-}
-
-offers.forEach(o => {
-  if (o.type === "product" && o.product) {
-    offerMap.product[o.product.toString()] = o.discount
-  }
-
-  if (o.type === "subcategory" && o.subCategory) {
-    offerMap.subcategory[o.subCategory.toString()] = o.discount
-  }
-
-  if (o.type === "category" && o.category) {
-    offerMap.category[o.category.toString()] = o.discount
-  }
-})
-
-
       const productIds = products.map(p => p._id)
 
 const ratingData = await Review.aggregate([
@@ -197,6 +167,24 @@ count: r.count
       p => p.category && p.subCategory && p.author
       );
 
+      const now = new Date()
+
+const offers = await Offer.find({
+  isListed: true,
+  startDate: { $lte: now },
+  endDate: { $gte: now }
+})
+
+let wishlistItems = []
+
+if(req.session.userId){
+
+wishlistItems = await Wishlist.find({
+  userId: req.session.userId
+}).select("productId")
+
+}
+
 const productsWithStock = validProducts.map(p => {
 
 let totalStock = 0
@@ -215,39 +203,69 @@ p.variants.forEach(v=>{
   })
 })
 
-let productOffer = offerMap.product[p._id.toString()] || 0
-
-let subCategoryOffer =
-  offerMap.subcategory[p.subCategory?._id?.toString()] || 0
-
-let categoryOffer =
-  offerMap.category[p.category?._id?.toString()] || 0
-
 
 let discount = 0
 
-if(productOffer > 0){
-  discount = productOffer
+const productId = p._id.toString()
+const subCategoryId = p.subCategory?._id?.toString()
+const categoryId = p.category?._id?.toString()
+
+const productOffer = offers.find(o =>
+  o.type === "product" &&
+  o.product?.toString() === productId
+)
+
+const subOffer = offers.find(o =>
+  o.type === "subcategory" &&
+  o.subCategory?.toString() === subCategoryId
+)
+
+const catOffer = offers.find(o =>
+  o.type === "category" &&
+  o.category?.toString() === categoryId
+)
+
+const offerList = []
+
+if(productOffer){
+
+  offerList.push(productOffer.discount)
+
 }
-else if(subCategoryOffer > 0){
-  discount = subCategoryOffer
+
+if(subOffer){
+
+  offerList.push(subOffer.discount)
+
 }
-else if(categoryOffer > 0){
-  discount = categoryOffer
+
+if(catOffer){
+
+  offerList.push(catOffer.discount)
+
+}
+
+if(offerList.length > 0){
+
+  discount = Math.max(...offerList)
+
 }
 
 let finalPrice = minPrice
 
 if(discount > 0){
-  finalPrice = Math.round(
-    minPrice - (minPrice * discount / 100))
+  finalPrice = Math.round(minPrice - (minPrice * discount / 100))
 }
+
+const isWishlisted = wishlistItems.some(
+w => w.productId.toString() === p._id.toString()
+)
 
 const rating = ratingMap[p._id.toString()] || null
 
 return {
   ...p.toObject(),
-
+  isWishlisted,
   isOutOfStock: totalStock === 0,
 
   rating: rating ? rating.avg : 0,
@@ -259,7 +277,6 @@ return {
   discount
 }
 })
-
 
 const priceData = await Product.aggregate([
   { $match: { isDeleted:false } },
@@ -388,9 +405,6 @@ isDeleted: false
       defaultFormat = defaultVariant.formats[0];
     }
 
-   const defaultStock = defaultFormat.stock;
-    const defaultPrice = defaultFormat.price;
-
     let minPrice = Infinity;
 
     product.variants.forEach(variant => {
@@ -412,6 +426,70 @@ isDeleted: false
         totalStock += format.stock;
       });
     });
+
+
+const defaultStock = defaultFormat.stock;
+const defaultPrice = defaultFormat.price;
+
+// ← இங்க போடு
+const now = new Date()
+
+const offers = await Offer.find({
+  isListed: true,
+  startDate: { $lte: now },
+  endDate: { $gte: now }
+})
+
+const pid = product._id.toString()
+const subCatId = product.subCategory?._id?.toString()
+const catId = product.category?._id?.toString()
+
+const productOffer = offers.find(o =>
+  o.type === "product" &&
+  o.product?.toString() === pid
+)
+
+const subOffer = offers.find(o =>
+  o.type === "subcategory" &&
+  o.subCategory?.toString() === subCatId
+)
+
+const catOffer = offers.find(o =>
+  o.type === "category" &&
+  o.category?.toString() === catId
+)
+
+let discount = 0
+
+const offerList = []
+
+if(productOffer){
+
+  offerList.push(productOffer.discount)
+
+}
+
+if(subOffer){
+
+  offerList.push(subOffer.discount)
+
+}
+
+if(catOffer){
+
+  offerList.push(catOffer.discount)
+
+}
+
+if(offerList.length > 0){
+
+  discount = Math.max(...offerList)
+
+}
+
+const offerPrice = discount > 0
+  ? Math.round(defaultPrice - (defaultPrice * discount / 100))
+  : defaultPrice
 
     
 const recommendedProducts = await Product.find({
@@ -542,7 +620,9 @@ wished = true
       highestRating,
       isLoggedIn: req.session.isLoggedIn || false,
       userId: req.session.userId || null,
-      wished
+      wished,
+      discount,
+      offerPrice
     });
 
   } catch (error) {

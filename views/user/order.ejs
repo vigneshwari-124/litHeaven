@@ -60,6 +60,7 @@
     .page-title-strip h2{font-family:'Playfair Display',serif;color:#fff;font-size:2rem;font-weight:900;margin:0;animation:fadeDown .8s;}
     .page-title-strip p{color:rgba(255,255,255,.75);font-size:13px;margin:6px 0 0;}
 
+    .my-toast{z-index: 999999 !important;}
     /* ── MAIN WRAP ── */
     .orders-wrap{max-width:1100px;margin:0 auto;padding:32px 20px 60px;}
 
@@ -257,8 +258,7 @@
         <nav class="main-nav d-none d-lg-flex gap-1">
           <a class="nav-link" href="/">Home</a>
           <a class="nav-link" href="/shop">Shop</a>
-          <a class="nav-link" href="/about">About</a>
-          <a class="nav-link" href="/contact">Contact</a>
+         
         </nav>
       </div>
       <div class="col-6 d-flex justify-content-end align-items-center">
@@ -290,8 +290,7 @@
 <div id="mobileMenu" class="mobile-menu d-lg-none">
   <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+  
 </div>
 
 <div class="breadcrumb-wrap">
@@ -403,7 +402,7 @@
   <div class="container-fluid">
     <div class="row g-4">
       <div class="col-md-4"><h5>Get In Touch</h5><p><small>LitHeaven Company, Gandhipuram road,<br>Coimbatore - 641018</small></p></div>
-      <div class="col-md-4"><h5>Quick Links</h5><ul class="list-unstyled"><li><a href="/">Home</a></li><li><a href="/shop">Shop Books</a></li><li><a href="/about">About Us</a></li></ul></div>
+      <div class="col-md-4"><h5>Quick Links</h5><ul class="list-unstyled"><li><a href="/">Home</a></li><li><a href="/shop">Shop Books</a></li></ul></div>
       <div class="col-md-4 text-md-end"><h5>LitHeaven</h5><p><small>Read, learn, and enjoy stories that inspire every reader.</small></p></div>
     </div>
     <div class="text-center mt-4"><small>© 2025 LITHEAVEN. All Rights Reserved.</small></div>
@@ -412,6 +411,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="/js/common.js"></script>
 <script>
 /* ════ DEMO DATA ════ */
@@ -453,8 +453,8 @@ window.onload = () => {
 };
 /* ════ BADGE HELPERS ════ */
 function orderBadge(s){
-  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned'};
-  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️'};
+  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned', 'Return Requested':'sb-returned'};
+  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️', 'Return Requested':'🕒'};
   return `<span class="sbadge ${cls[s]||'sb-processing'}">${ico[s]||'📦'} ${s}</span>`;
 }
 function payBadge(s){
@@ -463,8 +463,8 @@ function payBadge(s){
   return `<span class="pbadge ${cls[s]||'pb-pending'}">${lbl[s]||s}</span>`;
 }
 function itemBadge(s){
-  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned'};
-  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️'};
+  const cls={Processing:'sb-processing',Shipped:'sb-shipped',Delivered:'sb-delivered',Cancelled:'sb-cancelled',Returned:'sb-returned', 'Return Requested':'sb-returned'};
+  const ico={Processing:'⏳',Shipped:'🚚',Delivered:'✅',Cancelled:'❌',Returned:'↩️','Return Requested':'🕒'};
   return `<span class="sbadge ${cls[s]||'sb-processing'}" style="font-size:10px;padding:3px 9px">${ico[s]||'📦'} ${s}</span>`;
 }
 
@@ -517,9 +517,26 @@ function buildRow(o){
       <td><div class="oid-cell">${o.orderId}</div></td>
       <td><div class="date-cell">${d}</div></td>
       <td>${orderBadge(o.orderStatus)}</td>
-      <td>${payBadge(o.paymentStatus)}</td>
-      <td><div class="total-cell">₹${o.totalAmount}</div></td>
-      <td><button class="btn-details" onclick="openDetail('${o._id}')"><i class="fa-solid fa-eye me-1"></i>Details</button></td>
+      <td>
+  ${payBadge(o.paymentStatus)}
+
+  ${
+    o.paymentStatus === "Failed"
+      ? `<br>
+         <button class="btn-details mt-1" onclick="retryPayment('${o._id}')">
+           🔁 Retry
+         </button>`
+      : ""
+  }
+</td>
+
+<td><div class="total-cell">₹${o.totalAmount}</div></td>
+
+<td>
+  <button class="btn-details" onclick="openDetail('${o._id}')">
+    <i class="fa-solid fa-eye me-1"></i>Details
+  </button>
+</td>
     </tr>`;
 }
 
@@ -537,43 +554,73 @@ function openDetail(id){
   if(!o)return;
   currentDetailId=id;
 
-  /* top bar title */
+ 
   document.getElementById('dmTopTitle').textContent=`Order ${o.orderId}`;
 
-  /* ── content ── */
   const d=new Date(o.createdAt).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 
-  /* can cancel whole order */
   const orderCanCancel=o.orderStatus==='Processing'||o.orderStatus==='Shipped';
-  /* can return whole order (all items delivered) */
-  const orderCanReturn=o.orderStatus==='Delivered'&&o.items.every(it=>it.status==='Delivered');
 
-  /* product rows */
+ const orderCanReturn =
+  o.orderStatus === 'Delivered' &&
+  o.items.some(it => it.status === 'Delivered');
+
  const prodRows = o.items.map(it => {
   const isCancelled = it.status === 'Cancelled';
   const isReturned  = it.status === 'Returned';
   const canReturn   = it.status === 'Delivered';  
+  const isReturnRequested =it.status === 'Return Requested';
   const canCancel   = ['Processing', 'Shipped'].includes(o.orderStatus) && 
                       !['Cancelled', 'Returned'].includes(it.status);
 
   
   let rightEl = '';
+if (isReturnRequested) {
 
-  if (isReturned) {
-    rightEl = `<div class="returned-tag"><i class="fa-solid fa-rotate-left me-1"></i>Returned</div>`;
-  } else if (isCancelled) {
-    rightEl = `<div class="cancelled-tag"><i class="fa-solid fa-xmark me-1"></i>Cancelled</div>`;
-  } else if (canReturn) {
-    
-    rightEl = `<button class="btn-prod-return" onclick="openReturnModal('${o._id}','${it._id}')">
-                 <i class="fa-solid fa-rotate-left me-1"></i>Return
-               </button>`;
-  } else if (canCancel) {
-    rightEl = `<button class="btn-prod-cancel" onclick="openCancelModal('${o._id}','${it._id}')">
-                 <i class="fa-solid fa-xmark me-1"></i>Cancel
-               </button>`;
-  }
+ rightEl = `
+ <div class="returned-tag">
+   ⏳ Return Requested
+ </div>
+ `;
 
+}
+else if (isReturned) {
+
+ rightEl = `
+ <div class="returned-tag">
+   ↩️ Returned
+ </div>
+ `;
+
+}
+else if (isCancelled) {
+
+ rightEl = `
+ <div class="cancelled-tag">
+   ❌ Cancelled
+ </div>
+ `;
+
+}
+
+else if (canReturn) {
+
+ rightEl = `
+ <button class="btn-prod-return"
+ onclick="openReturnModal('${o._id}','${it._id}')">
+ Return
+ </button>
+ `;
+
+}else if (canCancel) {
+
+ rightEl = `
+ <button class="btn-prod-cancel"
+ onclick="openCancelModal('${o._id}','${it._id}')">
+ Cancel
+ </button>
+ `;
+}
   return `
     <div class="dm-product" style="${isCancelled || isReturned ? 'opacity:.55' : ''}">
       <img 
@@ -625,6 +672,14 @@ function openDetail(id){
 
   /* ── footer buttons ── */
   let footerHtml='';
+
+  if (o.paymentStatus === "Failed") {
+  footerHtml += `
+    <button class="btn-dm-cancel-order" onclick="retryPayment('${o._id}')">
+      🔁 Retry Payment
+    </button>`;
+}
+
   if(orderCanCancel)
     footerHtml+=`<button class="btn-dm-cancel-order" onclick="openCancelModal('${o._id}',null)"><i class="fa-solid fa-xmark"></i> Cancel Order</button>`;
   if(orderCanReturn)
@@ -646,6 +701,110 @@ function closeDetailIfBg(e){
   if(e.target===document.getElementById('detailOverlay'))closeDetail();
 }
 
+async function retryPayment(orderId) {
+  try {
+
+    const res = await fetch(`/retry-payment/${orderId}`, {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      return Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message || "Unable to start payment"
+      });
+    }
+
+    const options = {
+      key: data.razorpayKey,
+      amount: data.razorpayOrder.amount,
+      currency: data.razorpayOrder.currency,
+      name: "LitHeaven",
+      description: "Order Payment Retry",
+      order_id: data.razorpayOrder.id,
+
+      handler: async function (response) {
+
+        const verifyRes = await fetch("/verify-payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            orderId: data.orderId,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        });
+
+        const verifyData = await verifyRes.json();
+
+        if (!verifyData.success) {
+          return Swal.fire({
+            icon: "error",
+            title: "Verification Failed",
+            text: "Payment verification failed."
+          });
+        }
+
+        await Swal.fire({
+          icon: "success",
+          title: "Payment Successful 🎉",
+          text: "Your payment has been completed successfully.",
+          confirmButtonColor: "#6f2b67"
+        });
+
+        await Swal.fire({
+          icon: "success",
+          title: "Order Confirmed 📦",
+          text: "Thank you for shopping with LitHeaven.",
+          confirmButtonColor: "#6f2b67"
+        });
+
+        location.reload();
+      },
+
+      modal: {
+        ondismiss: async function () {
+
+          await fetch("/payment-failed", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              orderId: data.orderId
+            })
+          });
+
+          Swal.fire({
+            icon: "error",
+            title: "Payment Failed",
+            text: "You can retry payment from the Orders page.",
+            confirmButtonColor: "#c62828"
+          });
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+
+  } catch (err) {
+    console.log(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+      text: "Please try again."
+    });
+  }
+}
+
 /* ════ CANCEL ════ */
 function openCancelModal(orderId,itemId=null){
   pendingAction={type:'cancel',orderId,itemId};
@@ -657,8 +816,6 @@ function openCancelModal(orderId,itemId=null){
   document.getElementById('cancelModal').classList.add('open');
 }
 
-// order cancel:
-
 async function confirmCancel() {
   const reason = getReason('cancel');
   const { orderId, itemId } = pendingAction;
@@ -669,7 +826,7 @@ async function confirmCancel() {
     let res;
 
     if (itemId) {
-      // 🔹 Single item cancel
+   
       res = await fetch(`/api/orders/${orderId}/cancel-item/${itemId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -729,14 +886,14 @@ async function confirmReturn() {
     let res;
 
     if (itemId) {
-      // Single item return
+  
       res = await fetch(`/api/orders/${orderId}/return-item/${itemId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason })
       });
     } else {
-      //  Full order return
+    
       res = await fetch(`/api/orders/${orderId}/return-order`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -771,10 +928,23 @@ function getReason(type){
   const ta=document.getElementById(`${type}Ta`).value.trim();
   return ta||chip?.textContent||'';
 }
-function showToast(msg,icon='success'){
-  return Swal.fire({toast:true,position:'top-end',icon,title:msg,showConfirmButton:false,timer:2200,timerProgressBar:true});
-}
+function showToast(msg, icon = 'success') {
+  return Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon,
+    title: msg,
+    showConfirmButton: false,
+    timer: 2200,
+    timerProgressBar: true,
 
+    customClass: {
+      popup: 'my-toast'
+    },didOpen: (toast) => {
+      toast.style.zIndex = '9999999';  
+    }
+  });
+}
 /* ════ INVOICE PDF ════ */
 function downloadInvoice(orderId){
   const o=orders.find(x=>x._id===orderId);

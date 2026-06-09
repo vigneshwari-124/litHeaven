@@ -473,8 +473,7 @@ z-index: 999999 !important;
         <nav class="main-nav d-none d-lg-flex">
           <a class="nav-link" href="/">Home</a>
           <a class="nav-link active-link" href="/shop">Shop</a>
-          <a class="nav-link" href="/about">About</a>
-          <a class="nav-link" href="/contact">Contact</a>
+        
         </nav>
       </div>
       <div class="col-6 d-flex justify-content-end">
@@ -526,8 +525,7 @@ z-index: 999999 !important;
 <div id="mobileMenu" class="mobile-menu d-lg-none">
   <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+
 </div>
 
 <div class="search-wrap">
@@ -571,14 +569,37 @@ z-index: 999999 !important;
         <div class="zoom-hint"><i class="fa-solid fa-expand"></i>&nbsp;Hover · Click to expand</div>
       </div>
 
-      <!-- THUMBNAIL STRIP -->
     <div class="thumb-strip">
-      <% defaultVariant.subImages.forEach((img,i)=>{ %>
-        <div class="thumb-item <%= i===0 ? 'active' : '' %>" onclick="swapImages(this)">
-          <img src="<%= img.url %>">
-        </div>
-      <% }) %>
+
+  <!-- sub images -->
+  <% defaultVariant.subImages.forEach((img,i)=>{ %>
+
+    <div
+      class="thumb-item <%= i===0 ? 'active' : '' %>"
+      onclick="swapImages(this)"
+    >
+
+      <img src="<%= img.url %>">
+
     </div>
+
+  <% }) %>
+
+  <!-- additional images -->
+  <% defaultVariant.additionalImages.forEach((img)=>{ %>
+
+    <div
+      class="thumb-item"
+      onclick="swapImages(this)"
+    >
+
+      <img src="<%= img.url %>">
+
+    </div>
+
+  <% }) %>
+
+</div>
 
     </div>
 
@@ -600,9 +621,31 @@ z-index: 999999 !important;
 </div>
 
 <% } %>
-      <div class="price-row-info">
-        <span class="new-price">₹<%= defaultFormat.price %></span>
-      </div>
+      <div class="price-row-info" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+
+  <% if(discount > 0){ %>
+
+    <span class="old-price" style="text-decoration:line-through;color:#aaa;font-size:1rem;">
+      ₹<%= defaultPrice %>
+    </span>
+
+    <span class="new-price">₹<%= offerPrice %></span>
+
+    <span style="
+  color:#16a34a;
+  font-size:.88rem;
+  font-weight:700;
+">
+  <%= discount %>% Off
+</span>
+
+  <% } else { %>
+
+    <span class="new-price">₹<%= defaultPrice %></span>
+
+  <% } %>
+
+</div>
      <p class="prod-desc"><%= product.shortDescription %></p>
       <div class="avail-row">
         <strong style="color:#dc2626">Available :</strong>
@@ -1017,6 +1060,7 @@ See <%= reviews.length - 2 %> More Reviews
 <div id="productData" style="display:none;">
 <%- JSON.stringify(product) %>
 </div>
+<div id="discountData" data-discount="<%= discount %>"></div>
 
 <div id="loginStatus" data-login="<%= isLoggedIn %>"></div>
 
@@ -1083,8 +1127,7 @@ See <%= reviews.length - 2 %> More Reviews
         <ul class="list-unstyled">
           <li><a href="/">Home</a></li>
           <li><a href="/shop">Shop Books</a></li>
-          <li><a href="/about">About Us</a></li>
-          <li><a href="/contact">Contact Us</a></li>
+         
           <li><a href="/privacy">Privacy Policy</a></li>
         </ul>
       </div>
@@ -1118,6 +1161,15 @@ const productData = JSON.parse(
 document.getElementById("productData").textContent
 );
 
+const DISCOUNT = parseInt(document.getElementById('discountData').dataset.discount) || 0;
+
+function calcOfferPrice(originalPrice) {
+  if (DISCOUNT > 0) {
+    return Math.round(originalPrice - (originalPrice * DISCOUNT / 100));
+  }
+  return originalPrice;
+}
+
 let currentVariant = 0;
 let currentFormat = productData.variants[0].formats[0].format;
 
@@ -1140,7 +1192,19 @@ function changeLanguage(index, el) {
     stockEl.innerText = format.stock + " In Stock";
     stockEl.style.color = "green";
   }
-  document.querySelector(".new-price").innerText = "₹" + format.price;
+
+  const offerPrice = calcOfferPrice(format.price);
+  document.querySelector(".new-price").innerText = "₹" + offerPrice;
+  const oldPriceEl = document.querySelector(".old-price");
+  if (oldPriceEl) {
+    if (DISCOUNT > 0) {
+      oldPriceEl.innerText = "₹" + format.price;
+      oldPriceEl.style.display = "inline";
+    } else {
+      oldPriceEl.style.display = "none";
+    }
+  }
+
   const thumbStrip = document.querySelector(".thumb-strip");
   thumbStrip.innerHTML = "";
   variant.subImages.forEach((img, i) => {
@@ -1173,6 +1237,7 @@ function changeLanguage(index, el) {
     .forEach(p => p.classList.remove("selected"));
   el.classList.add("selected");
 }
+
 document.addEventListener("click", function(e) {
   const pill = e.target.closest("#formatGroup .tag-pill");
   if (!pill) return;
@@ -1388,71 +1453,6 @@ function selectFormat(format, element, stock) {
 function changeQty(d) { const i = document.getElementById('qtyInput'); i.value = Math.min(24, Math.max(1, parseInt(i.value) + d)); }
 
 
-// function addToCart(productId){
-
-// if(!STATE.isLoggedIn){
-// Swal.fire({
-// icon:"warning",
-// title:"Login Required",
-// text:"Please login to add product to cart"
-// }).then(()=>{
-// window.location.href="/login"
-// })
-// return
-// }
-
-// const languageEl = document.querySelector('.tag-group[data-type="language"] .selected')
-// const formatEl = document.querySelector('#formatGroup .selected')
-
-// const languageId = languageEl 
-// ? languageEl.dataset.language 
-// : "<%= defaultVariant.language._id %>"
-
-// const format = formatEl 
-// ? formatEl.dataset.format 
-// : "<%= defaultFormat.format %>"
-
-// fetch("/add-to-cart",{
-// method:"POST",
-// headers:{
-// "Content-Type":"application/json"
-// },
-// body:JSON.stringify({
-// productId,
-// languageId,
-// format
-// })
-// })
-// .then(res=>res.json())
-// .then(data=>{
-
-// if(data.success){
-
-// STATE.cartCount++
-// document.getElementById("cartBadge").textContent = STATE.cartCount
-
-// Swal.fire({
-// toast:true,
-// position:'top-end',
-// icon:'success',
-// title:data.message || "Added to cart",
-// timer:2000,
-// showConfirmButton:false
-// })
-
-// }else{
-
-// Swal.fire({
-// icon:"error",
-// title:"Oops...",
-// text:data.message
-// })
-
-// }
-
-// })
-
-// }
 /* ══ WISHLIST ══ */
 async function toggleWish() {
 
@@ -1746,9 +1746,6 @@ function scrollRec(d)  { document.getElementById('recGrid').scrollBy({ left: d *
   });
 
 
-document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
-document.getElementById('footerLogout')?.addEventListener('click', doLogout);
-
 
 
 ///////////////////////////////////////////////////////
@@ -1771,12 +1768,23 @@ function changeFormatByName(fmt, el) {
     stockEl.style.color = "green";
   }
 
-  document.querySelector(".new-price").innerText = "₹" + format.price;
+  const offerPrice = calcOfferPrice(format.price);
+  document.querySelector(".new-price").innerText = "₹" + offerPrice;
+  const oldPriceEl = document.querySelector(".old-price");
+  if (oldPriceEl) {
+    if (DISCOUNT > 0) {
+      oldPriceEl.innerText = "₹" + format.price;
+      oldPriceEl.style.display = "inline";
+    } else {
+      oldPriceEl.style.display = "none";
+    }
+  }
 
   document.querySelectorAll("#formatGroup .tag-pill")
     .forEach(btn => btn.classList.remove("selected"));
   el.classList.add("selected");
 }
+
 // ========== MOBILE MENU TOGGLE ==========
 const menuToggle = document.getElementById('menuToggle');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -1797,7 +1805,6 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
   });
 });
 
-// Close mobile menu on outside click
 document.addEventListener('click', function (e) {
   if (mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
     mobileMenu.classList.remove('open');
@@ -1842,15 +1849,11 @@ return
 
   const data = await res.json()
 
-  
-
-  // 🔥 MAX LIMIT
   if (data.status === "max-reached") {
     Swal.fire("Limit Reached 🚫", "Maximum 8 items allowed", "error")
     return
   }
 
-  // ✅ SUCCESS
   if (data.status === "added") {
     Swal.fire({
       icon: "success",
@@ -1859,6 +1862,16 @@ return
       showConfirmButton: false
     })
   }
+  else if(data.status === "cart-limit"){
+
+Swal.fire({
+icon:"warning",
+title:"Cart Limit Reached",
+text:data.message,
+confirmButtonColor:"#6f2b67"
+})
+
+}
 }
 
 </script>

@@ -334,8 +334,26 @@
     .payment-opt { border: 2px solid rgba(184,138,180,.4); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: all .3s; background: rgba(255,255,255,.7); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .payment-opt:hover { border-color: var(--purple); background: rgba(243,232,242,.9); }
     .payment-opt.selected { border-color: var(--purple); background: rgba(243,232,242,.95); box-shadow: 0 4px 16px rgba(111,43,103,.12); }
-    .payment-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .3s; }
-    .payment-opt.selected .payment-radio { border-color: var(--purple); background: var(--purple); }
+    .payment-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .3s;
+}
+
+/* ✅ Selected state - inner dot */
+.payment-opt.selected .payment-radio {
+  border-color: var(--purple);
+   border-width: 6px;
+  background: var(--purple);
+}
+   
     .payment-opt.selected .payment-radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #fff; }
     .payment-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
     .payment-name { font-weight: 700; font-size: 13px; color: var(--ink); }
@@ -364,6 +382,7 @@
     .trust-row { display: flex; justify-content: center; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
     .trust-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); font-weight: 600; }
     .trust-item i { color: var(--purple); font-size: 12px; }
+
 
     /* ─── SUCCESS PAGE ─── */
     #successPage { display: none; max-width: 450px; margin: 40px auto; padding: 30px 15px; text-align: center; animation: popIn .6s ease; }
@@ -410,6 +429,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="top-offer">Get 10% off for your first purchase — USE CODE <strong>NEW1</strong></div>
@@ -428,8 +448,7 @@
           <nav class="main-nav d-none d-lg-flex">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/shop">Shop</a>
-            <a class="nav-link" href="/about">About</a>
-            <a class="nav-link" href="/contact">Contact</a>
+            
           </nav>
         </div>
         <div class="col-6 d-flex justify-content-end align-items-center">
@@ -463,8 +482,7 @@
   <div id="mobileMenu" class="mobile-menu d-lg-none">
     <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
     <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-    <a class="mobile-nav-link" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-    <a class="mobile-nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+    
   </div>
 
   <div class="breadcrumb-wrap">
@@ -566,38 +584,44 @@
             Payment Method
           </div>
 
-          <div class="payment-opt selected" id="payOpt-cod" onclick="selectPayment('cod')">
-            <div class="payment-radio"><span></span></div>
-            <div class="payment-icon" style="background:rgba(46,125,50,.1)"><i class="fa-solid fa-money-bill-wave" style="color:var(--success)"></i></div>
-            <div>
-              <div class="payment-name">Cash on Delivery</div>
-              <div class="payment-sub">Pay when your books arrive</div>
-            </div>
-            <span class="payment-badge cod-badge">Available</span>
-          </div>
+<div class="payment-opt" id="payOpt-razorpay" onclick="selectPayment('razorpay')">
+  <div class="payment-radio" id="radio-razorpay"></div>
+  <div class="payment-icon" style="background:rgba(111,43,103,.08)">
+    <i class="fa-solid fa-credit-card" style="color:var(--purple)"></i>
+  </div>
+  <div>
+    <div class="payment-name">Online Payment</div>
+    <div class="payment-sub">UPI / Cards / Net Banking</div>
+  </div>
+</div>
 
-          <div class="payment-opt disabled-opt" id="payOpt-online">
-            <div class="payment-radio"></div>
-            <div class="payment-icon" style="background:rgba(111,43,103,.08)"><i class="fa-solid fa-credit-card" style="color:var(--purple)"></i></div>
-            <div>
-              <div class="payment-name">Online Payment</div>
-              <div class="payment-sub">UPI / Cards / Net Banking</div>
-            </div>
-            <span class="payment-badge coming-badge">Coming Soon</span>
-          </div>
+<div class="payment-opt" id="payOpt-cod" onclick="selectPayment('cod')">
+  <div class="payment-radio" id="radio-cod"></div>
+  <div class="payment-icon" style="background:rgba(46,125,50,.1)">
+    <i class="fa-solid fa-money-bill-wave" style="color:var(--success)"></i>
+  </div>
+  <div>
+    <div class="payment-name">Cash on Delivery</div>
+    <div class="payment-sub">Pay when your books arrive</div>
+    <p id="codError" style="color:red;font-size:12px;margin-top:5px;"></p>
+  </div>
+</div>
 
-          <div class="payment-opt disabled-opt" id="payOpt-wallet">
-            <div class="payment-radio"></div>
-            <div class="payment-icon" style="background:rgba(111,43,103,.08)"><i class="fa-solid fa-wallet" style="color:var(--purple)"></i></div>
-            <div>
-              <div class="payment-name">LitHeaven Wallet</div>
-              <div class="payment-sub">Use your wallet balance</div>
-            </div>
-            <span class="payment-badge coming-badge">Coming Soon</span>
-          </div>
-        </div>
+         
 
-      </div>
+<div class="payment-opt" id="payOpt-wallet" onclick="selectPayment('wallet')">
+  <div class="payment-radio" id="radio-wallet"></div>
+  <div class="payment-icon" style="background:rgba(111,43,103,.08)">
+    <i class="fa-solid fa-wallet" style="color:var(--purple)"></i>
+  </div>
+  <div>
+    <div class="payment-name">LitHeaven Wallet</div>
+    <p id="walletError" style="color:red;font-size:12px;margin-top:5px;"></p>
+  </div>
+</div>
+</div>
+</div>
+
 
       <!-- RIGHT COLUMN — ORDER ITEMS + SUMMARY -->
       <div>
@@ -777,6 +801,8 @@
     </div>
   </div>
 
+
+
   <!-- confetti -->
   <div class="confetti-wrap" id="confettiWrap"></div>
 
@@ -792,7 +818,7 @@
           <ul class="list-unstyled">
             <li><a href="/">Home</a></li>
             <li><a href="/shop">Shop Books</a></li>
-            <li><a href="/about">About Us</a></li>
+           
           </ul>
         </div>
         <div class="col-md-4 text-md-end">
@@ -804,15 +830,23 @@
     </div>
   </footer>
 
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/common.js"></script>
   <script>
-  /* ═══════════════════════════════════════════
-     DEMO ORDER ITEMS  (replace with real API)
-  ═══════════════════════════════════════════ */
- 
+  
 
+  window.addEventListener("pageshow", function (event) {
+
+  const navType =
+    performance.getEntriesByType("navigation")[0]?.type;
+
+  if (event.persisted || navType === "back_forward") {
+    window.location.reload();
+  }
+
+});
 
   /* ═══════════════════════════════════════════
      STATE
@@ -835,8 +869,12 @@ const DELIVERY_CHARGE = 40;
     await loadAddresses();
     await loadOrderItems();
     updateSummary();
-
     await loadCoupons();
+
+    selectedPayment = null; 
+
+    document.getElementById("codError").innerText = "";
+    document.getElementById("walletError").innerText = "";
   };
 
   /* ═══════════════════════════════════════════
@@ -863,9 +901,7 @@ const DELIVERY_CHARGE = 40;
 
   /* ═══════════════════════════════════════════
      RENDER ADDRESS CARDS
-     — primary first
-     — tick button on top-right to select delivery address
-     — clicking tick on non-primary sets it as primary via API
+    
   ═══════════════════════════════════════════ */
   function renderAddresses() {
     const grid = document.getElementById('addrGrid');
@@ -918,31 +954,27 @@ const DELIVERY_CHARGE = 40;
     }).join('');
   }
 
-  /* ─── Select address for delivery (card click) ─── */
+ 
   function selectAddr(id) {
     selectedAddr = id;
     renderAddresses();
   }
 
-  /* ─── Tick button click:
-       • if already selected  → do nothing
-       • if not selected      → select it AND set as primary via API
-  ─── */
+
   async function handleTickClick(e, id) {
     e.stopPropagation();
 
-    if (selectedAddr === id) return; /* already selected, nothing to do */
+    if (selectedAddr === id) return; 
 
     selectedAddr = id;
 
-    /* Set as primary (default) via API */
     try {
       const res  = await fetch(`/addresses/set-primary/${id}`, {
        method: 'PATCH'
       });
       const data = await res.json();
       if (data.success) {
-        await loadAddresses(); /* reload so isPrimary badge updates */
+        await loadAddresses(); 
         return;
       }
     } catch (_) {}
@@ -1091,7 +1123,6 @@ const DELIVERY_CHARGE = 40;
 
     if (!valid) return;
 
-    /* ── Get selected address type ── */
     const selectedType = document.querySelector('input[name="addrType"]:checked')?.value || 'Home';
 
     const body = {
@@ -1192,7 +1223,9 @@ if (editingAddrId) {
         f.format === item.format
       );
 
-      const price = formatData ? formatData.price : 0;
+      const originalPrice = item.originalPrice || formatData?.price || 0;
+      const price = item.offerPrice || formatData?.price || 0;
+      const itemDiscount = item.discount || 0;
       const total = price * item.quantity;
 
       const image = variant?.thumbnail?.url || '';
@@ -1211,7 +1244,9 @@ if (editingAddrId) {
             <div class="order-item-qty">Qty: ${item.quantity}</div>
           </div>
           <div style="text-align:right">
+            ${itemDiscount > 0 ? `<div class="order-item-orig">₹${originalPrice * item.quantity}</div>` : ''}
             <div class="order-item-price">₹${total}</div>
+            ${itemDiscount > 0 ? `<div style="font-size:10px;color:#2e7d32;font-weight:700">${itemDiscount}% Off</div>` : ''}
           </div>
         </div>
       `;
@@ -1230,15 +1265,11 @@ if (editingAddrId) {
 
 
 function updateSummary() {
-
   let totalItems = 0;
-
-  (cartItems || []).forEach(item => {
-    totalItems += item.quantity;
-  });
+  (cartItems || []).forEach(item => { totalItems += item.quantity; });
 
   const delivery = DELIVERY_CHARGE;
-  const totalAmount = subtotal + delivery -discountAmount;
+  const totalAmount = subtotal + delivery - discountAmount;
 
   document.getElementById('sumItemCount').innerText = totalItems;
   document.getElementById('sumSubtotal').innerText = `₹${subtotal}`;
@@ -1246,86 +1277,156 @@ function updateSummary() {
   document.getElementById('sumDiscount').innerText = `−₹${discountAmount}`;
   document.getElementById('sumTotal').innerText = `₹${totalAmount}`;
 
-  const hasOut = cartItems.some(i => i.stock === 0)
-
-const btn = document.querySelector(".btn-place-order");
-
-if (btn) {
-  btn.disabled = hasOut;
-}
 }
 
 async function placeOrder() {
+  if (!selectedAddr) {
+    Swal.fire({ icon: 'warning', title: 'Select Address', text: 'Please select a delivery address.', confirmButtonColor: '#6f2b67' });
+    return;
+  }
+
+  if (!selectedPayment) {
+    Swal.fire({ icon: 'warning', title: 'Select Payment Method', text: 'Please choose a payment method to continue.', confirmButtonColor: '#6f2b67' });
+    return;
+  }
+
+  Swal.fire({
+    title: 'Placing Order...',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
   try {
-
-    // loading popup
-    Swal.fire({
-      title: 'Placing Order...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
-    const res = await fetch('/place-order', {
+    const res = await fetch('/checkout/place-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         addressId: selectedAddr,
-        paymentMethod: selectedPayment
+        paymentMethod: selectedPayment,
+        couponCode: appliedCoupon || null
       })
     });
 
     const data = await res.json();
+    Swal.close();
 
-    Swal.close(); //  close loading
-
-    if (data.success) {
-
-      showSuccessPage(data); // IMPORTANT
-
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: data.message || 'Order failed'
-      });
+    if (!data.success) {
+      Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Order failed', confirmButtonColor: '#6f2b67' });
+      return;
     }
 
+    // Razorpay flow
+    if (data.razorpay) {
+      const orderRes = await fetch("/payment/razorpay-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: data.amount, orderId: data.orderId })
+      });
+      const orderData = await orderRes.json();
+
+      const options = {
+        key:  data.razorpayKey,
+        amount: orderData.order.amount,
+        currency: "INR",
+        order_id: orderData.order.id,
+        handler: async function (response) {
+          await fetch("/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: data.orderId })
+          });
+          showSuccessPage(data);
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on("payment.failed", async function () {
+        await fetch("/payment-failed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId: data.orderId })
+        });
+
+  Swal.fire({
+  icon: "error",
+  title: "Payment Failed",
+  text: "Your payment failed. Try again.",
+
+  confirmButtonText: "View Order Page",
+
+  confirmButtonColor: "#6f5ce7",
+
+  background: "#f5f5f5",
+
+  backdrop: "rgba(111,43,103,1)",
+
+  allowOutsideClick: false,
+
+  didOpen: () => {
+
+    document.querySelector("header").style.display = "none"
+
+    document.querySelector(".breadcrumb-wrap").style.display = "none"
+
+    document.querySelector(".page-title-strip").style.display = "none"
+
+    document.querySelector(".checkout-wrap").style.display = "none"
+
+    document.querySelector("footer").style.display = "none"
+
+    document.body.style.background = "#7d3c7b"
+
+  }
+
+}).then(() => {
+
+   window.location.href = "/order"
+
+})   
+        ;
+      });
+      rzp.open();
+      return;
+    }
+
+    showSuccessPage(data);
+
   } catch (err) {
+    Swal.close();
     console.log(err);
+    Swal.fire({ icon: 'error', title: 'Network Error', text: 'Please try again.', confirmButtonColor: '#6f2b67' });
   }
 }
 
 function showSuccessPage(data) {
 
-  //hide checkout
   document.getElementById('checkoutPage').style.display = 'none';
 
-  // show success
   document.getElementById('successPage').style.display = 'block';
 
-  //  Order ID (random / backend irunthu varala na temp)
   document.getElementById('successOrderId').innerText =
     data.orderId || 'LH-' + Math.floor(Math.random() * 100000);
 
  
-  document.getElementById('successDetails').innerHTML = `
-    <div class="success-detail-row">
-      <span class="sd-label">Items</span>
-      <span class="sd-val">${document.getElementById('sumItemCount').innerText}</span>
-    </div>
+  document.getElementById("successOrderId").textContent =
+  data.orderId;
 
-    <div class="success-detail-row">
-      <span class="sd-label">Total Paid</span>
-      <span class="sd-val">₹${data.total}</span>
-    </div>
+document.getElementById("successDetails").innerHTML = `
+  <div class="success-detail-row">
+    <span class="sd-label">Items</span>
+    <span class="sd-val">${data.itemCount}</span>
+  </div>
 
-    <div class="success-detail-row">
-      <span class="sd-label">Payment</span>
-      <span class="sd-val">Cash on Delivery</span>
-    </div>
-  `;
+  <div class="success-detail-row">
+    <span class="sd-label">Total Paid</span>
+    <span class="sd-val">₹${data.totalAmount || data.amount}</span>
+  </div>
+
+  <div class="success-detail-row">
+    <span class="sd-label">Payment Method</span>
+    <span class="sd-val">${data.paymentMethod}</span>
+  </div>
+`;
 
  
   launchConfetti();
@@ -1428,13 +1529,69 @@ function launchConfetti() {
   /* ═══════════════════════════════════════════
      PAYMENT
   ═══════════════════════════════════════════ */
-  function selectPayment(type) {
-    selectedPayment = type;
-    document.querySelectorAll('.payment-opt').forEach(el => el.classList.remove('selected'));
-    document.getElementById('payOpt-' + type)?.classList.add('selected');
+ async function selectPayment(method) {
+
+  const totalAmount = subtotal + DELIVERY_CHARGE - discountAmount;
+
+  // ── COD ──────────────────────────────────────
+  if (method === 'cod') {
+    const codError = document.getElementById("codError");
+
+    if (totalAmount < 500) {
+      codError.innerText = "COD available only for orders above ₹500";
+     
+      document.getElementById("payOpt-cod").classList.remove("selected");
+      document.getElementById("payOpt-cod").querySelector(".payment-radio").style.background = "";
+      return;
+    }
+
+    if (totalAmount > 5000) {
+      codError.innerText = "COD not available for orders above ₹5000";
+      document.getElementById("payOpt-cod").classList.remove("selected");
+      return;
+    }
+
+    codError.innerText = "";
   }
 
-  
+  // ── ONLINE (Razorpay) ─────────────────────────
+  if (method === 'razorpay') {
+ 
+    document.getElementById("walletError").innerText = "";
+    document.getElementById("codError").innerText = "";
+  }
+
+  // ── WALLET ───────────────────────────────────
+  if (method === 'wallet') {
+    const walletError = document.getElementById("walletError");
+
+    try {
+      const res = await fetch("/wallet-data");
+      const data = await res.json();
+      const balance = data.balance || 0;
+
+      if (balance < totalAmount) {
+        walletError.innerText = `Insufficient balance (₹${balance} available). Try another payment method.`;
+     
+        return;
+      }
+
+      walletError.innerText = ""; 
+    } catch (err) {
+      walletError.innerText = "Could not fetch wallet balance. Try another method.";
+      return;
+    }
+  }
+  selectedPayment = method.toUpperCase();
+
+  // remove selected from all
+  document.querySelectorAll(".payment-opt")
+    .forEach(el => el.classList.remove("selected"));
+
+  // add selected to clicked one
+  document.getElementById("payOpt-" + method)
+    .classList.add("selected");
+}
   /* ═══════════════════════════════════════════
      SUCCESS PAGE
   ═══════════════════════════════════════════ */
@@ -1564,15 +1721,30 @@ function handleCouponInput(input) {
 
   const clearBtn = document.getElementById('clearBtn');
 
-  // show if typing
+
   clearBtn.style.display = input.value ? 'block' : 'none';
 
-  // remove message while typing
   document.getElementById('couponMsg').innerHTML = '';
 }
 
+function updatePaymentUI(totalAmount) {
+  const cod = document.getElementById("payOpt-cod");
+  const codError = document.getElementById("codError");
 
-loadCoupons();
+  if (totalAmount < 500) {
+    cod.classList.add("disabled-opt");
+    codError.innerText = "COD available only above ₹500";
+  } 
+  else if (totalAmount > 5000) {
+    cod.classList.add("disabled-opt");
+    codError.innerText = "COD not available for orders above ₹5000";
+  } 
+  else {
+    cod.classList.remove("disabled-opt");
+    codError.innerText = "";
+  }
+}
+
   </script>
 </body>
 </html>

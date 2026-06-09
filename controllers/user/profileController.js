@@ -153,6 +153,21 @@ const uploadProfileImg=async(req,res)=>{
       return res.status(400).json({ success: false })
     }
 
+    const allowedMimeTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp"
+];
+
+if (!allowedMimeTypes.includes(req.file.mimetype)) {
+
+  return res.status(400).json({
+    success: false,
+    message: "Only image files are allowed"
+  });
+}
+
   const user = await User.findById(req.session.userId)
 
     if (user.profileImage?.publicId) {

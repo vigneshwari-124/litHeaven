@@ -185,7 +185,7 @@
     <a href="/admin/productOff">Product Offers</a>
   </div>
   <a href="/admin/author" class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
-  <a href="/admin/admin" class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+ 
   <a href="/admin/customer" class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
   <a href="/admin/salesReport" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
   <div class="menu-item" onclick="toggleMenu('settMenu')">
@@ -193,7 +193,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+   
     <a href="/admin/language">Language</a>
   </div>
   <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
@@ -408,14 +408,49 @@ async function fetchSubcateOff(){
  }
 
   function toggleMenu(id) { document.getElementById(id).classList.toggle('show'); }
-  document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
-    if (!confirm('Are you sure you want to logout?')) return;
-    try {
-      const res  = await fetch('/admin/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-      const data = await res.json();
-      if (res.ok) window.location.href = data.redirect;
-    } catch (err) { console.error(err); }
-  });
+  document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
 
   window.onload = fetchSubcateOff;
 
@@ -453,7 +488,7 @@ window.onclick = function(e){
 
 async function loadCategories(){
   try{
-    let res = await fetch('/admin/parent-categories'); // correct route check pannunga
+    let res = await fetch('/admin/parent-categories'); 
     let data = await res.json();
 
     let select = document.getElementById('categorySelect');
@@ -531,7 +566,7 @@ async function saveOffer(){
 let isValid=true
 
   let category = document.getElementById("categorySelect").value;
-  let subCategory = document.getElementById("subCategorySelect").value; // 🔥 important
+  let subCategory = document.getElementById("subCategorySelect").value; 
   let offerName = document.getElementById("offerName").value;
   let discount = document.getElementById("discountPct").value;
   let startDate = document.getElementById("startDate").value;

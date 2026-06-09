@@ -30,17 +30,29 @@ const userSchema=new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Address',
     default: null
-  },
+    },
   googleId: {
   type: String,
   unique: true,
   sparse: true
-},
-authProvider: {
+ },
+  authProvider: {
   type: String,
   enum: ["local", "google"],
   default: "local"
-}
+ },
+
+    referralCode: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null
+    }
 
    
 },{timestamps:true})

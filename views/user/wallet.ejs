@@ -70,7 +70,7 @@ header.navbar-area{background:var(--purple);color:#fff;padding:12px 0}
 .wallet-amount{font-size:38px;font-weight:800;color:#6f2b67;line-height:1}
 .wallet-amount span{font-size:22px;font-weight:700;vertical-align:super;margin-right:2px}
 .wallet-added{font-size:12px;color:#a78aa5;margin-top:5px}
-.btn-add-money{background:#6f2b67;color:#fff;border:none;padding:13px 28px;border-radius:50px;font-weight:700;font-size:14px;cursor:pointer;transition:all .3s;animation:droplet 3s infinite;box-shadow:0 4px 14px rgba(111,43,103,.3);white-space:nowrap;flex-shrink:0}
+.btn-add-money{background:#6f2b67;color:#fff;border:none;padding:6px 12px;border-radius:50px;font-weight:700;font-size:10px;cursor:pointer;transition:all .3s;animation:droplet 3s infinite;box-shadow:0 4px 14px rgba(111,43,103,.3);white-space:nowrap;flex-shrink:0}
 .btn-add-money:hover{background:#8e4a86;transform:translateY(-2px);box-shadow:0 6px 20px rgba(111,43,103,.4)}
 .btn-add-money i{margin-right:8px}
 
@@ -104,6 +104,7 @@ header.navbar-area{background:var(--purple);color:#fff;padding:12px 0}
 .txn-type.wallet-topup{background:#edf5ff;color:#1a73e8}
 .txn-type.refund{background:#edfbf0;color:#22a850}
 .txn-type.purchase{background:#fff2f2;color:#e74c3c}
+.txn-type.referral_bonus{ background:#fff4e5; color:#ff9800;}
 
 .txn-amount{font-size:16px;font-weight:800;flex-shrink:0;white-space:nowrap}
 .txn-amount.credit{color:#22a850}
@@ -209,8 +210,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <nav class="main-nav d-none d-lg-flex">
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/shop">Shop</a>
-        <a class="nav-link" href="/about">About</a>
-        <a class="nav-link" href="/contact">Contact</a>
+        
       </nav>
       <div class="header-icons">
         <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
@@ -234,8 +234,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 <div id="mobileMenuP" class="mobile-menu-p d-lg-none">
   <a class="mobile-nav-link-p" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link-p" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  <a class="mobile-nav-link-p" href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-  <a class="mobile-nav-link-p" href="/contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+ 
 </div>
 
 <!-- Search -->
@@ -256,7 +255,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <li><a href="/profile" class="sidebar-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
       <li><a href="/addresses" class="sidebar-link"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a></li>
       <li><a href="/wallet" class="sidebar-link active"><i class="fa-solid fa-wallet"></i><span>Wallet</span></a></li>
-      <li><a href="/coupons" class="sidebar-link"><i class="fa-solid fa-ticket"></i><span>My Coupons</span></a></li>
+     
       <li class="mt-2">
         <button type="button" id="logoutBtn" class="sidebar-link logout-btn">
           <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
@@ -276,8 +275,8 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
         </div>
         <div class="wallet-info">
           <div class="wallet-label">My Balance</div>
-          <div class="wallet-amount"><span>₹</span><span id="walletBalance">480</span></div>
-          <div class="wallet-added" id="walletAdded">Added : 8 May 2020</div>
+          <div class="wallet-amount"><span>₹</span><span id="walletBalance">0</span></div>
+          <div class="wallet-added" id="walletAdded"></div>
         </div>
       </div>
       <button class="btn-add-money" onclick="openAddMoneyModal()">
@@ -302,60 +301,9 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
         <h5>History</h5>
       </div>
 
-      <!-- Transaction 1 -->
-      <div class="transaction-item" data-type="credit">
-        <div class="txn-left">
-          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
-          <div class="txn-details">
-            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
-            <div class="txn-date">6 May 2018, 12.56PM</div>
-            <span class="txn-type wallet-topup">Wallet Top Up</span>
-          </div>
-        </div>
-        <div class="txn-amount credit">+₹7500</div>
+       <div id="historyList"></div>
+
       </div>
-
-      <!-- Transaction 2 -->
-      <div class="transaction-item" data-type="credit">
-        <div class="txn-left">
-          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
-          <div class="txn-details">
-            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
-            <div class="txn-date">8 May 2018, 12.56PM</div>
-            <span class="txn-type wallet-topup">Wallet Top Up</span>
-          </div>
-        </div>
-        <div class="txn-amount credit">+₹1500</div>
-      </div>
-
-      <!-- Transaction 3 -->
-      <div class="transaction-item" data-type="credit">
-        <div class="txn-left">
-          <div class="txn-icon credit"><i class="fa-solid fa-plus"></i></div>
-          <div class="txn-details">
-            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
-            <div class="txn-date">12 May 2018, 12.56PM</div>
-            <span class="txn-type refund">Refund</span>
-          </div>
-        </div>
-        <div class="txn-amount credit">+₹7500</div>
-      </div>
-
-      <!-- Transaction 4 -->
-      <div class="transaction-item" data-type="debit">
-        <div class="txn-left">
-          <div class="txn-icon debit"><i class="fa-solid fa-minus"></i></div>
-          <div class="txn-details">
-            <div class="txn-id">Transaction ID <a href="#">freshoo99802586</a></div>
-            <div class="txn-date">14 May 2018, 12.56PM</div>
-            <span class="txn-type purchase">Purchase</span>
-          </div>
-        </div>
-        <div class="txn-amount debit">-₹750</div>
-      </div>
-
-    </div><!-- /history-card -->
-
   </div><!-- /content -->
 </div><!-- /main-container -->
 
@@ -369,7 +317,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
     <div class="modal-body-inner">
       <label class="form-label-m">Enter Amount</label>
       <input type="number" class="form-input-m" id="addAmount" placeholder="Enter Amount" min="1">
-      <div class="error-msg" id="amountErr">Please enter a valid amount (minimum ₹1)</div>
+      <div class="error-msg" id="amountErr"  style="color:red; display:none;">Please enter a valid amount (minimum ₹1)</div>
       <button class="btn-modal-add" onclick="addMoneyToWallet()">Add Money</button>
     </div>
   </div>
@@ -415,7 +363,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <h5>Quick Links</h5>
       <a href="/">Home</a>
       <a href="/shop">Shop Books</a>
-      <a href="/about">About Us</a>
+      
     </div>
     <div class="footer-section">
       <h5>LitHeaven</h5>
@@ -426,6 +374,7 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
 /* ── ADD MONEY MODAL ── */
@@ -443,58 +392,270 @@ document.getElementById('addMoneyModal').addEventListener('click', function(e){
   if(e.target === this) closeAddMoneyModal();
 });
 
-function addMoneyToWallet(){
-  const amountInput = document.getElementById('addAmount');
-  const amountErr   = document.getElementById('amountErr');
-  const amount = parseFloat(amountInput.value);
-  amountErr.style.display = 'none';
-  if(!amountInput.value || isNaN(amount) || amount < 1){
-    amountErr.style.display = 'block';
+document.getElementById('addAmount').addEventListener('input', function(){
+  const errorMsg = document.getElementById('amountErr');
+
+  if(this.value && this.value > 0){
+    errorMsg.style.display = 'none';
+  }
+});
+const INITIAL_SHOW = 3;
+let allTransactions = [];
+let currentFilter = 'all';
+let expanded = false;
+
+function renderTransactions() {
+  const container = document.getElementById('historyList');
+  const filtered = currentFilter === 'all'
+    ? allTransactions
+    : allTransactions.filter(txn => txn.type === currentFilter);
+
+  const toShow = expanded ? filtered : filtered.slice(0, INITIAL_SHOW);
+
+  container.innerHTML = '';
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="padding:30px;text-align:center;color:#888">
+        <i class="fa-solid fa-receipt" style="font-size:30px;margin-bottom:10px"></i>
+        <p>No transactions found</p>
+      </div>`;
+    removeSeeMoreBtn();
     return;
   }
-  // Replace below with your actual fetch/API call
-  Swal.fire({
-    icon:'success',
-    title:'Money Added!',
-    text:`₹${amount} has been added to your wallet.`,
-    confirmButtonColor:'#6f2b67',
-    timer:1800
-  }).then(()=>{
-    closeAddMoneyModal();
-    // Update balance display (demo)
-    const current = parseFloat(document.getElementById('walletBalance').textContent) || 0;
-    document.getElementById('walletBalance').textContent = current + amount;
+
+  toShow.forEach(txn => {
+    const div = document.createElement('div');
+    div.className = 'transaction-item';
+    div.dataset.type = txn.type;
+    div.innerHTML = `
+      <div class="txn-left">
+        <div class="txn-icon ${txn.type}">
+          <i class="fa-solid ${txn.type === 'credit' ? 'fa-plus' : 'fa-minus'}"></i>
+        </div>
+        <div class="txn-details">
+          <div class="txn-id">Transaction ID ${txn.transactionId}</div>
+          <div class="txn-date">${new Date(txn.createdAt).toLocaleString()}</div>
+        <span class="txn-type ${txn.reason}">
+  ${
+    txn.reason === "referral_bonus"
+      ? "Referral Bonus"
+      : txn.reason === "topup"
+      ? "Wallet Topup"
+      : txn.reason === "refund"
+      ? "Refund"
+      : "Purchase"
+  }
+</span>
+        </div>
+      </div>
+      <div class="txn-amount ${txn.type}">
+        ${txn.type === 'credit' ? '+' : '-'}₹${txn.amount}
+      </div>`;
+    container.appendChild(div);
   });
+
+  renderSeeMoreBtn(filtered.length);
 }
 
-/* ── FILTER ── */
-function filterTransactions(){
-  const val = document.getElementById('txnFilter').value;
-  document.querySelectorAll('.transaction-item').forEach(item => {
-    const type = item.dataset.type;
-    if(val === 'all') item.style.display = 'flex';
-    else if(val === 'credit' && type === 'credit') item.style.display = 'flex';
-    else if(val === 'debit'  && type === 'debit')  item.style.display = 'flex';
-    else item.style.display = 'none';
-  });
+function renderSeeMoreBtn(total) {
+  removeSeeMoreBtn();
+  if (total <= INITIAL_SHOW) return;
+
+  const btn = document.createElement('div');
+  btn.id = 'seeMoreBtn';
+  btn.style.cssText = 'text-align:center;padding:14px;border-top:1px solid #f5f0f6;';
+  btn.innerHTML = `
+    <button onclick="toggleExpand()" style="background:none;border:none;color:#6f2b67;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+      <i class="fa-solid ${expanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i>
+      ${expanded ? 'See Less' : 'See More (' + (total - INITIAL_SHOW) + ' more)'}
+    </button>`;
+  document.querySelector('.history-card').appendChild(btn);
 }
+
+function removeSeeMoreBtn() {
+  const existing = document.getElementById('seeMoreBtn');
+  if (existing) existing.remove();
+}
+
+function toggleExpand() {
+  expanded = !expanded;
+  renderTransactions();
+}
+
+function filterTransactions() {
+  currentFilter = document.getElementById('txnFilter').value;
+  expanded = false;
+  renderTransactions();
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/wallet-data');
+    const data = await res.json();
+
+    document.getElementById('walletBalance').textContent = data.balance ? data.balance : 0;
+
+    const container = document.getElementById('historyList');
+
+    if (!data.transactions || data.transactions.length === 0) {
+      container.innerHTML = `
+        <div style="padding:30px;text-align:center;color:#888">
+          <i class="fa-solid fa-receipt" style="font-size:30px;margin-bottom:10px"></i>
+          <p>No transactions yet</p>
+        </div>`;
+      return;
+    }
+
+    allTransactions = data.transactions.slice().reverse();
+    renderTransactions();
+
+  } catch (err) {
+    console.log(err);
+    document.getElementById('historyList').innerHTML = `
+      <p style="padding:20px;color:red;">Failed to load wallet data</p>`;
+  }
+});
+
+async function addMoneyToWallet() {
+
+  const amount = document.getElementById('addAmount').value;
+
+  if (!amount || amount < 1) {
+    Swal.fire({
+  icon: "warning",
+  title: "Invalid Amount",
+  text: "Please enter valid amount",
+  confirmButtonColor: "#6f2b67"
+});
+    return;
+  }
+
+  const res = await fetch("/payment/razorpay-order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ amount })
+  });
+
+  const data = await res.json();
+  console.log("ORDER DATA:", data); 
+
+  if (!data.success) {
+Swal.fire({
+  icon: "warning",
+  title: "Error",
+  text: "Order creation failed",
+  confirmButtonColor: "#6f2b67"
+});
+    return;
+  }
+
+  const options = {
+    key:"<%= razorpayKey %>", 
+    amount: data.order.amount,
+    currency: "INR",
+    order_id: data.order.id,
+    name: "Wallet Topup",
+
+    handler: async function (response) {
+
+  const res2 = await fetch("/wallet/add-success", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      amount: data.order.amount / 100,
+      paymentId: response.razorpay_payment_id,
+      orderId: response.razorpay_order_id,
+      signature: response.razorpay_signature
+    })
+  });
+
+const result = await res2.json();
+
+console.log("BACKEND RESULT:", result);
+
+if (result.success) {
+
+  Swal.fire({
+    icon: "success",
+    title: "Success 🎉",
+    text: "Money added successfully 💰"
+  });
+
+  setTimeout(() => {
+    location.reload();
+  }, 2000);
+
+} else {
+
+  Swal.fire({
+    icon: "error",
+    title: "Backend Failed ❌",
+    text: result.message || "Wallet update failed"
+  });
+
+}
+
+  
+}
+
+
+  };
+
+  const rzp = new Razorpay(options);
+
+rzp.on("payment.failed", function (response) {
+
+  console.log("FAILED RESPONSE:", response);
+
+  Swal.fire({
+    icon: "error",
+    title: "Payment Failed ❌",
+    text: response?.error?.description || "Please try again",
+    confirmButtonColor: "#6f2b67"
+  });
+
+});
+
+  rzp.open();
+}
+
 
 /* ── LOGOUT ── */
-document.getElementById('logoutBtn')?.addEventListener('click', function(e){
-  e.preventDefault();
-  Swal.fire({
-    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
-    html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
-    imageUrl:"https://cdn-icons-png.flaticon.com/512/1828/1828479.png",
-    imageWidth:100,imageHeight:100,imageAlt:"Logout",
-    showCancelButton:true,
-    confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
-    confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",
-    reverseButtons:true,
-    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",
-    backdrop:"rgba(0,0,0,0.6)"
-  }).then(r=>{ if(r.isConfirmed) window.location.href="/logout"; });
-});
+document.getElementById('logoutBtn')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+        html: `
+          <p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p>
+          <p style="font-size:13px;color:#888">You can login again anytime.</p>
+        `,
+        imageUrl: "/images/go-out-thro-removebg-preview.png",
+        imageWidth: 130,
+        imageHeight: 130,
+        imageAlt: "Logout illustration",
+        showCancelButton: true,
+        confirmButtonText: "🚪 Logout",
+        cancelButtonText: "Stay Here",
+        confirmButtonColor: "#6f2b67",
+        cancelButtonColor: "#d6c3d3",
+        reverseButtons: true,
+        background: "linear-gradient(135deg, #f6eef6, #efe3f0)",
+        backdrop: "rgba(0,0,0,0.6)",
+        showClass: { popup: 'animate__animated animate__fadeInUp' },
+        hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/logout";
+        }
+      });
+    });
+
+
 
 /* ── HAMBURGER ── */
 const menuToggleP = document.getElementById('menuToggleP');

@@ -15,7 +15,158 @@
     .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:#fff;border-right:1px solid #6f2b67;padding:20px 0;overflow-y:auto;z-index:1000;transition:0.3s;}
     .sidebar::-webkit-scrollbar{width:5px;}
     .sidebar::-webkit-scrollbar-thumb{background:#6f2b67;border-radius:5px;}
-    
+    .dashboard-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-top:30px;
+}
+
+.dashboard-card{
+  background:#fff;
+  border:1px solid #6f2b67;
+  border-radius:14px;
+  padding:20px;
+}
+
+.dashboard-heading{
+  font-size:20px;
+  font-weight:700;
+  color:#5a2252;
+  margin-bottom:20px;
+}
+
+.top-product-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px;
+  border:1px solid rgba(111,43,103,0.1);
+  border-radius:16px;
+  margin-bottom:14px;
+  background:#fff;
+  transition:0.3s;
+}
+
+.top-product-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 25px rgba(111,43,103,0.12);
+}
+
+.top-product-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.top-product-image{
+  width:75px;
+  height:75px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid #eee;
+}
+
+.top-product-name{
+  font-size:18px;
+  font-weight:700;
+  color:#5a2252;
+  margin-bottom:5px;
+  text-transform:capitalize;
+}
+
+.top-product-price{
+  font-size:14px;
+  color:#444;
+  margin-bottom:3px;
+}
+
+.top-product-variant{
+  font-size:13px;
+  color:#888;
+}
+
+.top-product-right{
+  background:rgba(111,43,103,0.1);
+  color:#6f2b67;
+  padding:10px 16px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:700;
+}
+
+.subcategory-item{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid rgba(111,43,103,0.1);
+}
+
+.subcategory-name{
+  font-size:14px;
+  font-weight:600;
+  color:#5a2252;
+}
+
+.subcategory-count{
+  font-size:14px;
+  font-weight:700;
+  color:#6f2b67;
+}
+
+.subcategory-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px;
+  border:1px solid rgba(111,43,103,0.1);
+  border-radius:16px;
+  margin-bottom:14px;
+  background:#fff;
+  transition:0.3s;
+}
+
+.subcategory-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 25px rgba(111,43,103,0.12);
+}
+
+.subcategory-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.subcategory-image{
+  width:65px;
+  height:65px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid #eee;
+}
+
+.subcategory-title{
+  font-size:16px;
+  font-weight:700;
+  color:#5a2252;
+  margin-bottom:4px;
+  text-transform:capitalize;
+}
+
+.subcategory-small{
+  font-size:12px;
+  color:#888;
+}
+
+.subcategory-right{
+  background:rgba(111,43,103,0.1);
+  color:#6f2b67;
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:700;
+}
+
     .logo-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#6f2b67,#5a2252);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 25px rgba(111,43,103,0.5);padding:15px;}
     .book-logo{font-size:35px;color:#fff;margin-bottom:8px;}
     .logo-text{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1.5px;}
@@ -54,7 +205,7 @@
     .stat-value{font-size:24px;font-weight:800;color:#5a2252;}
     .stat-subtitle{font-size:10px;color:rgba(111,43,103,0.6);margin-top:5px;}
     
-    .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:30px;}
+    .charts-row{display:grid;grid-template-columns: 3fr 1fr;gap:20px;margin-bottom:30px;}
     .chart-card{background:#fff;border:1px solid #6f2b67;border-radius:12px;padding:25px;}
     .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
     .chart-title{font-size:18px;font-weight:700;}
@@ -193,9 +344,6 @@
     <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="/admin/admin" class="menu-item">
-      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-    </a>
     <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
@@ -211,7 +359,7 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="/admin/appSetting">App Settings</a>
+      
       <a href="/admin/language">Language</a>
     </div>
     
@@ -239,26 +387,26 @@
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
         <div class="stat-label">Total Orders</div>
-        <div class="stat-value">690</div>
+        <div class="stat-value" id="statOrders">—</div>
         <div class="stat-subtitle">Completed + Pending</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
         <div class="stat-label">Total User</div>
-        <div class="stat-value">5,000</div>
+        <div class="stat-value" id="statUsers">—</div>
         <div class="stat-subtitle">Total Customer Count</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
         <div class="stat-label">Total Earning</div>
-        <div class="stat-value">10,000</div>
+        <div class="stat-value" id="statEarning">—</div>
         <div class="stat-subtitle">Increase last week</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
         <div class="stat-label">Total Sales</div>
-        <div class="stat-value">4.8k</div>
-        <div class="stat-subtitle">Revenue increase this month</div>
+        <div class="stat-value" id="statSales">—</div>
+        <div class="stat-subtitle">Overall Order Amount</div>
       </div>
     </div>
     
@@ -268,187 +416,156 @@
           <div>
             <div class="chart-title">Weekly Sales</div>
             <div style="font-size:12px;color:rgba(111,43,103,0.6);margin-top:5px;">
-              Total Earning: <strong style="color:#5a2252;">41,512k</strong>
+              Total Earning: <strong id="chartEarning" style="color:#5a2252;">₹0</strong>
             </div>
           </div>
           <div class="chart-filter" onclick="toggleDropdown('weeklyFilter')">
             <i class="fas fa-chart-bar"></i> <span id="weeklyText">Today</span> <i class="fas fa-chevron-down" style="font-size:10px;"></i>
             <div class="dropdown-menu" id="weeklyFilter">
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Today')">Today</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Yesterday')">Yesterday</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last 7 Days')">Last 7 Days</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last 30 Days')">Last 30 Days</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','This Month')">This Month</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last Month')">Last Month</div>
-              <div class="dropdown-item" onclick="selectFilter('weeklyText','Last Year')">Last Year</div>
+             <div class="dropdown-item" onclick="loadChart('today')">Today</div>
+             <div class="dropdown-item" onclick="loadChart('yesterday')">Yesterday</div>
+             <div class="dropdown-item" onclick="loadChart('last7days')">Last 7 Days</div>
+             <div class="dropdown-item" onclick="loadChart('last30days')">Last 30 Days</div>
+             <div class="dropdown-item" onclick="loadChart('thismonth')">This Month</div>
+             <div class="dropdown-item" onclick="loadChart('lastmonth')">Last Month</div>
+             <div class="dropdown-item" onclick="loadChart('lastyear')">Last Year</div>
             </div>
           </div>
         </div>
-        <div class="chart-placeholder">
-          <div style="text-align:center;">
-            <i class="fas fa-chart-line" style="font-size:48px;margin-bottom:15px;"></i>
-            <div>Weekly Sales Chart</div>
-          </div>
+        <div style="height:300px;">
+         <canvas id="salesChart"></canvas>
         </div>
       </div>
       
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title">Orders Status</div>
+        </div> 
+        <div style="width:200px; height:200px; margin:0 auto; position:relative;">
+         <canvas id="donutChart"></canvas>
         </div>
-        <div class="donut-chart">
-          <svg viewBox="0 0 200 200" style="transform:rotate(-90deg);">
-            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(111,43,103,0.1)" stroke-width="30"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#6f2b67" stroke-width="30" stroke-dasharray="157 503"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#e74c3c" stroke-width="30" stroke-dasharray="50 610" stroke-dashoffset="-157"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#5a2252" stroke-width="30" stroke-dasharray="80 580" stroke-dashoffset="-207"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#2ecc71" stroke-width="30" stroke-dasharray="216 444" stroke-dashoffset="-287"/>
-          </svg>
-        </div>
-        <div>
-          <div class="legend-item">
-            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#6f2b67;"></div>Shipping</div>
-            <strong>32.8k (21%)</strong>
-          </div>
-          <div class="legend-item">
-            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#e74c3c;"></div>Refunds</div>
-            <strong>11 (11%)</strong>
-          </div>
-          <div class="legend-item">
-            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#5a2252;"></div>Order</div>
-            <strong>14.87 (1%)</strong>
-          </div>
-          <div class="legend-item">
-            <div style="display:flex;align-items:center;"><div class="legend-dot" style="background:#2ecc71;"></div>Income</div>
-            <strong>3,271 (861%)</strong>
-          </div>
-        </div>
+        <div id="donutLegend" style="margin-top:15px;"></div>
+     
+
       </div>
     </div>
     
-    <div class="table-card">
-      <div class="chart-header">
-        <div class="chart-title">Recent Order</div>
-        <div class="chart-filter" onclick="toggleDropdown('orderFilter')">
-          <span id="orderText">Today</span> <i class="fas fa-chevron-down" style="font-size:10px;"></i>
-          <div class="dropdown-menu" id="orderFilter">
-            <div class="dropdown-item" onclick="selectFilter('orderText','Today')">Today</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','Yesterday')">Yesterday</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','Last 7 Days')">Last 7 Days</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','Last 30 Days')">Last 30 Days</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','This Month')">This Month</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','Last Month')">Last Month</div>
-            <div class="dropdown-item" onclick="selectFilter('orderText','Last Year')">Last Year</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="table-wrapper">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th><input type="checkbox"></th>
-              <th>ORDER ID</th>
-              <th>PRODUCT NAME</th>
-              <th>ITEMS</th>
-              <th>ORDER DATE</th>
-              <th>PRICE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="checkbox"></td>
-              <td>#CT0023</td>
-              <td>Books</td>
-              <td>2 Items</td>
-              <td>28 Mar 2025</td>
-              <td>$00.00</td>
-              <td><span class="status-badge status-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"></td>
-              <td>#CT0024</td>
-              <td>Books</td>
-              <td>2 Items</td>
-              <td>28 Mar 2025</td>
-              <td>$00.00</td>
-              <td><span class="status-badge status-shipped">Shipped</span></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"></td>
-              <td>#CT0025</td>
-              <td>Books</td>
-              <td>2 Items</td>
-              <td>28 Mar 2025</td>
-              <td>$00.00</td>
-              <td><span class="status-badge status-shipped">Shipped</span></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"></td>
-              <td>#CT0026</td>
-              <td>Books</td>
-              <td>2 Items</td>
-              <td>28 Mar 2025</td>
-              <td>$00.00</td>
-              <td><span class="status-badge status-cancel">Cancel</span></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"></td>
-              <td>#CT0027</td>
-              <td>Books</td>
-              <td>2 Items</td>
-              <td>28 Mar 2025</td>
-              <td>$00.00</td>
-              <td><span class="status-badge status-processing">Processing</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
-      <div class="pagination">
-        <span style="font-size:13px;margin-right:10px;">1-10 of 46</span>
-        <button class="page-btn" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
-        <button class="page-btn" onclick="goToPage(1)">1</button>
-        <button class="page-btn" onclick="goToPage(2)">2</button>
-        <button class="page-btn" onclick="goToPage(3)">3</button>
-        <button class="page-btn">...</button>
-        <button class="page-btn" onclick="goToPage(5)">5</button>
-        <button class="page-btn" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
-      </div>
-    </div>
+<div class="dashboard-grid">
+
+  <div class="dashboard-card">
+
+    <h3 class="dashboard-heading">
+      Top Selling Products
+    </h3>
+
+    <div id="topProducts"></div>
+
   </div>
 
-  <div class="modal profile-modal" id="profileModal">
-    <div class="modal-content">
-      <button class="close-modal" onclick="closeProfile()">×</button>
-      <div class="profile-avatar">
-        <i class="fas fa-user"></i>
-        <div class="camera-icon" onclick="document.getElementById('fileInput').click()">
-          <i class="fas fa-camera"></i>
-        </div>
-      </div>
-      <input type="file" id="fileInput" class="profile-input" accept="image/*">
-      <div class="profile-name">App Admin</div>
-      <div class="profile-email">support@litheaven.com</div>
-      <button class="save-btn" onclick="closeProfile()">UPDATE PROFILE</button>
-    </div>
+  <div class="dashboard-card">
+
+    <h3 class="dashboard-heading">
+      Top Selling Categories
+    </h3>
+
+    <div id="topSubcategories"></div>
+
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</div>
+
+  </div>
+
+ 
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 
-let currentPage=1;
-function toggleMenu(id){document.getElementById(id).classList.toggle('show');}
-function toggleDropdown(id){event.stopPropagation();document.getElementById(id).classList.toggle('show');}
-function selectFilter(textId,value){document.getElementById(textId).textContent=value;document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));}
-function openProfile(){document.getElementById('profileModal').classList.add('show');}
-function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
-function goToPage(page){currentPage=page;document.querySelectorAll('.pagination .page-btn').forEach(btn=>{btn.textContent==page?btn.classList.add('active'):btn.classList.remove('active');});}
-function nextPage(){if(currentPage<5){currentPage++;goToPage(currentPage);}}
-function prevPage(){if(currentPage>1){currentPage--;goToPage(currentPage);}}
-document.addEventListener('click',()=>{document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));});
-goToPage(1);
+function toggleMenu(id) {
+  document.getElementById(id).classList.toggle('show')
+}
+
+// ── Dropdown close outside click ────────────────
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'))
+})
+
+function toggleDropdown(id) {
+  event.stopPropagation()
+  document.getElementById(id).classList.toggle('show')
+}
+
+
+let chartInstance = null
+
+
+async function loadChart(filter) {
+
+  const labels = {
+    today: 'Today', yesterday: 'Yesterday',
+    last7days: 'Last 7 Days', last30days: 'Last 30 Days',
+    thismonth: 'This Month', lastmonth: 'Last Month', lastyear: 'Last Year'
+  }
+  document.getElementById('weeklyText').textContent = labels[filter]
+  document.getElementById('weeklyFilter').classList.remove('show')
+
+  const res  = await fetch(`/admin/dashboard/chart-data?filter=${filter}`)
+  const data = await res.json()
+
+  if (!data.success) return
+
+  document.getElementById('chartEarning').textContent = '₹' + data.totalEarning.toLocaleString('en-IN')
+
+  if (chartInstance) chartInstance.destroy()
+
+  const ctx = document.getElementById('salesChart').getContext('2d')
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Sales ₹',
+        data: data.values,
+        backgroundColor: 'rgba(111,43,103,0.75)',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => '₹' + v, color: '#6f2b67' },
+          grid: { color: 'rgba(111,43,103,0.1)' }
+        },
+        x: {
+          ticks: { color: '#6f2b67', font: { size: 10 }, maxRotation: 45 },
+          grid: { display: false }
+        }
+      }
+    }
+  })
+}
+
+
+loadChart('today')
+
+
+async function loadDashboardCards() {
+  const res  = await fetch('/admin/dashboard/card-data')
+  const data = await res.json()
+
+  if (!data.success) return
+
+  document.getElementById('statOrders').textContent  = data.totalOrders.toLocaleString('en-IN')
+  document.getElementById('statUsers').textContent   = data.totalUsers.toLocaleString('en-IN')
+  document.getElementById('statEarning').textContent = '₹' + data.totalEarning.toLocaleString('en-IN')
+  document.getElementById('statSales').textContent   = '₹' + data.totalSales.toLocaleString('en-IN')
+}
+
+loadDashboardCards()
 
 
 document.getElementById('adminLogoutBtn').addEventListener('click', () => {
@@ -495,11 +612,212 @@ document.getElementById('adminLogoutBtn').addEventListener('click', () => {
 })
 
 
+
+
 window.onpageshow = function (event) {
   if (event.persisted) {
     window.location.reload();
   }
 };
+
+
+let donutInstance = null
+
+async function loadDonut() {
+  const res  = await fetch('/admin/dashboard/stats')
+  const data = await res.json()
+
+  if (!data.success) return
+
+  const statusMap = data.statusMap
+
+  
+  const colors = {
+    Processing : '#6c757d',
+    Shipped    : '#007bff',
+    Delivered  : '#2ecc71',
+    Cancelled  : '#e74c3c',
+    Returned   : '#6f2b67'
+  }
+
+  const labels = Object.keys(statusMap)    
+  const values = Object.values(statusMap)  
+  const total  = values.reduce((a, b) => a + b, 0)
+
+ 
+  if (donutInstance) donutInstance.destroy()
+
+  const ctx = document.getElementById('donutChart').getContext('2d')
+  donutInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: labels.map(l => colors[l]),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%',        
+      plugins: {
+        legend: { display: false },  
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0
+              return ` ${ctx.label}: ${ctx.raw} (${pct}%)`
+            }
+          }
+        }
+      }
+    }
+  })
+
+  const legendEl = document.getElementById('donutLegend')
+  legendEl.innerHTML = labels.map((label, i) => {
+    const pct = total > 0 ? ((values[i] / total) * 100).toFixed(1) : 0
+    return `
+      <div style="display:flex; justify-content:space-between; 
+                  padding:6px 0; font-size:13px; 
+                  border-bottom:1px solid rgba(111,43,103,0.1);">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:12px; height:12px; border-radius:50%; 
+                      background:${colors[label]};"></div>
+          ${label}
+        </div>
+        <strong style="color:#5a2252;">${values[i]} (${pct}%)</strong>
+      </div>
+    `
+  }).join('')
+}
+
+
+loadDonut()
+
+
+
+async function loadTopDashboard(){
+
+  const res = await fetch('/admin/dashboard/top-data')
+
+  const data = await res.json()
+
+  if(!data.success) return
+
+
+  // TOP PRODUCTS
+
+  const productContainer = document.getElementById('topProducts')
+
+  productContainer.innerHTML = ''
+
+  data.topProducts.forEach(product=>{
+
+   productContainer.innerHTML += `
+
+  <div class="top-product-card">
+
+    <div class="top-product-left">
+
+      <img 
+        src="${product.image}" 
+        class="top-product-image"
+      >
+
+      <div>
+
+        <div class="top-product-name">
+
+          ${product.productName}
+
+        </div>
+
+        <div class="top-product-price">
+
+          ₹${product.price}
+
+        </div>
+
+        <div class="top-product-variant">
+
+          Variant : ${product.variant}
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="top-product-right">
+
+      ${product.totalSold} Sold
+
+    </div>
+
+  </div>
+
+`
+  })
+
+
+  // SUBCATEGORY
+
+  const subContainer = document.getElementById('topSubcategories')
+
+  subContainer.innerHTML = ''
+
+  data.topSubcategories.forEach((sub,index)=>{
+
+    subContainer.innerHTML += `
+
+  <div class="subcategory-card">
+
+    <div class="subcategory-left">
+
+      <img 
+        src="${sub.subcategoryImage}" 
+        class="subcategory-image"
+      >
+
+      <div>
+
+        <div class="subcategory-title">
+
+          #${index + 1}
+          ${sub.subcategoryName}
+
+        </div>
+
+        <div class="subcategory-small">
+
+          Top Selling Subcategory
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="subcategory-right">
+
+      ${sub.totalSold} Sold
+
+    </div>
+
+  </div>
+
+`
+
+  })
+
+}
+
+loadTopDashboard()
+
 
 
 </script>

@@ -40,15 +40,25 @@ const orderSchema = new mongoose.Schema({
       format: String,
 
       price: Number,
+      originalPrice: Number, 
+      discount: Number, 
       quantity: Number,
       total: Number,
 
+      couponDiscount: {
+          type: Number,
+          default: 0
+      },
+      finalAmount:{
+         type:Number,
+         default:0
+      },
   
       mrp: Number,
 
       status: {
         type: String,
-        enum: ["Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
+        enum: ["Processing", "Shipped", "Delivered",  "Return Requested", "Cancelled", "Returned"],
         default: "Processing"
       },
 
@@ -59,6 +69,7 @@ const orderSchema = new mongoose.Schema({
   ],
 
   subtotal: Number,
+  offerDiscount: { type: Number, default: 0 },
   deliveryCharge: Number,
   discount: Number,
   totalAmount: Number,
@@ -79,7 +90,14 @@ const orderSchema = new mongoose.Schema({
 
   orderStatus: {
     type: String,
-    enum: ["Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
+    enum: [
+      "Processing", 
+      "Shipped", 
+      "Delivered",
+      "Cancelled",
+      "Returned",
+      "Return Requested"
+    ],
     default: "Processing"
   },
 

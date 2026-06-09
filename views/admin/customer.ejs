@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customers - LitHeaven</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:hidden;}
@@ -193,9 +195,7 @@
     <a href="/admin/author" class="menu-item">
       <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
     </a>
-    <a href="/admin/admin" class="menu-item">
-      <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-    </a>
+   
     <a href="/admin/customer" class="menu-item">
       <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
     </a>
@@ -211,11 +211,11 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="submenu" id="settMenu">
-      <a href="/admin/appSetting">App Settings</a>
+    
       <a href="/admin/language">Language</a>
     </div>
     
-    <button  id="adminLogoutBtn"  class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+   <button class="logout-btn" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
   </div>
 
   <div class="main-content">
@@ -249,7 +249,7 @@
         <div class="table-title">Customer List</div>
         <div class="table-search-wrapper">
         <i class="fas fa-search"></i>
-        <input type="text" class="table-search" placeholder="Search customers..." id="searchInput" />
+        <input type="text" class="table-search" placeholder="Search customers..." id="searchInput" oninput="this.value=this.value.replace(/[^a-zA-Z\s]/g,'')"/>
         </div>
       </div>
       
@@ -376,6 +376,7 @@
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
 
 const searchInput = document.getElementById('searchInput')
@@ -643,7 +644,7 @@ document.getElementById('adminLogoutBtn').addEventListener('click', () => {
           timer: 1200,
           showConfirmButton: false
         }).then(() => {
-          window.location.href = data.redirect
+          window.location.replace('/admin/login')
         })
 
       } catch (err) {
@@ -653,6 +654,7 @@ document.getElementById('adminLogoutBtn').addEventListener('click', () => {
     }
   })
 })
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 

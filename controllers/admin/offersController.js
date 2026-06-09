@@ -271,6 +271,7 @@ const getSubOff = async (req, res) => {
     let offers = await Offers.find({ type: "subcategory" })
       .populate('category', 'name')
       .populate('subCategory', 'name');
+      
 
     if (search) {
       const regex = new RegExp(search, "i");
@@ -759,7 +760,7 @@ const updateProductOffer = async (req, res) => {
     offer.product = product;
     offer.language = language;
 
-    // ✅ FIX HERE
+   
     offer.format = Array.isArray(format) ? format[0] : format;
 
     offer.offerName = offerName.toLowerCase().trim();

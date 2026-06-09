@@ -35,6 +35,10 @@
     .user-info{display:flex;align-items:center;gap:12px;cursor:pointer;margin-left:auto;}
     .user-avatar{width:45px;height:45px;border-radius:50%;border:2px solid #6f2b67;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:18px;}
 
+    .badge-active  {background:rgba(40,167,69,0.15);color:#28a745;}
+.badge-expired {background:rgba(220,53,69,0.15);color:#dc3545;}
+.badge-upcoming{background:rgba(255,193,7,0.15);color:#856404;}
+.badge-unlisted{background:rgba(108,117,125,0.15);color:#6c757d;}
     .add-btn{background:#6f2b67;color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:0.3s;white-space:nowrap;}
     .add-btn:hover{background:#5a2252;transform:translateY(-1px);box-shadow:0 4px 15px rgba(111,43,103,0.4);}
 
@@ -176,7 +180,7 @@
     <a href="/admin/productOff">Product Offers</a>
   </div>
   <a href="/admin/author" class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
-  <a href="/admin/admin" class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+  
   <a href="/admin/customer" class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
   <a href="/admin/salesReport" class="menu-item"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
   <div class="menu-item" onclick="toggleMenu('settMenu')">
@@ -184,7 +188,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+   
     <a href="/admin/language">Language</a>
   </div>
   <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
@@ -365,14 +369,24 @@ function getStatus(offer){
   today.setHours(0,0,0,0);
 
   const start = new Date(offer.startDate);
-  start.setHours(0,0,0,0)
-  const end = new Date(offer.endDate);
-  end.setHours(0,0,0,0)
+  start.setHours(0,0,0,0);
 
-  if(!offer.isListed) return "Unlisted";
-  if(today < start) return "Upcoming";
-  if(today > end) return "Expired";
-  return "Active";
+  const end = new Date(offer.endDate);
+  end.setHours(0,0,0,0);
+
+  if(!offer.isListed){
+    return `<span class="badge badge-unlisted">Unlisted</span>`;
+  }
+
+  if(today < start){
+    return `<span class="badge badge-upcoming">Upcoming</span>`;
+  }
+
+  if(today > end){
+    return `<span class="badge badge-expired">Expired</span>`;
+  }
+
+  return `<span class="badge badge-active">Active</span>`;
 }
 
 document.addEventListener('DOMContentLoaded', fetchCategoryOff);
@@ -717,14 +731,50 @@ document.getElementById("statusFilter").addEventListener("change", (e)=>{
 
   function toggleMenu(id) { document.getElementById(id).classList.toggle('show'); }
 
-  document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
-    if (!confirm('Are you sure you want to logout?')) return;
-    try {
-      const res  = await fetch('/admin/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-      const data = await res.json();
-      if (res.ok) window.location.href = data.redirect;
-    } catch (err) { console.error(err); }
-  });
+document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
+
 </script>
 </body>
 </html>

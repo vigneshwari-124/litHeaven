@@ -6,7 +6,7 @@
   <title>Sales Report - LitHeaven</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -187,7 +187,7 @@
     <a href="/admin/productOff">Product Offers</a>
   </div>
   <a href="/admin/author"      class="menu-item"><div class="menu-left"><i class="fas fa-user-tie"></i> Author</div></a>
-  <a href="/admin/admin"       class="menu-item"><div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div></a>
+ 
   <a href="/admin/customer"    class="menu-item"><div class="menu-left"><i class="fas fa-users"></i> Customers</div></a>
   <a href="/admin/salesReport" class="menu-item active"><div class="menu-left"><i class="fas fa-file-alt"></i> Sales Report</div></a>
   <div class="menu-item" onclick="toggleMenu('settMenu')">
@@ -195,7 +195,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+    
     <a href="/admin/language">Language</a>
   </div>
   <button id="adminLogoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
@@ -312,6 +312,7 @@
 
   </div>
 
+  
   <!-- Table Card -->
   <div class="table-card">
     <div class="table-header">
@@ -319,7 +320,7 @@
       <div class="table-actions">
         <div class="table-search-wrapper">
           <i class="fas fa-search"></i>
-          <input type="text" class="table-search" placeholder="Search order / customer..." id="searchInput" onkeyup="clientSearch()">
+          <input type="text" class="table-search" placeholder="Search order / customer..." id="searchInput" onkeypress="handleSearch(event)">
         </div>
         <button class="btn btn-red" onclick="downloadPDF()">
           <i class="fas fa-file-pdf"></i> PDF
@@ -358,338 +359,126 @@
       </table>
     </div>
 
-    <div class="pagination-bar">
-      <div id="showingInfo" class="showing-info"></div>
-      <div class="pagination" id="pagination"></div>
-    </div>
+    
   </div>
 
 </div><!-- end main-content -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  let currentPage  = 1;
-  let totalPages   = 1;
-  let allRows      = [];
-  let filteredRows = [];
+ 
 
-  /* ── Time Period quick-fill ── */
-  function applyQuickFilter() {
-    const val   = document.getElementById('quickFilter').value;
-    const today = new Date(); today.setHours(0,0,0,0);
-    let s = null, e = toISO(today);
+ async function fetchReport(){
 
-    if      (val === 'today')     { s = e = toISO(today); }
-    else if (val === 'yesterday') { const y=new Date(today); y.setDate(y.getDate()-1); s=e=toISO(y); }
-    else if (val === 'week')      { const mon=new Date(today); mon.setDate(today.getDate()-today.getDay()+(today.getDay()===0?-6:1)); s=toISO(mon); }
-    else if (val === 'month')     { s=toISO(new Date(today.getFullYear(),today.getMonth(),1)); }
-    else if (val === 'year')      { s=toISO(new Date(today.getFullYear(),0,1)); }
+    const startDate =
+    document.getElementById("startDate").value
 
-    if (s) { document.getElementById('startDate').value=s; document.getElementById('endDate').value=e; }
-  }
+    const endDate =
+    document.getElementById("endDate").value
 
-  /* ── Apply Date button ── */
-  function applyDateRange() {
-    const s = document.getElementById('startDate').value;
-    const e = document.getElementById('endDate').value;
-    if (!s || !e) {
-      Swal.fire({toast:true,position:'top-end',icon:'warning',title:'Please select both From and To dates',timer:2000,showConfirmButton:false});
-      return;
-    }
-    if (s > e) {
-      Swal.fire({toast:true,position:'top-end',icon:'warning',title:'"From" date cannot be after "To" date',timer:2200,showConfirmButton:false});
-      return;
-    }
-    Swal.fire({toast:true,position:'top-end',icon:'success',title:'Date range set — click Filter to load',timer:1800,showConfirmButton:false});
-  }
+    const period =
+    document.getElementById("quickFilter").value
 
-  function toISO(d){ return d.toISOString().split('T')[0]; }
+    const search =
+    document.getElementById("searchInput").value
 
-  /* ── Fetch Report ── */
-  async function fetchReport() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate   = document.getElementById('endDate').value;
+    const res = await fetch(
 
-    if (!startDate || !endDate) {
-      Swal.fire({toast:true,position:'top-end',icon:'warning',title:'Please select a date range first',timer:2000,showConfirmButton:false});
-      return;
-    }
+    `/admin/salesReport-data?startDate=${startDate}&endDate=${endDate}&period=${period}&search=${search}`
 
-    currentPage = 1;
-    showLoading();
+    )
 
-    try {
-      const res  = await fetch(`/admin/salesReport-data?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=10`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Server error');
+    const data = await res.json()
 
-      allRows      = data.orders || [];
-      filteredRows = [...allRows];
-      totalPages   = data.totalPages || 1;
+    document.getElementById("statOrders").innerText =data.totalOrders
+    document.getElementById("statRevenue").innerText ="₹" + data.totalRevenue
+    document.getElementById("statDiscount").innerText ="₹" + data.totalDiscount
+    document.getElementById("statReturns").innerText =data.totalReturns
 
-      renderTable(filteredRows);
-      renderPagination(totalPages);
+    const tbody =document.getElementById("reportTbody")
 
-    } catch (err) {
-      Swal.fire({toast:true,position:'top-end',icon:'error',title:err.message,timer:2500,showConfirmButton:false});
-      clearTable();
-    }
-  }
+    tbody.innerHTML = ""
 
-  function fmt(n){ return Number(n).toLocaleString('en-IN',{maximumFractionDigits:0}); }
+if(data.salesData.length === 0){
 
-  /* ── Render Table ── */
-  function renderTable(rows) {
-    const tbody = document.getElementById('reportTbody');
-    const tfoot = document.getElementById('reportTfoot');
-    tbody.innerHTML = '';
+    document.getElementById("reportTfoot").style.display = "none";
 
-    if (!rows.length) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="9">No orders found for the selected filters</td></tr>`;
-      tfoot.style.display = 'none';
-      document.getElementById('showingInfo').textContent = '';
-      return;
-    }
+    tbody.innerHTML = `
+    <tr class="empty-row">
+    <td colspan="9">
+    No Sales Data Found
+    </td>
+    </tr>
+    `
 
-    let totalNet = 0;
-    const perPage = 10;
-    const startIdx = (currentPage - 1) * perPage;
+    return
+}
 
-    rows.forEach((o, i) => {
-      const net = o.netAmount || o.totalAmount || o.totalCost || 0;
-      totalNet += net;
+    let grandTotal = 0;
 
-      const statusCls = {
-        delivered:'badge-delivered', shipped:'badge-shipped', processing:'badge-processing',
-        pending:'badge-pending', cancelled:'badge-cancelled', returned:'badge-returned'
-      }[o.status?.toLowerCase()] || 'badge-pending';
+data.salesData.forEach(item => {
+  grandTotal += Number(item.amount || 0);
+});
 
-      const firstName = o.firstName || (o.customerName||'').split(' ')[0] || '';
-      const lastName  = o.lastName  || (o.customerName||'').split(' ').slice(1).join(' ') || '';
-      const fullName  = (firstName + ' ' + lastName).trim() || '-';
-      const orderId   = o.orderId || o._id || '-';
+document.getElementById("reportTfoot").style.display = "";
 
-      tbody.innerHTML += `
+document.getElementById("footNet").innerText =
+  "₹" + grandTotal.toFixed(2);
+  
+    data.salesData.forEach((item,index)=>{
+
+        tbody.innerHTML += `
+
         <tr>
-          <td style="font-weight:600;color:#6f2b67;">${startIdx + i + 1}</td>
-          <td style="font-family:monospace;font-size:12px;color:#6f2b67;font-weight:600;">${orderId}</td>
-          <td>${fmtDate(o.createdAt || o.orderDate)}</td>
-          <td>${fullName}</td>
-          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.productName||'-'}">${o.productName || '-'}</td>
-          <td style="text-align:center;font-weight:600;">${o.quantity || o.noOfItems || 1}</td>
-          <td style="font-weight:700;">₹${fmt(net)}</td>
-          <td style="font-size:12px;">${o.paymentMethod || '-'}</td>
-          <td><span class="badge ${statusCls}">${cap(o.status)}</span></td>
-        </tr>`;
-    });
 
-    document.getElementById('footNet').textContent = '₹' + fmt(totalNet);
-    tfoot.style.display = '';
+        <td>${index+1}</td>
 
-    /* ── Update Stat Cards ── */
-    const allFiltered = filteredRows;
-    const totalOrders   = allFiltered.length;
-    const totalRevenue  = allFiltered.reduce((s,o)=>s+(o.netAmount||o.totalAmount||o.totalCost||0),0);
-    const totalDiscount = allFiltered.reduce((s,o)=>s+(o.discount||o.discountAmount||0),0);
-    const totalReturns  = allFiltered.filter(o=>['cancelled','returned'].includes((o.status||'').toLowerCase())).length;
-    document.getElementById('statOrders').textContent   = totalOrders;
-    document.getElementById('statRevenue').textContent  = '₹' + fmt(totalRevenue);
-    document.getElementById('statDiscount').textContent = totalDiscount ? '₹' + fmt(totalDiscount) : '₹0';
-    document.getElementById('statReturns').textContent  = totalReturns;
+        <td>${item.orderId}</td>
 
-    const totalEntries = filteredRows.length;
-    const from = startIdx + 1;
-    const to   = Math.min(startIdx + rows.length, totalEntries);
-    document.getElementById('showingInfo').textContent =
-      `Showing ${from} to ${to} of ${totalEntries} entries`;
-  }
+        <td>${new Date(item.date).toLocaleDateString('en-GB')}</td>
 
-  function fmtDate(str) {
-    if (!str) return '-';
-    const d = new Date(str);
-    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-  }
-  function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1).toLowerCase() : '-'; }
+        <td>${item.customer}</td>
 
-  /* ── Client Search ── */
-  function clientSearch() {
-    const q = document.getElementById('searchInput').value.toLowerCase().trim();
-    filteredRows = q
-      ? allRows.filter(o =>
-          (o.orderId||'').toLowerCase().includes(q) ||
-          (o._id||'').toString().toLowerCase().includes(q) ||
-          (o.customerName||'').toLowerCase().includes(q) ||
-          (o.firstName||'').toLowerCase().includes(q) ||
-          (o.lastName||'').toLowerCase().includes(q) ||
-          (o.productName||'').toLowerCase().includes(q)
-        )
-      : [...allRows];
-    currentPage = 1;
-    renderTable(filteredRows);
-    renderPagination(Math.ceil(filteredRows.length/10));
-  }
+        <td>${item.product}</td>
 
-  /* ── Pagination ── */
-  function renderPagination(total) {
-    totalPages = total;
-    const c = document.getElementById('pagination');
-    c.innerHTML = '';
-    if (total <= 1) return;
+        <td>${item.quantity}</td>
 
-    c.innerHTML += `<button class="page-btn prev-next" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>Previous</button>`;
+        <td>&#8377;${item.amount}</td>
 
-    const pages = [];
-    if (total <= 7) {
-      for (let i=1; i<=total; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('...');
-      for (let i=Math.max(2,currentPage-1); i<=Math.min(total-1,currentPage+1); i++) pages.push(i);
-      if (currentPage < total-2) pages.push('...');
-      pages.push(total);
-    }
+        <td>${item.payment}</td>
 
-    pages.forEach(p => {
-      if (p === '...') {
-        c.innerHTML += `<button class="page-btn" disabled>…</button>`;
-      } else {
-        c.innerHTML += `<button class="page-btn ${p===currentPage?'active':''}" onclick="changePage(${p})">${p}</button>`;
-      }
-    });
+        <td>${item.status}</td>
 
-    c.innerHTML += `<button class="page-btn prev-next" onclick="changePage(${currentPage+1})" ${currentPage===total?'disabled':''}>Next</button>`;
-  }
+        </tr>
 
-  function changePage(p) {
-    if (p<1||p>totalPages) return;
-    currentPage = p;
-    const slice = filteredRows.slice((p-1)*10, p*10);
-    renderTable(slice);
-    renderPagination(totalPages);
-  }
+        `
 
-  /* ── Loading / Clear ── */
-  function showLoading() {
-    document.getElementById('reportTbody').innerHTML = `
-      <tr><td colspan="9">
-        <div style="padding:40px;text-align:center;color:#8e4a86;">
-          <i class="fas fa-spinner fa-spin" style="font-size:28px;margin-bottom:10px;display:block;"></i>
-          Loading report...
-        </div>
-      </td></tr>`;
-    document.getElementById('reportTfoot').style.display='none';
-    document.getElementById('pagination').innerHTML='';
-    document.getElementById('showingInfo').textContent='';
-  }
+    })
 
-  function clearTable() {
-    document.getElementById('reportTbody').innerHTML=`<tr class="empty-row"><td colspan="9">No data to display</td></tr>`;
-    document.getElementById('reportTfoot').style.display='none';
-    document.getElementById('pagination').innerHTML='';
-    document.getElementById('showingInfo').textContent='';
-    ['statOrders','statRevenue','statDiscount','statReturns'].forEach(id=>document.getElementById(id).textContent='—');
-  }
+}
 
-  /* ── Reset ── */
-  function resetFilters() {
-    document.getElementById('quickFilter').value = '';
-    document.getElementById('startDate').value   = '';
-    document.getElementById('endDate').value     = '';
-    document.getElementById('searchInput').value = '';
-    allRows=[]; filteredRows=[];
-    clearTable();
-    document.getElementById('pagination').innerHTML='';
-  }
+function applyDateRange(){
 
-  /* ── Export PDF ── */
-  function downloadPDF() {
-    if (!filteredRows.length) {
-      Swal.fire({toast:true,position:'top-end',icon:'warning',title:'No data to export',timer:2000,showConfirmButton:false});
-      return;
-    }
-    const {jsPDF} = window.jspdf;
-    const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-    doc.setFillColor(111,43,103);
-    doc.rect(0,0,297,20,'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(14); doc.setFont(undefined,'bold');
-    doc.text('LitHeaven — Sales Report',14,13);
-    doc.setFontSize(9); doc.setFont(undefined,'normal');
-    const start=document.getElementById('startDate').value;
-    const end=document.getElementById('endDate').value;
-    doc.text(`Period: ${start||'—'} to ${end||'—'}   Generated: ${new Date().toLocaleString('en-IN')}`,140,13);
+   fetchReport()
 
-    const head=[['S.NO','ORDER ID','DATE','CUSTOMER','PRODUCT','QTY','AMOUNT','PAYMENT','STATUS']];
-    const body=filteredRows.map((o,i)=>{
-      const net=o.netAmount||o.totalAmount||o.totalCost||0;
-      const firstName=o.firstName||(o.customerName||'').split(' ')[0]||'';
-      const lastName=o.lastName||(o.customerName||'').split(' ').slice(1).join(' ')||'';
-      const fullName=(firstName+' '+lastName).trim()||'-';
-      const orderId=o.orderId||o._id||'-';
-      return [
-        i+1,
-        orderId,
-        fmtDate(o.createdAt||o.orderDate),
-        fullName,
-        (o.productName||'-').substring(0,30),
-        o.quantity||o.noOfItems||1,
-        '₹'+fmt(net),
-        o.paymentMethod||'-',
-        cap(o.status)
-      ];
-    });
+}
 
-    doc.autoTable({
-      head, body, startY:26,
-      styles:{fontSize:8,cellPadding:3},
-      headStyles:{fillColor:[111,43,103],textColor:255,fontStyle:'bold'},
-      alternateRowStyles:{fillColor:[248,244,255]}
-    });
-    doc.save(`LitHeaven_SalesReport_${start}_${end}.pdf`);
-  }
+function resetFilters(){
 
-  /* ── Export Excel ── */
-  function downloadExcel() {
-    if (!filteredRows.length) {
-      Swal.fire({toast:true,position:'top-end',icon:'warning',title:'No data to export',timer:2000,showConfirmButton:false});
-      return;
-    }
-    const start=document.getElementById('startDate').value;
-    const end=document.getElementById('endDate').value;
-    const wsData=[
-      ['LitHeaven - Sales Report'],
-      [`Period: ${start} to ${end}`],
-      [`Generated: ${new Date().toLocaleString('en-IN')}`],
-      [],
-      ['S.NO','ORDER ID','DATE','CUSTOMER','PRODUCT','QTY','AMOUNT','PAYMENT','STATUS']
-    ];
-    filteredRows.forEach((o,i)=>{
-      const net=o.netAmount||o.totalAmount||o.totalCost||0;
-      const firstName=o.firstName||(o.customerName||'').split(' ')[0]||'';
-      const lastName=o.lastName||(o.customerName||'').split(' ').slice(1).join(' ')||'';
-      const fullName=(firstName+' '+lastName).trim()||'-';
-      const orderId=o.orderId||o._id||'-';
-      wsData.push([
-        i+1,
-        orderId,
-        fmtDate(o.createdAt||o.orderDate),
-        fullName,
-        o.productName||'-',
-        o.quantity||o.noOfItems||1,
-        net,
-        o.paymentMethod||'-',
-        cap(o.status)
-      ]);
-    });
-    const wb=XLSX.utils.book_new();
-    const ws=XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols']=[6,20,12,20,30,6,12,16,12].map(w=>({wch:w}));
-    XLSX.utils.book_append_sheet(wb,ws,'Sales Report');
-    XLSX.writeFile(wb,`LitHeaven_SalesReport_${start}_${end}.xlsx`);
-  }
+   document.getElementById("startDate").value = ""
 
-  /* ── Sidebar + Logout (same as dashboard) ── */
-  function toggleMenu(id){ document.getElementById(id).classList.toggle('show'); }
+   document.getElementById("endDate").value = ""
+
+   document.getElementById("quickFilter").value = ""
+
+   document.getElementById("searchInput").value = ""
+
+   fetchReport()
+
+}
+
+
+  window.onload = fetchReport
 
   document.getElementById('adminLogoutBtn').addEventListener('click', () => {
     Swal.fire({
@@ -721,9 +510,217 @@
     });
   });
 
-  window.onpageshow = function(event) {
-    if (event.persisted) { window.location.reload(); }
-  };
+
+function handleSearch(event){
+
+   if(event.key === "Enter"){
+
+      fetchReport()
+
+   }
+
+}
+
+ function toggleMenu(id){ document.getElementById(id).classList.toggle('show'); }
+
+
+async function downloadPDF(){
+
+    const { jsPDF } = window.jspdf
+
+    const doc = new jsPDF()
+
+    // HEADER
+
+    doc.setFontSize(28)
+
+    doc.text("XEMART - SALES REPORT",14,20)
+
+    doc.setFontSize(12)
+
+    doc.text(
+        "Report Period: Auto Selected",
+        14,
+        35
+    )
+
+    doc.text(
+        `Generated On: ${new Date().toLocaleDateString('en-GB')}`,
+        140,
+        35
+    )
+
+    // SUMMARY TITLE
+
+    doc.setFontSize(18)
+
+    doc.text("SUMMARY",14,55)
+
+    doc.line(14,60,195,60)
+
+    // SUMMARY DATA
+
+    const totalOrders =
+    document.getElementById("statOrders").innerText
+
+    const totalRevenue =
+    document.getElementById("statRevenue")
+    .innerText
+    .replace(/[₹,\s]/g,"")
+
+    const totalDiscount =
+    document.getElementById("statDiscount")
+    .innerText
+    .replace(/[₹,\s]/g,"")
+
+    const avgOrderValue = (
+
+        Number(totalRevenue) /
+
+        Number(totalOrders || 1)
+
+    ).toFixed(2)
+
+    // SUMMARY TABLE
+
+    doc.autoTable({
+
+        startY:70,
+
+        body:[
+
+            ["Total Orders", totalOrders],
+
+            ["Total Revenue", "Rs. " + totalRevenue],
+
+            ["Total Discount", "Rs. " + totalDiscount],
+
+            ["Avg. Order Value", "Rs. " + avgOrderValue]
+
+        ],
+
+        theme:"grid",
+
+        styles:{
+            fontSize:12
+        },
+
+        columnStyles:{
+            0:{
+                fontStyle:"bold"
+            }
+        }
+
+    })
+
+    // ORDER DETAILS TITLE
+
+    const finalY =
+    doc.lastAutoTable.finalY + 20
+
+    doc.setFontSize(18)
+
+    doc.text("ORDER DETAILS",14,finalY)
+
+    doc.line(14,finalY + 5,195,finalY + 5)
+
+    // TABLE DATA
+
+    const rows = []
+
+    const tableRows =
+    document.querySelectorAll("#reportTbody tr")
+
+    tableRows.forEach((row,index)=>{
+
+        const cols = row.querySelectorAll("td")
+
+        if(cols.length === 9){
+
+            rows.push([
+
+                index + 1,
+
+                cols[3].innerText,
+
+                cols[2].innerText,
+
+                cols[4].innerText,
+
+                cols[5].innerText,
+
+                "Rs. " + cols[6]
+                .innerText
+                .replace(/[₹,\s]/g,""),
+
+                cols[7].innerText
+
+            ])
+
+        }
+
+    })
+
+    // MAIN TABLE
+
+    doc.autoTable({
+
+        startY:finalY + 15,
+
+        head:[[
+
+            "S.NO",
+            "NAME",
+            "DELIVERY DATE",
+            "PRODUCT NAME",
+            "QUANTITY",
+            "TOTAL",
+            "PAYMENT METHOD"
+
+        ]],
+
+        body:rows,
+
+        theme:"grid",
+
+        headStyles:{
+
+            fillColor:[0,0,0],
+
+            textColor:[255,255,255],
+
+            fontStyle:"bold"
+
+        },
+
+        styles:{
+
+            fontSize:10,
+
+            cellPadding:4
+
+        }
+
+    })
+
+    // SAVE PDF
+
+    doc.save("sales-report.pdf")
+
+}
+
+function downloadExcel(){
+
+    const table =
+    document.getElementById("reportTable")
+
+    const workbook =
+    XLSX.utils.table_to_book(table,{sheet:"Sales Report"})
+
+    XLSX.writeFile(workbook,"sales-report.xlsx")
+
+}
+
 </script>
 </body>
 </html>

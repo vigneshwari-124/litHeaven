@@ -210,9 +210,7 @@
   <a href="/admin/author" class="menu-item">
     <div class="menu-left"><i class="fas fa-user-tie"></i> Author</div>
   </a>
-  <a href="/admin/admin" class="menu-item">
-    <div class="menu-left"><i class="fas fa-user-shield"></i> Admin</div>
-  </a>
+  
   <a href="/admin/customer" class="menu-item">
     <div class="menu-left"><i class="fas fa-users"></i> Customers</div>
   </a>
@@ -225,7 +223,7 @@
     <i class="fas fa-chevron-down"></i>
   </div>
   <div class="submenu" id="settMenu">
-    <a href="/admin/appSetting">App Settings</a>
+    
     <a href="/admin/language">Language</a>
   </div>
 
@@ -779,14 +777,50 @@ async function deleteCoupon(id){
   
   function toggleMenu(id){ document.getElementById(id).classList.toggle('show'); }
 
-  document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
-    if(!confirm('Are you sure you want to logout?')) return;
-    try {
-      const res  = await fetch('/admin/logout', { method:'POST', headers:{'Content-Type':'application/json'} });
-      const data = await res.json();
-      if(res.ok) window.location.href = data.redirect;
-    } catch(err){ console.error(err); }
-  });
+ document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out from admin panel",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#6f2b67",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, Logout"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch('/admin/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          Swal.fire("Error", data.message, "error")
+          return
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Logged out",
+          timer: 1200,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.replace('/admin/login')
+        })
+
+      } catch (err) {
+        console.log(err)
+        Swal.fire("Error", "Something went wrong", "error")
+      }
+    }
+  })
+})
+
+
 </script>
 </body>
 </html>

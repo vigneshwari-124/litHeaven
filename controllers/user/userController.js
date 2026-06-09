@@ -3,9 +3,11 @@ const Otp  = require('../../models/Otp_temp')
 const Product = require("../../models/Product")
 const Offers=require('../../models/Offers')
 const Review=require('../../models/Review')
+const Wallet = require('../../models/Wallet');
 const bcrypt=require('bcrypt')
 const Category = require("../../models/Categories");
 const sendOtpMail=require('../../utils/sendMail')
+const generateReferralCode =require('../../utils/generateReferralCode');
 const passport = require('passport')
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +20,7 @@ const getSignup=(req,res)=>{
 
 const postSignup=async (req,res)=>{
   try{
-    const {name,email,phone,password}=req.body;
+    const {name,email,phone,password,referralCode}=req.body;
     let user=await User.findOne({email})
     if(user && user.isVerified){
         return res.status(400).json({
@@ -39,12 +41,24 @@ const postSignup=async (req,res)=>{
     
    if(!user){
     const hashedPassword=await bcrypt.hash(password,10)
+    let myReferralCode;
+    let exists;
+
+do {
+  myReferralCode = generateReferralCode(name);
+
+  exists = await User.findOne({
+    referralCode: myReferralCode
+  });
+
+} while (exists);
     user=await User.create({
       name,
       email,
       phone,
       password:hashedPassword,
-      isVerified:false
+      isVerified:false,
+      referralCode: myReferralCode
     })
    }else{
     user.name=name;
@@ -73,6 +87,8 @@ const postSignup=async (req,res)=>{
     expiresAt:new Date(Date.now()+60*1000)
    })
 
+
+   req.session.referralCode = referralCode || null;
 
     req.session.otpUserId=user._id
     req.session.otpPurpose = 'signup';  
@@ -127,12 +143,27 @@ const getOtp=async(req,res)=>{
     return res.redirect(redirectMap[purpose] || '/signup')
   }
 
+let email = "";
 
-  
-  res.render('user/otp',{
-    email:user.email,
-    otpExpiresAt:otpDoc.expiresAt.getTime()
-  })
+if (purpose === "profile-email") {
+  email = req.session.pendingEmail;
+} else {
+  let user = await User.findById(req.session.otpUserId)
+    .select("email")
+    .lean();
+
+  if (!user) {
+    return res.redirect("/signup");
+  }
+
+  email = user.email;
+}
+
+res.render("user/otp", {
+  email,
+  otpExpiresAt: otpDoc.expiresAt.getTime()
+});
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,22 +212,92 @@ const postOtp = async (req, res) => {
     let redirectUrl = '/';
     let successMessage = 'OTP verified successfully';
 
-    if (otpDoc.purpose === "signup") {
+ if (otpDoc.purpose === "signup") {
 
-      user.isVerified = true
-      await user.save()
+  const referralCode = req.session.referralCode;
 
-      req.session.userId = user._id
-      req.session.isLoggedIn = true
-      
-      redirectUrl = '/';
-      successMessage = 'Account verified successfully!';
-  
-    }else if (purpose === 'forgot') {
+  if (referralCode) {
+
+    const referrer = await User.findOne({
+      referralCode: referralCode.trim().toUpperCase()
+    });
+
+    if (!referrer) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid referral code"
+      });
+    }
+
+    if (String(referrer._id) === String(user._id)) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot use your own referral code"
+      });
+    }
+
+    if (user.referredBy) {
+      return res.status(400).json({
+        success: false,
+        message: "Referral code already used"
+      });
+    }
+
+    user.referredBy = referrer._id;
+
+    let wallet = await Wallet.findOne({
+      userId: referrer._id
+    });
+
+    if (!wallet) {
+
+      wallet = new Wallet({
+        userId: referrer._id,
+        balance: 0,
+        transactions: []
+      });
+
+    }
+
+  const alreadyRewarded = wallet.transactions.find(
+  t =>
+    t.reason === "referral_bonus" &&
+    t.transactionId === String(user._id)
+);
+
+if (!alreadyRewarded) {
+
+  wallet.balance += 100;
+
+  wallet.transactions.push({
+    transactionId: String(user._id),
+    type: "credit",
+    amount: 100,
+    reason: "referral_bonus"
+  });
+
+  await wallet.save();
+
+}
+
+}
+
+  user.isVerified = true;
+  await user.save();
+
+  delete req.session.referralCode;
+
+  req.session.userId = user._id;
+  req.session.isLoggedIn = true;
+
+  redirectUrl = '/';
+  successMessage = 'Account verified successfully!';
+    
+}else if (purpose === 'forgot') {
       req.session.allowPasswordReset = true;
       redirectUrl = '/reset-password';
       successMessage = 'OTP verified! Set your new password';
-    }else if (purpose === "profile-email") {
+}else if (purpose === "profile-email") {
       user.email = req.session.pendingEmail;
       await user.save();
 
@@ -204,7 +305,7 @@ const postOtp = async (req, res) => {
 
       redirectUrl = '/profile';
       successMessage = 'Email updated successfully';
-    }
+}
 
 
      delete req.session.otpPurpose;
@@ -386,8 +487,13 @@ const getHome = async (req, res) => {
   })
   .sort({ createdAt: -1 });
 
-  const offers = await Offers.find({isListed: true});
+const now = new Date()
 
+const offers = await Offers.find({
+  isListed: true,
+  startDate: { $lte: now },
+  endDate: { $gte: now }
+})
 const bestSellers = await Promise.all(
   products
     .filter(p => p.author && p.category && p.subCategory)
@@ -418,7 +524,7 @@ const bestSellers = await Promise.all(
       )
 
       let subCategoryOffer = offers.find(o =>
-        o.type === "subCategory" &&
+        o.type === "subcategory" &&
         String(o.subCategory) === String(p.subCategory._id) &&
         o.isListed
       )
@@ -429,8 +535,33 @@ const bestSellers = await Promise.all(
         o.isListed
       )
 
-      let finalOffer = productOffer || subCategoryOffer || categoryOffer
-      let discount = finalOffer ? finalOffer.discount : 0
+     const offerList = []
+
+if(productOffer){
+
+  offerList.push(productOffer.discount)
+
+}
+
+if(subCategoryOffer){
+
+  offerList.push(subCategoryOffer.discount)
+
+}
+
+if(categoryOffer){
+
+  offerList.push(categoryOffer.discount)
+
+}
+
+let discount = 0
+
+if(offerList.length > 0){
+
+  discount = Math.max(...offerList)
+
+}
       let basePrice = p.variants[0]?.formats[0]?.price || 0
       let offerPrice = basePrice - (basePrice * discount / 100)
 
@@ -454,6 +585,12 @@ const bestSellers = await Promise.all(
       path: "parentCategory",
      match: { isDeleted: false }
     });
+
+    console.log("Featured Categories Count:", featuredCategories.length);
+
+    featuredCategories.forEach(cat => {
+  console.log(cat.name, cat.isFeatured);
+});
 
     const validFeaturedCategories = featuredCategories.filter(
        c => c.parentCategory
