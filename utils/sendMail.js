@@ -1,13 +1,10 @@
 const nodemailer=require('nodemailer')
 
-console.log("EMAIL:", process.env.EMAIL)
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "LOADED" : "NOT LOADED")
-
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASS // App Password
+    pass: process.env.EMAIL_PASS 
   }
 });
 
