@@ -21,6 +21,7 @@ const getSignup=(req,res)=>{
 const postSignup=async (req,res)=>{
   try{
     const {name,email,phone,password,referralCode}=req.body;
+    console.log(req.body);
     let user=await User.findOne({email})
     if(user && user.isVerified){
         return res.status(400).json({
@@ -215,12 +216,17 @@ const postOtp = async (req, res) => {
  if (otpDoc.purpose === "signup") {
 
   const referralCode = req.session.referralCode;
+  console.log("Referral Code:", referralCode);
 
   if (referralCode) {
 
     const referrer = await User.findOne({
       referralCode: referralCode.trim().toUpperCase()
     });
+
+    
+    console.log("User:", user._id);
+    console.log("Referrer:", referrer?._id);
 
     if (!referrer) {
       return res.status(400).json({
@@ -277,6 +283,38 @@ if (!alreadyRewarded) {
   });
 
   await wallet.save();
+
+  let newUserWallet = await Wallet.findOne({
+  userId: user._id
+});
+
+if (!newUserWallet) {
+  newUserWallet = new Wallet({
+    userId: user._id,
+    balance: 0,
+    transactions: []
+  });
+}
+
+const alreadyGotBonus = newUserWallet.transactions.find(
+  t =>
+    t.reason === "referral_bonus" &&
+    t.transactionId === `REF-${referrer._id}`
+);
+
+if (!alreadyGotBonus) {
+
+  newUserWallet.balance += 50;
+
+  newUserWallet.transactions.push({
+    transactionId: `REF-${referrer._id}`,
+    type: "credit",
+    amount: 50,
+    reason: "referral_bonus"
+  });
+
+  await newUserWallet.save();
+}
 
 }
 

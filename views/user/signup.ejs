@@ -119,9 +119,15 @@ body::before {
         <div class="error" id="phoneErr"></div>
       </div>
 
-      <div class="mb-2">
-        <input type="text" class="form-control" placeholder="Referral Code (optional)"  autocomplete="off">
-      </div>
+<div class="mb-2">
+  <input
+  type="text"
+  id="referralCode"
+  name="referralCode"
+  class="form-control"
+  placeholder="Referral Code (optional)"
+  autocomplete="off">     
+</div>
 
       <button type="submit" id="submitBtn" class="btn btn-purple w-100">Sign Up</button>
 
@@ -173,6 +179,8 @@ const emailErr = document.getElementById("emailErr");
 const phoneErr = document.getElementById("phoneErr");
 const passwordErr = document.getElementById("passwordErr");
 const signupForm=document.getElementById("signupForm");
+
+const referralCodeField =document.getElementById("referralCode");
 
 nameField.addEventListener("input",()=>{
   nameField.value = nameField.value.replace(/[^a-zA-Z\s]/g, "")
@@ -272,7 +280,8 @@ signupForm.addEventListener('submit',async(e)=>{
     name:nameField.value,
     email:emailField.value,
     phone:phoneField.value,
-    password:passwordField.value
+    password:passwordField.value,
+    referralCode: referralCodeField.value
 
   }
  try{
