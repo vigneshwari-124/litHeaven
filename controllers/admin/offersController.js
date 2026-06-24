@@ -270,7 +270,8 @@ const getSubOff = async (req, res) => {
 
     let offers = await Offers.find({ type: "subcategory" })
       .populate('category', 'name')
-      .populate('subCategory', 'name');
+      .populate('subCategory', 'name')
+      .sort({ createdAt: -1 });;
       
 
     if (search) {
