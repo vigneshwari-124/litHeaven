@@ -181,8 +181,6 @@ const reduceStock = async (items) => {
 
 }
 
-
-
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -246,8 +244,12 @@ const placeOrder = async (req, res) => {
       if (!formatData) throw new Error("Format not found");
 
       if (formatData.stock < item.quantity) {
-        throw new Error(`${product.title} out of stock`);
-      }
+    return res.status(200 ).json({
+        success: false,
+        outOfStock: true,
+        message: `${product.title} is out of stock`
+    });
+}
 
       const originalPrice = formatData.price;
 
@@ -455,6 +457,57 @@ if (fixedPayment === "COD") {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+const checkStock = async (req, res) => {
+ console.log("CHECK STOCK API CALLED");
+ 
+   const cart = await Cart.findOne({ userId: req.session.userId })
+      .populate({
+         path: "items.productId",
+         populate: { path: "variants.language" }
+      });
+
+   for (const item of cart.items) {
+
+      const product = item.productId;
+
+      const variant = product.variants.find(v => {
+
+   const vLang = v.language?._id
+      ? v.language._id.toString()
+      : v.language.toString();
+
+   const cartLang = item.languageId?._id
+      ? item.languageId._id.toString()
+      : item.languageId.toString();
+
+   return vLang === cartLang;
+
+});
+
+if (!variant) continue;
+
+const format = variant.formats.find(f =>
+   f.format === item.format
+);
+
+if (!format) continue;
+
+if (format.stock < item.quantity) {
+
+   return res.json({
+      outOfStock: true,
+      message: `${product.title} is out of stock`
+   });
+
+}
+   }
+
+   res.json({
+      outOfStock: false
+   });
+
+}
 
 const verifyPayment = async (req, res) => {
   try {
@@ -905,8 +958,56 @@ const retryPayment = async (req, res) => {
   }
 };
 
+const checkStockStatus = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    const cart = await Cart.findOne({ userId })
+      .populate({
+        path: "items.productId",
+        populate: [{ path: "variants.language" }]
+      })
+      .populate("items.languageId");
+
+    if (!cart || cart.items.length === 0) {
+      return res.json({ outOfStock: false });
+    }
+
+    for (const item of cart.items) {
+      const product = item.productId;
+      if (!product) continue;
+
+      const variant = product.variants.find(v => {
+        const vLang = v.language?._id ? v.language._id.toString() : v.language.toString();
+        const cartLang = item.languageId?._id ? item.languageId._id.toString() : item.languageId.toString();
+        return vLang === cartLang;
+      });
+
+      if (!variant) continue;
+
+      const formatData = variant.formats.find(f => f.format === item.format);
+
+      if (!formatData || formatData.stock < item.quantity) {
+        return res.json({
+          outOfStock: true,
+          message: `${product.title} is out of stock`
+        });
+      }
+    }
+
+    return res.json({ outOfStock: false });
+
+  } catch (err) {
+    console.log("CHECK STOCK ERROR:", err);
+    res.status(500).json({ outOfStock: false });
+  }
+};
+
+
 module.exports={
     checkoutPage,
+    checkStockStatus,
+    checkStock,
     placeOrder,
     orderPage,
     getUserOrders,
@@ -919,5 +1020,4 @@ module.exports={
     verifyPayment,
     paymentFailed,
     retryPayment
-   
 }

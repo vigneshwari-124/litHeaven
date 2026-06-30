@@ -24,7 +24,7 @@ body{
   color:#6f2b67;
   padding:20px;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 body::before {
@@ -45,7 +45,7 @@ body::before {
 .book-logo{width:28px;filter:brightness(0) saturate(100%) invert(21%) sepia(47%) saturate(1789%) hue-rotate(285deg) brightness(85%) contrast(92%);}
 .logo-text{position:absolute;bottom:3px;font-size:6px;font-weight:800;color:#6f2b67;letter-spacing:0.6px;text-transform:uppercase;}
 .tagline{position:absolute;bottom:0px;font-size:3px;font-weight:600;color:#6f2b67;letter-spacing:0.4px;text-transform:uppercase;opacity:0.85;}
-.container-box{max-width:480px;width:100%;border:2px solid #6f2b67;border-radius:16px;padding:10px 24px;box-shadow:0 8px 30px rgba(111,43,103,0.18);background:#fff;}
+.container-box{max-width:480px;width:100%;border:2px solid #6f2b67;border-radius:16px;padding:10px 24px 20px;box-shadow:0 8px 30px rgba(111,43,103,0.18);background:#fff;overflow: visible;}
 .title{font-size:18px;font-weight:700;margin-bottom:8px;text-align:center;margin-top:3px;color:#6f2b67;}
 .title-animated{display:inline-block;opacity:0;animation:fadeIn 0.5s forwards;}
 .form-control{background:#fff;border:2px solid #d8b5d8;color:#6f2b67;border-radius:50px;padding:6px 16px;height:32px;font-size:12px;transition:all 0.3s;}
@@ -114,6 +114,12 @@ body::before {
         <div class="error" id="passwordErr"></div>
       </div>
 
+      <div class="mb-2 password-wrapper">
+        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="new-password">
+        <i class="fas fa-eye eye-icon" id="toggleConfirmPassword"></i>
+        <div class="error" id="confirmPasswordErr"></div>
+      </div>
+
       <div class="mb-2">
         <input type="tel" id="phone" class="form-control" name="phone" placeholder="Phone Number"  autocomplete="off" >
         <div class="error" id="phoneErr"></div>
@@ -180,6 +186,10 @@ const phoneErr = document.getElementById("phoneErr");
 const passwordErr = document.getElementById("passwordErr");
 const signupForm=document.getElementById("signupForm");
 
+const confirmPasswordField = document.getElementById("confirmPassword");
+const confirmPasswordErr = document.getElementById("confirmPasswordErr");
+const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
 const referralCodeField =document.getElementById("referralCode");
 
 nameField.addEventListener("input",()=>{
@@ -231,6 +241,27 @@ passwordField.addEventListener("input",()=>{
   }else{
     passwordErr.innerHTML="";
   }
+
+  if (
+    confirmPasswordField.value &&
+    confirmPasswordField.value !== passwordField.value
+  ) {
+    confirmPasswordErr.textContent = "Passwords do not match";
+  } else {
+    confirmPasswordErr.textContent = "";
+  }
+});
+
+confirmPasswordField.addEventListener("input", () => {
+
+    if (confirmPasswordField.value.trim() === "") {
+        confirmPasswordErr.textContent = "Confirm password is required";
+    } else if (confirmPasswordField.value !== passwordField.value) {
+        confirmPasswordErr.textContent = "Passwords do not match";
+    } else {
+        confirmPasswordErr.textContent = "";
+    }
+
 });
 
 signupForm.addEventListener('submit',async(e)=>{
@@ -267,6 +298,14 @@ signupForm.addEventListener('submit',async(e)=>{
   }else if(!passRegex.test(passwordField.value)){
     passwordErr.textContent="Min 8 chars, 1 uppercase & 1 symbol required";
     isValid=false;
+  }
+
+  if (confirmPasswordField.value.trim() === "") {
+    confirmPasswordErr.textContent = "Confirm password is required";
+    isValid = false;
+  } else if (passwordField.value !== confirmPasswordField.value) {
+    confirmPasswordErr.textContent = "Passwords do not match";
+    isValid = false;
   }
 
   if(!isValid){
@@ -329,6 +368,20 @@ togglePassword.addEventListener("click",()=>{
   passwordField.type=type;
   togglePassword.classList.toggle("fa-eye");
   togglePassword.classList.toggle("fa-eye-slash");
+});
+
+toggleConfirmPassword.addEventListener("click", () => {
+
+    const type =
+        confirmPasswordField.type === "password"
+            ? "text"
+            : "password";
+
+    confirmPasswordField.type = type;
+
+    toggleConfirmPassword.classList.toggle("fa-eye");
+    toggleConfirmPassword.classList.toggle("fa-eye-slash");
+
 });
 
 

@@ -1311,10 +1311,34 @@ async function placeOrder() {
     Swal.close();
 
     if (!data.success) {
-      Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Order failed', confirmButtonColor: '#6f2b67' });
-      return;
-    }
+  if (data.outOfStock) {
+    await Swal.fire({
+      icon: 'warning',
+      title: '⚠️ Out of Stock!',
+      text: data.message,
+      confirmButtonColor: '#6f2b67',
+      confirmButtonText: 'Go to Cart',
+      allowOutsideClick: false
+    });
+    window.location.href = '/cart';
+    return;
+  }
 
+  if (data.itemsRemoved) {
+  alertedUnavailableIds = new Set(data.unavailableIds || []);
+  await Swal.fire({
+    icon: 'warning',
+    title: 'Item Unavailable',
+    text: data.message,
+    confirmButtonColor: '#6f2b67'
+  });
+  await loadOrderItems();
+  resetPaymentSelection();
+  return;
+}
+  Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Order failed', confirmButtonColor: '#6f2b67' });
+  return;
+}
     // Razorpay flow
     if (data.razorpay) {
       const orderRes = await fetch("/payment/razorpay-order", {
@@ -1396,6 +1420,56 @@ async function placeOrder() {
     console.log(err);
     Swal.fire({ icon: 'error', title: 'Network Error', text: 'Please try again.', confirmButtonColor: '#6f2b67' });
   }
+}
+
+
+let alertedUnavailableIds = new Set(); // track already-alerted unlisted items
+
+async function checkStock() {
+  const res = await fetch("/checkout/check-stock");
+  const data = await res.json();
+
+  if (data.redirectToCart || (data.outOfStock && !data.itemsRemoved)) {
+    await Swal.fire({
+      icon: "warning",
+      title: "Item Unavailable",
+      text: data.message,
+      allowOutsideClick: false
+    });
+    window.location.href = "/cart";
+    return;
+  }
+
+  if (data.itemsRemoved) {
+    const currentIds = (data.unavailableIds || []).sort().join(',');
+    const alertedIds = [...alertedUnavailableIds].sort().join(',');
+
+    // already alerted for these exact items -> don't show popup again
+    if (currentIds === alertedIds) return;
+
+    alertedUnavailableIds = new Set(data.unavailableIds || []);
+
+    await Swal.fire({
+      icon: "warning",
+      title: "Item Unavailable",
+      text: data.message,
+      allowOutsideClick: false
+    });
+    await loadOrderItems();
+    resetPaymentSelection();
+    return;
+  }
+
+  // no unavailable items currently -> reset tracking (covers relist case)
+  alertedUnavailableIds = new Set();
+}
+setInterval(checkStock, 3000);
+
+function resetPaymentSelection() {
+  selectedPayment = null;
+  document.querySelectorAll(".payment-opt").forEach(el => el.classList.remove("selected"));
+  document.getElementById("codError").innerText = "";
+  document.getElementById("walletError").innerText = "";
 }
 
 function showSuccessPage(data) {

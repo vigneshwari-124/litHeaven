@@ -15,8 +15,12 @@ const getOrders = async (req, res) => {
     let query = {}
 
     if (status !== 'all') {
-      query.orderStatus = status
-    }
+  if (status === 'Return Requested') {
+    query['items.status'] = 'Return Requested'
+  } else {
+    query.orderStatus = status
+  }
+}
 
     if (search) {
       query.$or = [

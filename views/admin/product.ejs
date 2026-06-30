@@ -937,8 +937,12 @@ document.getElementById('variantForm').addEventListener('submit', function(e) {
     else productVariants.push(newVar);
   });
 
+  if (editingProductId) {
+  updateVariantsListEdit();
+} else {
   updateVariantsList();
-  closeModal('variantModal');
+}
+closeModal('variantModal');
 });
 
 
@@ -1551,9 +1555,18 @@ function updateVariantsList(){
         <div class="language-content">
           ${grouped[langId].map(v => {
 
-            const thumbSrc = v.files?.[0]
-  ? URL.createObjectURL(v.files[0])
-  : (v.thumbnail?.url || '')
+          
+            const imgData = languageImageData[v.langCode] || {};
+            const thumbFile = imgData.fixed?.[0];
+
+            const isRealFile = thumbFile &&
+            !thumbFile.name.startsWith('existing') &&
+            thumbFile.size > 1;
+
+            const thumbSrc = thumbFile
+              ? URL.createObjectURL(thumbFile)
+              : (v.thumbnail?.url || '')
+
             return `
               <div class="variant-item">
                 <div class="variant-thumbnail">
@@ -1902,9 +1915,16 @@ function updateVariantsListEdit() {
 
   list.innerHTML = productVariants.map((v, idx) => {
     const langName = v.languageName || LANGS.find(l => l._id === v.language)?.languageName || 'Unknown';
-    const thumbSrc = v.thumbnailFile
-      ? URL.createObjectURL(v.thumbnailFile)
-      : v.thumbnail?.url || '';
+    const imgData = languageImageData[v.langCode] || {};
+const thumbFile = imgData.fixed?.[0];
+
+const isRealFile = thumbFile &&
+  !thumbFile.name.startsWith('existing') &&
+  thumbFile.size > 1;
+
+const thumbSrc = isRealFile
+  ? URL.createObjectURL(thumbFile)
+  : (v.thumbnail?.url || '');
 
     return `
       <div class="language-group">

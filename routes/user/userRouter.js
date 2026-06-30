@@ -115,6 +115,7 @@ router.post("/update-cart-qty",auth,cartController.updateCartQty)
 
 //=============================================================================================================================================
 router.get('/checkout',auth,noCache,orderController.checkoutPage)
+router.get('/checkout/check-stock', auth, orderController.checkStock);
 router.post('/checkout/place-order', auth, orderController.placeOrder);
 router.post('/verify-payment', auth, orderController.verifyPayment);
 router.post('/payment-failed', auth, orderController.paymentFailed);
@@ -127,6 +128,7 @@ router.put("/api/orders/:orderId/cancel-order", orderController.cancelFullOrder)
 router.put("/api/orders/:orderId/return-item/:itemId", orderController.returnItem);
 router.put("/api/orders/:orderId/return-order", orderController.returnFullOrder);
 router.post("/retry-payment/:orderId",auth,orderController.retryPayment);
+router.get('/checkout/check-stock',auth,orderController.checkStockStatus);
 
 //=========================================================================================================================================================
 

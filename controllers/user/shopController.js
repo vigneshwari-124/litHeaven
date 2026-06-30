@@ -360,7 +360,7 @@ isDeleted: false
 .populate("variants.language")
 
     if (!product) {
-      return res.redirect("/shop");
+      return res.status(404).render("errors/404");
     }
 
       product.variants = product.variants.filter(v =>
@@ -627,7 +627,7 @@ wished = true
 
   } catch (error) {
     console.log(error);
-    res.redirect("/shop");
+    return res.status(404).render("errors/404");
   }
 };
 
