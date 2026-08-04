@@ -8,11 +8,66 @@ const languagePage = (req, res) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// const addLanguage = async (req, res) => {
+//   try {
+//     const { languageCode, languageName, status } = req.body;
+
+//     const exists = await Language.findOne({ languageCode });
+//     if (exists) {
+//       return res.status(400).json({
+//         message: "Language already exists"
+//       });
+//     }
+
+//     const language = new Language({
+//       languageCode,
+//       languageName,
+//       status
+//     });
+
+//     await language.save();
+
+//     res.status(201).json({
+//       message: "Language added successfully",
+//       data: language
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 const addLanguage = async (req, res) => {
   try {
     const { languageCode, languageName, status } = req.body;
 
-    const exists = await Language.findOne({ languageCode });
+    const codeRegex = /^[A-Za-z]+$/;
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    const codeTrimmed = languageCode?.trim();
+    const nameTrimmed = languageName?.trim();
+
+    if (!codeTrimmed || !nameTrimmed || !status) {
+      return res.status(400).json({
+        message: "All fields are required"
+      });
+    }
+
+    if (!codeRegex.test(codeTrimmed)) {
+      return res.status(400).json({
+        message: "Language code should contain only letters."
+      });
+    }
+
+    if (!nameRegex.test(nameTrimmed)) {
+      return res.status(400).json({
+        message: "Language name should contain only letters and a single space between words."
+      });
+    }
+
+    const exists = await Language.findOne({
+      languageCode: codeTrimmed.toLowerCase()
+    });
+
     if (exists) {
       return res.status(400).json({
         message: "Language already exists"
@@ -20,8 +75,8 @@ const addLanguage = async (req, res) => {
     }
 
     const language = new Language({
-      languageCode,
-      languageName,
+      languageCode: codeTrimmed.toLowerCase(),
+      languageName: nameTrimmed,
       status
     });
 
@@ -31,6 +86,7 @@ const addLanguage = async (req, res) => {
       message: "Language added successfully",
       data: language
     });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -71,28 +127,92 @@ const getLanguages = async (req, res) => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// const updateLanguage = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { languageCode, languageName, status } = req.body;
+
+//     const language = await Language.findById(id);
+//     if (!language) {
+//       return res.status(404).json({ message: "Language not found" });
+//     }
+
+   
+//     const duplicate = await Language.findOne({
+//       languageCode,
+//       _id: { $ne: id }
+//     });
+
+//     if (duplicate) {
+//       return res.status(400).json({ message: "Language code already exists" });
+//     }
+
+//     language.languageCode = languageCode;
+//     language.languageName = languageName;
+//     language.status = status;
+
+//     await language.save();
+
+//     res.status(200).json({
+//       message: "Language updated successfully",
+//       data: language
+//     });
+
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 const updateLanguage = async (req, res) => {
   try {
     const { id } = req.params;
     const { languageCode, languageName, status } = req.body;
 
-    const language = await Language.findById(id);
-    if (!language) {
-      return res.status(404).json({ message: "Language not found" });
+    const codeRegex = /^[A-Za-z]+$/;
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    const codeTrimmed = languageCode?.trim();
+    const nameTrimmed = languageName?.trim();
+
+    if (!codeTrimmed || !nameTrimmed || !status) {
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
-   
+    if (!codeRegex.test(codeTrimmed)) {
+      return res.status(400).json({
+        message: "Language code should contain only letters."
+      });
+    }
+
+    if (!nameRegex.test(nameTrimmed)) {
+      return res.status(400).json({
+        message: "Language name should contain only letters and a single space between words."
+      });
+    }
+
+    const language = await Language.findById(id);
+
+    if (!language) {
+      return res.status(404).json({
+        message: "Language not found"
+      });
+    }
+
     const duplicate = await Language.findOne({
-      languageCode,
+      languageCode: codeTrimmed.toLowerCase(),
       _id: { $ne: id }
     });
 
     if (duplicate) {
-      return res.status(400).json({ message: "Language code already exists" });
+      return res.status(400).json({
+        message: "Language code already exists"
+      });
     }
 
-    language.languageCode = languageCode;
-    language.languageName = languageName;
+    language.languageCode = codeTrimmed.toLowerCase();
+    language.languageName = nameTrimmed;
     language.status = status;
 
     await language.save();
@@ -103,10 +223,11 @@ const updateLanguage = async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      message: err.message
+    });
   }
 };
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const deleteLanguage = async (req, res) => {

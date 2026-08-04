@@ -35,6 +35,45 @@ const addToCart = async (req, res) => {
       })
     }
 
+    const product = await Product.findById(productId)
+  .populate("variants.language");
+
+if (!product) {
+  return res.status(404).json({
+    status: "not-found",
+    message: "Product not found"
+  });
+}
+
+const variant = product.variants.find(
+  v => v.language._id.toString() === languageId
+);
+
+if (!variant) {
+  return res.status(400).json({
+    status: "invalid-variant",
+    message: "Invalid language selected"
+  });
+}
+
+const formatData = variant.formats.find(
+  f => f.format === format
+);
+
+if (!formatData) {
+  return res.status(400).json({
+    status: "invalid-format",
+    message: "Invalid format selected"
+  });
+}
+
+if (formatData.stock <= 0) {
+  return res.status(400).json({
+    status: "out-of-stock",
+    message: "Product is out of stock"
+  });
+}
+
     const existingItem = cart.items.find(item =>
       item.productId.toString() === productId &&
       item.languageId.toString() === languageId &&
@@ -52,14 +91,21 @@ const addToCart = async (req, res) => {
 
     if (existingItem) {
 
-      if (existingItem.quantity >= 8) {
-        return res.json({
-          status: "max-reached"
-        })
-      }
+  if (existingItem.quantity >= 8) {
+    return res.json({
+      status: "max-reached"
+    });
+  }
 
-      existingItem.quantity += 1
-    }
+  if (existingItem.quantity >= formatData.stock) {
+    return res.json({
+      status: "out-of-stock",
+      message: "Only limited stock available"
+    });
+  }
+
+  existingItem.quantity += 1;
+}
     else {
     
       cart.items.push({

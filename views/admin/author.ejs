@@ -449,7 +449,7 @@
             <td>${(page - 1) * LIMIT + index + 1}</td>
             <td><strong>${author.name}</strong></td>
             <td>${author.bio}</td>
-            <td>${new Date(author.createdAt).toLocaleDateString()}</td>
+            <td>${new Date(author.createdAt).toLocaleDateString("en-IN")}</td>
             <td>
               <button
                 class="list-toggle-btn ${isDeleted ? 'unlisted' : 'listed'}"
@@ -510,16 +510,36 @@
       const bioInput = document.getElementById("authorBio");
       const name = nameInput.value.trim();
       const bio = bioInput.value.trim();
+
+      const textRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
       const nameError = document.getElementById("nameError");
       const bioError = document.getElementById("bioError");
 
       nameError.textContent = "";
       bioError.textContent = "";
 
-      let isValid = true;
-      if (!name) { nameError.textContent = "Author name is required"; isValid = false; }
-      if (!bio) { bioError.textContent = "Author bio is required"; isValid = false; }
-      if (!isValid) return;
+//      let isValid = true;
+
+// if (!name) {
+//     nameError.textContent = "Author name is required";
+//     isValid = false;
+// } else if (!textRegex.test(name)) {
+//     nameError.textContent =
+//         "Author name should contain only letters.";
+//     isValid = false;
+// }
+
+// if (!bio) {
+//     bioError.textContent = "Author bio is required";
+//     isValid = false;
+// } else if (!textRegex.test(bio)) {
+//     bioError.textContent =
+//         "Author bio should contain only letters.";
+//     isValid = false;
+// }
+
+// if (!isValid) return;
 
       const data = { name, bio };
 

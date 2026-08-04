@@ -309,8 +309,13 @@ z-index: 999999 !important;
   background: #be123c;
   transform: translateY(-2px);
 }
-.btn-wish.wished {
-  background: #be123c;
+.btn-wish.wished{
+    background:#be123c;
+    box-shadow:0 0 15px rgba(225,29,72,.4);
+}
+
+.btn-wish.wished i{
+    color:white;
 }
     .free-ship{font-size:.79rem;color:#555}
     .free-ship strong{color:var(--purple)}
@@ -733,15 +738,14 @@ allFormats.forEach(fmt => {
             <span class="csub">Free shipping above ₹300</span>
           </div>
         </button>
-       <button
-          class="btn-wish "
+      <button
+          class="btn-wish <%= wished ? 'wished' : '' %>"
           id="wishBtn"
           data-product="<%= product._id %>"
-          onclick="toggleWish()">
+         onclick="toggleWish()">
 
-          <i class="fa-solid fa-heart"></i>
-
-       </button>
+           <i class="<%= wished ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+      </button>
       </div>
       <p class="free-ship"><strong>Free shipping & returns:</strong> On all orders over ₹300!</p>
     </div>
@@ -1493,11 +1497,14 @@ const res = await fetch("/wishlist/toggle",{
 
 const data = await res.json()
 
-STATE.wished = data.status === "added"
+STATE.wished = data.status === "added";
 
-btn.classList.toggle('wished', STATE.wished)
+btn.classList.toggle("wished", STATE.wished);
 
-btn.innerHTML = '<i class="fa-solid fa-heart"></i>'
+btn.innerHTML = STATE.wished
+  ? '<i class="fa-solid fa-heart"></i>'
+  : '<i class="fa-regular fa-heart"></i>';
+  
 
 Swal.fire({
   toast:true,

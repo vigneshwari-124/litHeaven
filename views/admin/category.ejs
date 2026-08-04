@@ -453,7 +453,7 @@
             <td>${(page - 1) * LIMIT + index + 1}</td>
             <td><strong>${cat.name}</strong></td>
             <td>${cat.description}</td>
-            <td>${new Date(cat.createdAt).toLocaleDateString()}</td>
+            <td>${new Date(cat.createdAt).toLocaleDateString("en-IN")}</td>
             <td>
               <button
     class="list-toggle-btn ${isDeleted ? 'unlisted' : 'listed'}"
@@ -500,19 +500,48 @@
       loadCategories(1);
     });
 
-    document.getElementById("categoryName").addEventListener("input", () => {
-      document.getElementById("nameError").textContent = "";
-    });
+   const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-    document.getElementById("categoryDescription").addEventListener("input", () => {
-      document.getElementById("descriptionError").textContent = "";
-    });
+document.getElementById("categoryName").addEventListener("input", function () {
+
+    const value = this.value;
+    const error = document.getElementById("nameError");
+
+    if (value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(value)) {
+        error.textContent = "Only letters are allowed.";
+    } else {
+        error.textContent = "";
+    }
+});
+
+document.getElementById("categoryDescription").addEventListener("input", function () {
+
+    const value = this.value;
+    const error = document.getElementById("descriptionError");
+
+    if (value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(value)) {
+        error.textContent = "Only letters are allowed.";
+    } else {
+        error.textContent = "";
+    }
+});
 
     document.getElementById('categoryForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const nameInput = document.getElementById("categoryName");
       const descInput = document.getElementById("categoryDescription");
+      
       const name = nameInput.value.trim();
       const description = descInput.value.trim();
       const nameError = document.getElementById("nameError");
@@ -520,13 +549,30 @@
 
       nameError.textContent = "";
       descriptionError.textContent = "";
+let isValid = true;
 
-      let isValid = true;
-      if (!name) { nameError.textContent = "Category name is required"; isValid = false; }
-      if (!description) { descriptionError.textContent = "Description is required"; isValid = false; }
-      if (!isValid) return;
+// Category Name
+if (!name) {
+    nameError.textContent = "Category name is required";
+    isValid = false;
+} else if (!letterRegex.test(name)) {
+    nameError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
 
-      // No status sent — backend should default to 'publish' for new categories
+// Description
+if (!description) {
+    descriptionError.textContent = "Description is required";
+    isValid = false;
+} else if (!letterRegex.test(description)) {
+    descriptionError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
+
+if (!isValid) return;
+
       const data = { name, description };
 
       try {

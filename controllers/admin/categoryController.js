@@ -15,6 +15,8 @@ const addCategory=async(req,res)=>{
     try{
         const {name,description}=req.body
 
+        const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
         if(!name || !description ){
             return res.status(400).json({
                 success:false,
@@ -22,8 +24,24 @@ const addCategory=async(req,res)=>{
             })
         }
 
+        const trimmedName = name.trim();
+        const trimmedDescription = description.trim();
+
+if (!letterRegex.test(trimmedName)) {
+    return res.status(400).json({
+        success: false,
+        message: "Category name should contain only letters with a single space between words."
+    });
+}
+
+if (!letterRegex.test(trimmedDescription)) {
+    return res.status(400).json({
+        success: false,
+        message: "Description should contain only letters with a single space between words."
+    });
+}
          const existingCategory = await Category.findOne({
-         name: name.trim().toLowerCase(),
+        name: trimmedName.toLowerCase(),
          parentCategory: null,
          isDeleted: { $ne: true }
          });
@@ -36,7 +54,7 @@ const addCategory=async(req,res)=>{
     }
 
     const newCategory=new Category({
-        name: name.trim().toLowerCase(),
+        name: trimmedName.toLowerCase(),
         description,
         parentCategory:null
     })
@@ -63,15 +81,35 @@ const updateCategory = async(req,res)=>{
   try{
     const {id}=req.params;
     const { name, description} = req.body;
+    const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-    if (!name || !description) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
+if (!name || !description) {
+  return res.status(400).json({
+    success: false,
+    message: "All fields are required",
+  });
+}
 
-    const nameNormalized = name.trim().toLowerCase();
+
+const trimmedName = name.trim();
+const trimmedDescription = description.trim();
+
+
+if (!letterRegex.test(trimmedName)) {
+  return res.status(400).json({
+    success: false,
+    message: "Category name should contain only letters with a single space between words.",
+  });
+}
+
+
+if (!letterRegex.test(trimmedDescription)) {
+  return res.status(400).json({
+    success: false,
+    message: "Description should contain only letters with a single space between words.",
+  });
+}
+    const nameNormalized = trimmedName.toLowerCase();
     const category = await Category.findById(id);
 
     if (!category) {
@@ -94,8 +132,8 @@ const updateCategory = async(req,res)=>{
       });
     }
 
-    category.name =nameNormalized;
-    category.description = description;
+    category.name = nameNormalized;
+    category.description = trimmedDescription;
    
 
     await category.save();
@@ -328,13 +366,32 @@ const addSubCategory = async (req, res) => {
   try {
     const { name, description, parentCategory} = req.body;
 
-    if (!name || !description || !parentCategory ) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields required'
-      });
-    }
+    const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
+if (!name || !description || !parentCategory) {
+  return res.status(400).json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+const trimmedName = name.trim();
+const trimmedDescription = description.trim();
+
+if (!letterRegex.test(trimmedName)) {
+  return res.status(400).json({
+    success: false,
+    message: "Sub-category name should contain only letters with a single space between words."
+  });
+}
+
+
+if (!letterRegex.test(trimmedDescription)) {
+  return res.status(400).json({
+    success: false,
+    message: "Description should contain only letters with a single space between words."
+  });
+}
      const parent = await Category.findOne({
       _id: parentCategory,
       isDeleted: false
@@ -389,8 +446,9 @@ if (req.file && req.file.path) {
 
 
     const exists = await Category.findOne({
-      name: name.trim().toLowerCase(),
-      parentCategory
+      name: trimmedName.toLowerCase(),
+      parentCategory,
+      isDeleted: false
     });
 
     if (exists) {
@@ -402,7 +460,7 @@ if (req.file && req.file.path) {
 
     const subCategory = new Category({
       name: name.trim().toLowerCase(),
-      description,
+      description: trimmedDescription,
       parentCategory,
       image: imageUrl
     });
@@ -429,14 +487,58 @@ const updateSubCategory = async (req, res) => {
   try {
     const { id } = req.params
     const { name, description, parentCategory, featured } = req.body
+    const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+
+if (!name || !description || !parentCategory) {
+  return res.status(400).json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+const trimmedName = name.trim();
+const trimmedDescription = description.trim();
+
+if (!letterRegex.test(trimmedName)) {
+  return res.status(400).json({
+    success: false,
+    message: "Sub-category name should contain only letters with a single space between words."
+  });
+}
+
+if (!letterRegex.test(trimmedDescription)) {
+  return res.status(400).json({
+    success: false,
+    message: "Description should contain only letters with a single space between words."
+  });
+}
 
     const subCategory = await Category.findById(id)
     if (!subCategory) {
-      return res.status(404).json({ success:false, message:'Sub-category not found' })
+      return res.status(404).json({
+         success:false,
+          message:'Sub-category not found' 
+        })
     }
 
-    subCategory.name = name?.trim()
-    subCategory.description = description
+
+const existingSubCategory = await Category.findOne({
+  name: trimmedName.toLowerCase(),
+  parentCategory,
+  isDeleted: false,
+  _id: { $ne: id }
+});
+
+if (existingSubCategory) {
+  return res.status(409).json({
+    success: false,
+    message: "Sub-category name already exists under this category"
+  });
+}
+
+    subCategory.name = trimmedName.toLowerCase();
+    subCategory.description = trimmedDescription;
     subCategory.parentCategory = parentCategory
   
     

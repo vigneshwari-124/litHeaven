@@ -33,16 +33,60 @@ const getProfile=async(req,res)=>{
 const editProfile=async(req,res)=>{
   try{
     const userId=req.session.userId
-    const {name,phone}=req.body
+    let {name,phone}=req.body
+
+    name = name.trim();
+    phone = phone.trim();
+
+    
+
+    if (!name) {
+      return res.status(400).json({
+    success: false,
+    message: "Name is required"
+  });
+}
+
+
+
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+if (!nameRegex.test(name)) {
+   return res.status(400).json({
+    success: false,
+    message: "Name should contain only letters"
+  });
+}
+
+
+
+   if (!phone) {
+  return res.status(400).json({
+    success: false,
+    message: "Phone number is required"
+  });
+}
+
+    const phoneRegex = /^[0-9]{10}$/;
+
+   if (!phoneRegex.test(phone)) {
+  return res.status(400).json({
+    success: false,
+    message: "Phone number must be exactly 10 digits"
+  });
+}
 
      const existingUser = await User.findOne({
       phone: phone,
       _id: { $ne: userId }
     });
 
-    if (existingUser) {
-      return res.redirect('/profile?error=phone-exists');
-    }
+   if (existingUser) {
+  return res.status(400).json({
+    success: false,
+    message: "Phone number already exists"
+  });
+}
 
     await User.findByIdAndUpdate(userId,{
         name,
@@ -50,7 +94,10 @@ const editProfile=async(req,res)=>{
       }
     )
 
-     return res.redirect('/profile?success=updated');
+    return res.json({
+      success: true,
+      message: "Profile updated successfully"
+    });
 
 
   }catch(err){
@@ -79,7 +126,25 @@ const getChangeEmail=(req,res)=>{
 
 const postChangeEmil=async(req,res)=>{
   try{
-    const {email}=req.body
+let {email}=req.body
+
+email =email.trim()
+
+if (!email) {
+  return res.status(400).json({
+    success: false,
+    message: "Email is required"
+  });
+}
+
+const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+if (!emailRegex.test(email)) {
+  return res.status(400).json({
+    success: false,
+    message: "Email must be lowercase & valid format"
+  });
+}
     const userId=req.session.userId
     if(!userId){
       return res.status(401).json({
@@ -236,9 +301,51 @@ const changePassword=async (req,res)=>{
   try{
     const userId=req.session.userId
 
-    const {currentPassword,newPassword}=req.body
+    let { currentPassword, newPassword,confirmPassword } = req.body;
 
-    const user=await User.findById(userId)
+    currentPassword = currentPassword.trim();
+    newPassword = newPassword.trim();
+    confirmPassword = confirmPassword.trim();
+
+if (!currentPassword) {
+  return res.status(400).json({
+    success: false,
+    message: "Current password is required"
+  });
+}
+
+if (!newPassword) {
+  return res.status(400).json({
+    success: false,
+    message: "New password is required"
+  });
+}
+
+if (!confirmPassword) {
+  return res.status(400).json({
+    success: false,
+    message: "Confirm password is required"
+  });
+}
+
+const passwordRegex =/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[A-Za-z0-9!@#$%^&*]{8,}$/;
+
+if (!passwordRegex.test(newPassword)) {
+  return res.status(400).json({
+    success: false,
+    message: "New password Min 8 chars, 1 uppercase & 1 symbol required"
+  });
+}
+
+if (newPassword !== confirmPassword) {
+  return res.status(400).json({
+    success: false,
+    message: "Confirm Passwords do not match"
+  });
+}
+
+const user=await User.findById(userId)
+
 
     if(!user){
       return res.status(404).json({success:false,

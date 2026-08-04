@@ -637,6 +637,7 @@ async function changeQty(id, delta) {
   document.getElementById(`total-${id}`).innerText = "₹" + total
 
   updateSummary()
+  updateCheckoutButton(cartItems)
 }
 
     /* ═══════════════════════════════════════════
@@ -880,58 +881,25 @@ async function changeQty(id, delta) {
 }
 
 async function refreshCartStock() {
-
   try {
-    const res = await fetch("/get-cart")
-    const data = await res.json()
 
-    const newItems = data.items || []
+    const res = await fetch("/get-cart");
+    const data = await res.json();
 
-  
-    newItems.forEach(newItem => {
+    const newItems = data.items || [];
 
-      const oldItem = cartItems.find(i =>
-        i.productId._id === newItem.productId._id &&
-        i.languageId._id === newItem.languageId._id &&
-        i.format === newItem.format
-      )
+    cartItems = newItems;
 
-      if (!oldItem) return
+    renderCart();
 
-      if (oldItem.stock !== newItem.stock) {
+    updateSummary();
 
-        oldItem.stock = newItem.stock
+    updateCheckoutButton(cartItems);
 
-        updateCheckoutButton(cartItems)
-    
-        const qtyMinus = document.querySelector(`button[onclick*="${oldItem._id}"][onclick*="-1"]`)
-        const qtyPlus  = document.querySelector(`button[onclick*="${oldItem._id}"][onclick*="1"]`)
-
-        if (newItem.stock === 0) {
-
-          qtyMinus?.setAttribute("disabled", true)
-          qtyPlus?.setAttribute("disabled", true)
-
-          const row = qtyMinus.closest("tr")
-
-          if (!row.innerHTML.includes("Out of Stock")) {
-            row.querySelector(".item-format").insertAdjacentHTML("afterend", `
-              <span style="color:red;font-size:12px;font-weight:bold;margin-left:6px;">
-                🚫 Out of Stock
-              </span>
-            `)
-          }
-
-        } else {
-       
-          qtyMinus?.removeAttribute("disabled")
-          qtyPlus?.removeAttribute("disabled")
-        }
-      }
-    })
+    handleEmptyCart();
 
   } catch (err) {
-    console.log("Stock refresh error", err)
+    console.log("Stock refresh error", err);
   }
 }
 

@@ -877,17 +877,46 @@ function applyCrop() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Form Validation
-document.getElementById("catName").addEventListener("input", () => {
-  document.getElementById("nameError").textContent = "";
+const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+document.getElementById("catName").addEventListener("input", function () {
+
+    const value = this.value;
+    const error = document.getElementById("nameError");
+
+    if (value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(value)) {
+        error.textContent =
+            "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    } else {
+        error.textContent = "";
+    }
 });
 
-document.getElementById("catDesc").addEventListener("input", () => {
-  document.getElementById("descError").textContent = "";
+document.getElementById("catDesc").addEventListener("input", function () {
+
+    const value = this.value;
+    const error = document.getElementById("descError");
+
+    if (value === "") {
+        error.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(value)) {
+        error.textContent =
+            "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    } else {
+        error.textContent = "";
+    }
 });
 
-document.getElementById("parentCat").addEventListener("change", () => {
-  document.getElementById("parentError").textContent = "";
+document.getElementById("parentCat").addEventListener("change", function () {
+    document.getElementById("parentError").textContent = "";
 });
 
 
@@ -911,13 +940,34 @@ document.getElementById('subCategoryForm').addEventListener('submit', async (e) 
   descError.textContent = "";
   parentError.textContent = "";
 
-  let isValid = true;
+ let isValid = true;
 
-  if (!name) { nameError.textContent = 'Name required'; isValid = false; }
-  if (!description) { descError.textContent = 'Description required'; isValid = false; }
-  if (!parentCategory) { parentError.textContent = 'Select parent category'; isValid = false; }
+if (!name) {
+    nameError.textContent = "Sub-category name is required";
+    isValid = false;
+}
+else if (!letterRegex.test(name)) {
+    nameError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
 
-  if (!isValid) return;
+if (!description) {
+    descError.textContent = "Description is required";
+    isValid = false;
+}
+else if (!letterRegex.test(description)) {
+    descError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
+
+if (!parentCategory) {
+    parentError.textContent = "Please select a parent category";
+    isValid = false;
+}
+
+if (!isValid) return;
 
   const formData = new FormData();
   formData.append('name', name);

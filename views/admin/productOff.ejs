@@ -448,8 +448,8 @@ function getStatus(offer){
         <td>₹${offer.originalPrice}</td>
         <td>₹${offer.offerPrice}</td>
 
-        <td>${new Date(offer.startDate).toLocaleDateString()}</td>
-        <td>${new Date(offer.endDate).toLocaleDateString()}</td>
+        <td>${new Date(offer.startDate).toLocaleDateString("en-IN")}</td>
+        <td>${new Date(offer.endDate).toLocaleDateString("en-IN")}</td>
 
         <td>${getStatus(offer)}</td>
 
@@ -755,7 +755,11 @@ if(isHardcover) format.push("hardcover");
   let startDate = document.getElementById("startDate").value;
   let endDate = document.getElementById("endDate").value;
 
-  
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const discountRegex = /^[0-9]+$/;
+
+const offerNameTrimmed = offerName.trim();
+
   if(!product){
     document.getElementById('productError').innerText = "Select a product";
     isValid = false;
@@ -771,20 +775,34 @@ if(isHardcover) format.push("hardcover");
   isValid = false;
 }
 
-  if(!offerName){
-    document.getElementById('nameError').innerText = "Offer name is required";
+if (!offerNameTrimmed) {
+    document.getElementById("nameError").innerText =
+        "Offer name is required";
     isValid = false;
-  }
-
-  if(!discount){
-    document.getElementById('discountError').innerText = "Discount % is required";
+} else if (!nameRegex.test(offerNameTrimmed)) {
+    document.getElementById("nameError").innerText =
+        "Offer name should contain only letters with a single space between words.";
     isValid = false;
-  }
+}
 
+  if (!discount) {
+    document.getElementById("discountError").innerText =
+        "Discount percentage is required";
+    isValid = false;
+} else if (!discountRegex.test(discount)) {
+    document.getElementById("discountError").innerText =
+        "Only digits are allowed";
+    isValid = false;
+} else if (Number(discount) <=0  || Number(discount) > 99) {
+    document.getElementById("discountError").innerText =
+        "Discount percentage must be between 1% and 99%";
+    isValid = false;
+}
   if(!startDate){
     document.getElementById('startError').innerText = "Start date is required";
     isValid = false;
   }
+
 
   if(!endDate){
     document.getElementById('endError').innerText = "End date is required";
@@ -824,7 +842,7 @@ if(isHardcover) format.push("hardcover");
     product,
     language,
     format,
-    offerName,
+   offerName: offerNameTrimmed,
     discount,
     startDate,
     endDate

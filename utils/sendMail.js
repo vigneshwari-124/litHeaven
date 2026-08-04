@@ -19,7 +19,7 @@ const sendOtpMail=async(email,otp)=>{
           <h2 style="color: #6f2b67;">Verify your email</h2>
           <p>Your OTP is:</p>
           <h1 style="color: #6f2b67; font-size: 32px; letter-spacing: 5px;">${otp}</h1>
-          <p>This OTP is valid for 2 minutes</p>
+          <p>This OTP is valid for 60 seconds</p>
           <p style="color: #888; font-size: 12px;">If you didn't request this, please ignore this email.</p>
         </div>`
     });

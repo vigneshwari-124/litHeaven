@@ -493,6 +493,7 @@ document.getElementById("languageForm").addEventListener("submit", async functio
   const languageCode = document.getElementById("langCode").value.trim();
   const languageName = document.getElementById("langName").value.trim();
   const status = document.getElementById("langStatus").value;
+  const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
   const codeError = document.getElementById("langCodeError");
   const nameError = document.getElementById("langNameError");
@@ -502,15 +503,24 @@ document.getElementById("languageForm").addEventListener("submit", async functio
 
   let isValid = true;
 
+  const codeRegex = /^[A-Za-z]+$/;
   if (!languageCode) {
     codeError.textContent = "Language code is required";
     isValid = false;
-  }
+} else if (!codeRegex.test(languageCode)) {
+    codeError.textContent =
+        "Language code should contain only letters. Spaces, numbers and symbols are not allowed.";
+    isValid = false;
+}
 
   if (!languageName) {
     nameError.textContent = "Language name is required";
     isValid = false;
-  }
+} else if (!nameRegex.test(languageName)) {
+    nameError.textContent =
+        "Only letters are allowed. Numbers and symbols are not allowed.";
+    isValid = false;
+}
 
   if (!isValid) return;
 

@@ -59,27 +59,51 @@ const createAuthor = async (req, res) => {
   try {
     const { name, bio } = req.body;
 
-    if (!name || !name.trim()) {
-      return res.status(400).json({ success: false, message: 'Author name is required' });
-    }
+    const textRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-    if (!bio || !bio.trim()) {
-      return res.status(400).json({ success: false, message: 'Author bio is required' });
-    }
+    const nameTrimmed = name?.trim();
+    const bioTrimmed = bio?.trim();
 
-    const existingAuthor = await Author.findOne({
-      name: { $regex: `^${name.trim()}$`, $options: 'i' }
-    });
+   if (!nameTrimmed) {
+  return res.status(400).json({
+    success: false,
+    message: "Author name is required"
+  });
+}
+
+if (!bioTrimmed) {
+  return res.status(400).json({
+    success: false,
+    message: "Author bio is required"
+  });
+}
+
+if (!textRegex.test(nameTrimmed)) {
+  return res.status(400).json({
+    success: false,
+    message: "Author name should contain only letters."
+  });
+}
+
+if (!textRegex.test(bioTrimmed)) {
+  return res.status(400).json({
+    success: false,
+    message: "Author bio should contain only letters."
+  });
+}
+  
+const existingAuthor = await Author.findOne({
+  name: { $regex: `^${nameTrimmed}$`, $options: "i" }
+});
 
     if (existingAuthor) {
       return res.status(400).json({ success: false, message: 'Author already exists' });
     }
 
-    const author = new Author({
-      name: name.trim(),
-      bio: bio.trim()
-    });
-
+  const author = new Author({
+  name: nameTrimmed,
+  bio: bioTrimmed
+});
     await author.save();
 
     res.status(201).json({
@@ -109,24 +133,48 @@ const updateAuthor = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, bio } = req.body;
+    const textRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-    if (!name || !name.trim()) {
-      return res.status(400).json({ success: false, message: 'Author name is required' });
-    }
+    const nameTrimmed = name?.trim();
+    const bioTrimmed = bio?.trim();
 
-    if (!bio || !bio.trim()) {
-      return res.status(400).json({ success: false, message: 'Author bio is required' });
-    }
+    if (!nameTrimmed) {
+  return res.status(400).json({
+    success: false,
+    message: "Author name is required"
+  });
+}
+
+if (!bioTrimmed) {
+  return res.status(400).json({
+    success: false,
+    message: "Author bio is required"
+  });
+}
+
+if (!textRegex.test(nameTrimmed)) {
+  return res.status(400).json({
+    success: false,
+    message: "Author name should contain only letters."
+  });
+}
+
+if (!textRegex.test(bioTrimmed)) {
+  return res.status(400).json({
+    success: false,
+    message: "Author bio should contain only letters."
+  });
+}
 
     const author = await Author.findById(id);
     if (!author) {
       return res.status(404).json({ success: false, message: 'Author not found' });
     }
 
-    if (name.trim().toLowerCase() !== author.name.toLowerCase()) {
+   if (nameTrimmed.toLowerCase() !== author.name.toLowerCase()) {
       const existingAuthor = await Author.findOne({
-        name: { $regex: `^${name.trim()}$`, $options: 'i' },
-        _id: { $ne: id }
+            name: { $regex: `^${nameTrimmed}$`, $options: "i" },
+            _id: { $ne: id }
       });
 
       if (existingAuthor) {
@@ -134,8 +182,8 @@ const updateAuthor = async (req, res) => {
       }
     }
 
-    author.name = name.trim();
-    author.bio = bio.trim();
+    author.name = nameTrimmed;
+    author.bio = bioTrimmed;
 
     await author.save();
 

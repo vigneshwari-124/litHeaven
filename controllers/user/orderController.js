@@ -153,15 +153,15 @@ const reduceStock = async (items) => {
 
     if (!product) continue
 
-    const variant = product.variants.find(v => {
+   const langId =
+  item.language?._id ||
+  item.language ||
+  item.languageId?._id ||
+  item.languageId;
 
-      const lang = item.language || item.languageId
-
-      if (!v.language || !lang) return false
-
-      return String(v.language) === String(lang)
-
-    })
+const variant = product.variants.find(v => {
+  return String(v.language) === String(langId);
+});
 
     if (!variant) continue
 
@@ -170,10 +170,12 @@ const reduceStock = async (items) => {
     )
 
     if (!formatData) continue
+if (formatData.stock < item.quantity) {
+    throw new Error("Insufficient stock");
+}
 
-    formatData.stock -= item.quantity
-
-    formatData.sold += item.quantity
+formatData.stock -= item.quantity;
+formatData.sold += item.quantity;
 
     await product.save()
 
@@ -363,10 +365,7 @@ if(offerList.length > 0){
 
     const totalAmount = subtotal + delivery - discount;
 
-    console.log("SUBTOTAL:", subtotal)
-    console.log("DELIVERY:", delivery)
-    console.log("COUPON DISCOUNT:", discount)
-    console.log("FINAL:", totalAmount)
+   
 
     if (fixedPayment === "COD") {
       if (totalAmount < 500) {
@@ -459,7 +458,7 @@ if (fixedPayment === "COD") {
 };
 
 const checkStock = async (req, res) => {
- console.log("CHECK STOCK API CALLED");
+ 
  
    const cart = await Cart.findOne({ userId: req.session.userId })
       .populate({

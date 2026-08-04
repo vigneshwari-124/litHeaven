@@ -40,16 +40,24 @@ const addAddress=async(req,res)=>{
       })
     }
 
-    const {
-      fullName,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zip,
-      country,
-      type
+    let {
+       fullName,
+       addressLine1,
+       addressLine2,
+       city,
+       state,
+       zip,
+       country,
+       type
     } = req.body;
+
+    fullName = fullName.trim();
+    addressLine1 = addressLine1.trim();
+    addressLine2 = addressLine2 ? addressLine2.trim() : "";
+    city = city.trim();
+    state = state.trim();
+    country = country.trim();
+    zip = zip.trim();
 
      if (!fullName || !addressLine1 || !city || !state || !zip || !country) {
       return res.status(400).json({
@@ -58,6 +66,62 @@ const addAddress=async(req,res)=>{
       });
     }
 
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    if (!nameRegex.test(fullName)) {
+  return res.status(400).json({
+    success: false,
+    message: "Name should contain only letters"
+  });
+}
+
+const addressRegex = /^[A-Za-z0-9/,-]+(?: [A-Za-z0-9/,-]+)*$/; 
+
+if (!addressRegex.test(addressLine1)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid Address Line 1"
+  });
+}
+
+if (addressLine2 && !addressRegex.test(addressLine2)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid Address Line 2"
+  });
+}
+
+const cityRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!cityRegex.test(city)) {
+  return res.status(400).json({
+    success: false,
+    message: "City should contain only letters"
+  });
+}
+
+const stateRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!stateRegex.test(state)) {
+  return res.status(400).json({
+    success: false,
+    message: "State should contain only letters"
+  });
+}
+
+const countryRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!countryRegex.test(country)) {
+  return res.status(400).json({
+    success: false,
+    message: "Country should contain only letters"
+  });
+}
+
+const pinRegex = /^[0-9]{6}$/;
+if (!pinRegex.test(zip)) {
+  return res.status(400).json({
+    success: false,
+    message: "Pincode must be exactly 6 digits"
+  });
+}
     const addressCount=await Address.countDocuments({userId})
     
 
@@ -109,16 +173,26 @@ const editAddress = async (req, res) => {
       });
     }
 
-    const {
-      fullName,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zip,
-      country,
-      type
-    } = req.body;
+    let {
+  fullName,
+  addressLine1,
+  addressLine2,
+  city,
+  state,
+  zip,
+  country,
+  type
+} = req.body;
+
+fullName = fullName.trim();
+addressLine1 = addressLine1.trim();
+addressLine2 = addressLine2 ? addressLine2.trim() : "";
+city = city.trim();
+state = state.trim();
+country = country.trim();
+zip = zip.trim();
+
+
 
     if (!fullName || !addressLine1 || !city || !state || !zip || !country) {
       return res.status(400).json({
@@ -126,6 +200,61 @@ const editAddress = async (req, res) => {
         message: 'All required fields must be filled'
       });
     }
+
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+    if (!nameRegex.test(fullName)) {
+    return res.status(400).json({
+        success: false,
+        message: "Name should contain only letters"
+    });
+}
+
+const addressRegex = /^[A-Za-z0-9]+(?: [A-Za-z0-9]+)*$/;
+if (!addressRegex.test(addressLine1)) {
+    return res.status(400).json({
+        success: false,
+        message: "Address should contain only letters and numbers"
+    });
+}
+
+if (addressLine2 && !addressRegex.test(addressLine2)) {
+    return res.status(400).json({
+        success: false,
+        message: "Address should contain only letters and numbers"
+    });
+}
+
+const cityRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!cityRegex.test(city)) {
+    return res.status(400).json({
+        success: false,
+        message: "City should contain only letters"
+    });
+}
+
+const stateRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!stateRegex.test(state)) {
+    return res.status(400).json({
+        success: false,
+        message: "State should contain only letters"
+    });
+}
+
+const countryRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+if (!countryRegex.test(country)) {
+    return res.status(400).json({
+        success: false,
+        message: "Country should contain only letters"
+    });
+}
+
+const pinRegex = /^[0-9]{6}$/;
+if (!pinRegex.test(zip)) {
+    return res.status(400).json({
+        success: false,
+        message: "Pincode must be exactly 6 digits"
+    });
+}
 
     const formattedType =
       type.charAt(0).toUpperCase() + type.slice(1);

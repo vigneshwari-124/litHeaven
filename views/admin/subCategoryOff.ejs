@@ -379,9 +379,9 @@ async function fetchSubcateOff(){
         <td>${offer.subCategory?.name}</td>
         <td>${offer.category?.name}</td>
         <td>${offer.offerName}</td>
-        <td>${offer.discount}</td>
-        <td>${new Date(offer.startDate).toLocaleDateString()}</td>
-        <td>${new Date(offer.endDate).toLocaleDateString()}</td>
+        <td>${offer.discount}%</td>
+        <td>${new Date(offer.startDate).toLocaleDateString("en-IN")}</td>
+        <td>${new Date(offer.endDate).toLocaleDateString("en-IN")}</td>
         <td>${getStatus(offer)}</td>
         <td>
               <label class="toggle-switch">
@@ -459,6 +459,10 @@ async function fetchSubcateOff(){
 
 
 function openAddModal(){
+
+  editingId = null;
+
+  document.getElementById("modalTitle").innerText = "Add Sub-Category Offer";
   document.getElementById('offerModal').classList.add('show');
 
    loadCategories()
@@ -472,6 +476,9 @@ function openAddModal(){
 }
 
 function closeModal(){
+
+  editingId = null;
+
   document.getElementById('offerModal').classList.remove('show');
 }
 
@@ -572,6 +579,11 @@ let isValid=true
   let startDate = document.getElementById("startDate").value;
   let endDate = document.getElementById("endDate").value;
 
+  const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+  const discountRegex =  /^[0-9]+$/;
+
+  const offerNameTrimmed = offerName.trim();
+  
   if(!category){
     document.getElementById('categoryError').innerText = "Select a category";
     isValid = false;
@@ -581,15 +593,31 @@ let isValid=true
     document.getElementById('subCategoryError').innerText = "Select a category";
     isValid = false;
   }
-    if(!offerName){
-    document.getElementById('nameError').innerText = "Offer name is Required";
-    isValid = false;
-  }
 
-    if(!discount){
-    document.getElementById('discountError').innerText = "discount % is Required";
+  if (!offerNameTrimmed) {
+    document.getElementById("nameError").innerText =
+        "Offer name is required";
     isValid = false;
-  }
+} else if (!nameRegex.test(offerNameTrimmed)) {
+    document.getElementById("nameError").innerText =
+        "Offer name should contain only letters with a single space between words.";
+    isValid = false;
+}
+
+
+if (!discount) {
+    document.getElementById("discountError").innerText =
+        "Discount percentage is required";
+    isValid = false;
+} else if (!discountRegex.test(discount)) {
+    document.getElementById("discountError").innerText =
+        "Only digits are allowed";
+    isValid = false;
+} else if (Number(discount) < 1 || Number(discount) > 100) {
+    document.getElementById("discountError").innerText =
+        "Discount percentage must be between 1 and 100";
+    isValid = false;
+}
 
     if(!startDate){
     document.getElementById('startError').innerText = "Start date is Required";
@@ -635,7 +663,7 @@ if(end < start){
   const data = {
     category,
     subCategory,
-    offerName,
+    offerName: offerNameTrimmed,
     discount,
     startDate,
     endDate

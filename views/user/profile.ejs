@@ -458,10 +458,11 @@ footer{background:#6f2b67;color:#fff;padding:25px 20px;margin-top:50px}
       <button class="close" onclick="closeModal('editModal')">&times;</button>
     </div>
     <div class="modal-body">
-     <form  id="editProfileForm" action="/profile/edit" method="POST">
+     <form  id="editProfileForm" >
         <div class="form-group">
           <label class="form-label">Full Name</label>
           <input type="text"  name="name" id="editName" class="form-control-profile"  value="<%= user.name %>"  required>
+          <small id="editNameErr" class="text-danger"></small>
         </div>
         <div class="form-group">
           <label class="form-label">Email Address</label>
@@ -662,9 +663,58 @@ const editPhoneErr = document.getElementById("editPhoneErr");
 
 
 
+const editNameErr = document.getElementById("editNameErr");
+
+const editProfileForm = document.getElementById("editProfileForm");
+
+editProfileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const response = await fetch("/profile/edit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: editName.value,
+      phone: editPhone.value
+    })
+  });
+
+  const data = await response.json();
+
+  if (!data.success) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: data.message
+    });
+    return;
+  }
+
+  Swal.fire({
+    icon: "success",
+    title: "Success",
+    text: data.message
+  }).then(() => {
+    location.reload();
+  });
+});
+
+
 editName.addEventListener("input", () => {
 
-  editName.value = editName.value.replace(/[^a-zA-Z\s]/g, "");
+  editName.value = editName.value.replace(/[^A-Za-z ]/g, "");
+  editName.value = editName.value.replace(/^\s+/, "");
+  editName.value = editName.value.replace(/\s{2,}/g, " ");
+
+  if (editName.value.trim() === "") {
+    editNameErr.textContent = "Name is required";
+  } else if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(editName.value)) {
+    editNameErr.textContent = "Only letters are allowed";
+  } else {
+    editNameErr.textContent = "";
+  }
 
 });
 
@@ -794,7 +844,8 @@ async function changePassword(e){
       },
       body:JSON.stringify({
         currentPassword:current,
-        newPassword:newPass
+        newPassword:newPass,
+        confirmPassword: confirm
       })
     })
     const data=await res.json()

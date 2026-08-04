@@ -192,13 +192,18 @@ const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
 
 const referralCodeField =document.getElementById("referralCode");
 
-nameField.addEventListener("input",()=>{
-  nameField.value = nameField.value.replace(/[^a-zA-Z\s]/g, "")
-  if(nameField.value.trim()===""){
-    nameErr.innerHTML="Name is required";
-  }else{
-    nameErr.innerHTML="";  
-  }
+nameField.addEventListener("input", () => {
+
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    if (nameField.value.trim() === "") {
+        nameErr.textContent = "Name is required";
+    } else if (!nameRegex.test(nameField.value.trim())) {
+        nameErr.textContent = "Only letters are allowed";
+    } else {
+        nameErr.textContent = "";
+    }
+
 });
 
 emailField.addEventListener("input",()=>{
@@ -206,7 +211,7 @@ emailField.addEventListener("input",()=>{
   if(emailField.value.trim()===""){
     emailErr.innerHTML="Email is required";
   }else if(!emailRegex.test(emailField.value)){
-    emailErr.innerHTML="Email must be lowercase & valid format";
+    emailErr.innerHTML="Invalid email format";
   }else{
     emailErr.innerHTML="";
   }
@@ -265,14 +270,20 @@ confirmPasswordField.addEventListener("input", () => {
 });
 
 signupForm.addEventListener('submit',async(e)=>{
+
   e.preventDefault()
   let isValid=true;
   submitBtn.disabled = true;
 
-  if(nameField.value.trim()===""){
-    nameErr.textContent="Name is required";
-    isValid=false;
-  }
+ const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+if (nameField.value.trim() === "") {
+    nameErr.textContent = "Name is required";
+    isValid = false;
+} else if (!nameRegex.test(nameField.value.trim())) {
+    nameErr.textContent = "Only letters are allowed";
+    isValid = false;
+}
 
   const emailRegex=/^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
   if(emailField.value.trim()===""){
@@ -308,6 +319,8 @@ signupForm.addEventListener('submit',async(e)=>{
     isValid = false;
   }
 
+  
+
   if(!isValid){
     submitBtn.disabled=false;
    return;
@@ -320,6 +333,7 @@ signupForm.addEventListener('submit',async(e)=>{
     email:emailField.value,
     phone:phoneField.value,
     password:passwordField.value,
+    confirmPassword: confirmPasswordField.value,
     referralCode: referralCodeField.value
 
   }

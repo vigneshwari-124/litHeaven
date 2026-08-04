@@ -208,7 +208,7 @@ body::before {
     <div class="title mb-1" id="animatedTitle"></div>
     <div class="sub">Enter your new email address</div>
     
-    <form id="changeEmailForm">
+    <form id="changeEmailForm" novalidate>
 
       <div class="mb-2">
         <input type="email" id="newEmail" class="form-control" placeholder="New Email Address">
@@ -254,7 +254,7 @@ const newEmailField=document.getElementById("newEmail");
 const newEmailErr=document.getElementById("newEmailErr");
 const changeBtn=document.getElementById("changeBtn");
 
-const emailRegex=/^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+// const emailRegex=/^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
 form.addEventListener("submit",async(e)=>{
   e.preventDefault();

@@ -69,12 +69,46 @@ const postOffer = async (req, res) => {
   try {
     const { category, offerName, discount, startDate, endDate } = req.body;
 
-    if (!category || !offerName || !discount || !startDate || !endDate) {
-      return res.json({
-        success: false,
-        message: "All fields are required"
-      });
-    }
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+    const numberRegex = /^[0-9]+$/;
+
+    const offerNameTrimmed = offerName?.trim();
+
+    if (
+  !category ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!numberRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message: "Discount percentage should contain only digits."
+  });
+}
+
+const discountValue = Number(discount);
+
+if (Number(discount) <= 0 || Number(discount) > 99) {
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
 
     if (new Date(startDate) > new Date(endDate)) {
       return res.json({
@@ -85,10 +119,10 @@ const postOffer = async (req, res) => {
 
    
     const existingOffer = await Offers.findOne({
-      category,
-      offerName: offerName.toLowerCase(),
-      type: "category"
-    });
+  category,
+  offerName: offerNameTrimmed.toLowerCase(),
+  type: "category"
+});
 
     if (existingOffer) {
       return res.json({
@@ -134,7 +168,7 @@ if(end < start){
 
     const newOffer = new Offers({
       category,
-      offerName: offerName.toLowerCase(),
+     offerName: offerNameTrimmed.toLowerCase(),
       discount,
       startDate,
       endDate,
@@ -196,7 +230,85 @@ const updateOffer = async (req, res) => {
     const { id } = req.params;
     const { category, offerName, discount, startDate, endDate } = req.body;
 
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+    const numberRegex = /^[0-9]+$/;
+
+    const offerNameTrimmed = offerName?.trim();
+
+    if (
+  !category ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!numberRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message:  "Enter a valid discount percentage"
+  });
+}
+
+const discountValue = Number(discount);
+
+if (discountValue <= 0 || discountValue > 99){
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
+
     const offer = await Offers.findById(id);
+
+    const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const start = new Date(startDate);
+const end = new Date(endDate);
+
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+if (start < today) {
+  return res.json({
+    success: false,
+    message: "Start date cannot be in the past"
+  });
+}
+
+if (end < today) {
+  return res.json({
+    success: false,
+    message: "End date cannot be in the past"
+  });
+}
+
+if (start.getTime() === end.getTime()) {
+  return res.json({
+    success: false,
+    message: "End date must be greater than start date"
+  });
+}
+
+if (end < start) {
+  return res.json({
+    success: false,
+    message: "End date must be after start date"
+  });
+}
 
     if (!offer) {
       return res.json({
@@ -205,8 +317,22 @@ const updateOffer = async (req, res) => {
       });
     }
 
+    const existingOffer = await Offers.findOne({
+  category,
+  offerName: offerNameTrimmed.toLowerCase(),
+  type: "category",
+  _id: { $ne: id }
+});
+
+if (existingOffer) {
+  return res.json({
+    success: false,
+    message: "Offer name already exists for this category"
+  });
+}
+
     offer.category = category;
-    offer.offerName = offerName.toLowerCase();
+    offer.offerName = offerNameTrimmed.toLowerCase();
     offer.discount = discount;
     offer.startDate = startDate;
     offer.endDate = endDate;
@@ -331,12 +457,45 @@ const postSubCategoryOffer = async (req, res) => {
   try {
     let { category, subCategory, offerName, discount, startDate, endDate } = req.body;
 
-    if (!category || !subCategory || !offerName || !discount || !startDate || !endDate) {
-      return res.json({
-        success: false,
-        message: "All fields are required"
-      });
-    }
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const discountRegex = /^[0-9]+$/;
+
+const offerNameTrimmed = offerName?.trim();
+
+if (
+  !category ||
+  !subCategory ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!discountRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message: "Discount percentage should contain only digits."
+  });
+}
+
+if (Number(discount) <= 0 || Number(discount) > 99) {
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
 
     let today = new Date();
     today.setHours(0,0,0,0);
@@ -383,7 +542,7 @@ const postSubCategoryOffer = async (req, res) => {
     const newOffer = new Offers({
       category,
       subCategory,
-      offerName: offerName.toLowerCase().trim(),
+      offerName: offerNameTrimmed.toLowerCase(),
       discount,
       startDate: start,
       endDate: end,
@@ -432,7 +591,100 @@ const updateSubCategory=async(req,res)=>{
     const {id}=req.params
     const {category,subCategory,discount,offerName,startDate,endDate}=req.body
 
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const discountRegex = /^[0-9]+$/;
+
+const offerNameTrimmed = offerName?.trim();
+
+if (
+  !category ||
+  !subCategory ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!discountRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message: "Discount percentage should contain only digits."
+  });
+}
+
+const discountValue = Number(discount);
+
+if (discountValue <=0 || discountValue > 99)  {
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
+
+const start = new Date(startDate);
+const end = new Date(endDate);
+const today = new Date();
+
+today.setHours(0, 0, 0, 0);
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+if (start < today) {
+  return res.json({
+    success: false,
+    message: "Start date cannot be in the past"
+  });
+}
+
+if (end < today) {
+  return res.json({
+    success: false,
+    message: "End date cannot be in the past"
+  });
+}
+
+if (start.getTime() === end.getTime()) {
+  return res.json({
+    success: false,
+    message: "End date must be greater than start date"
+  });
+}
+
+if (end < start) {
+  return res.json({
+    success: false,
+    message: "End date must be after start date"
+  });
+}
+
      const offer = await Offers.findById(id);
+
+     
+     const existingName = await Offers.findOne({
+  subCategory,
+  offerName: offerNameTrimmed.toLowerCase(),
+  type: "subcategory",
+  _id: { $ne: id }
+});
+
+if (existingName) {
+  return res.json({
+    success: false,
+    message: "Offer name already exists for this subcategory"
+  });
+}
 
     if (!offer) {
       return res.json({
@@ -443,7 +695,7 @@ const updateSubCategory=async(req,res)=>{
 
     offer.category = category;
     offer.subCategory=subCategory;
-    offer.offerName = offerName.toLowerCase();
+    offer.offerName = offerNameTrimmed.toLowerCase();
     offer.discount = discount;
     offer.startDate = startDate;
     offer.endDate = endDate;
@@ -612,12 +864,47 @@ const postProductOffer = async (req, res) => {
   try {
     let { product, language, format, offerName, discount, startDate, endDate } = req.body;
 
-    if (!product || !language || !format || !offerName || !discount || !startDate || !endDate) {
-      return res.json({
-        success: false,
-        message: "All fields are required"
-      });
-    }
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const discountRegex = /^[0-9]+$/;
+
+const offerNameTrimmed = offerName?.trim();
+
+  if (
+  !product ||
+  !language ||
+  !format ||
+  format.length === 0 ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!discountRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message: "Discount percentage should contain only digits."
+  });
+}
+
+if (Number(discount) <= 0 || Number(discount) > 99) {
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
 
     let today = new Date();
     today.setHours(0,0,0,0);
@@ -670,7 +957,7 @@ const postProductOffer = async (req, res) => {
       product: new mongoose.Types.ObjectId(product),
       language,
       format:f,
-      offerName: offerName.toLowerCase().trim(),
+     offerName: offerNameTrimmed.toLowerCase(),
       discount,
       startDate: start,
       endDate: end,
@@ -752,6 +1039,110 @@ const updateProductOffer = async (req, res) => {
     const { id } = req.params;
     const { product, language, format, offerName, discount, startDate, endDate } = req.body;
 
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const discountRegex = /^[0-9]+$/;
+
+const offerNameTrimmed = offerName?.trim();
+
+
+if (
+  !product ||
+  !language ||
+  !format ||
+  (Array.isArray(format) && format.length === 0) ||
+  !offerNameTrimmed ||
+  !discount ||
+  !startDate ||
+  !endDate
+) {
+  return res.json({
+    success: false,
+    message: "All fields are required"
+  });
+}
+
+if (!nameRegex.test(offerNameTrimmed)) {
+  return res.json({
+    success: false,
+    message: "Offer name should contain only letters with a single space between words."
+  });
+}
+
+if (!discountRegex.test(String(discount))) {
+  return res.json({
+    success: false,
+    message: "Discount percentage should contain only digits."
+  });
+}
+
+const discountValue = Number(discount);
+
+if (discountValue <= 0 || discountValue > 99) {
+  return res.json({
+    success: false,
+    message: "Discount percentage must be between 1% and 99%."
+  });
+}
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const start = new Date(startDate);
+const end = new Date(endDate);
+
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+if (start < today) {
+  return res.json({
+    success: false,
+    message: "Start date cannot be in the past"
+  });
+}
+
+if (end < today) {
+  return res.json({
+    success: false,
+    message: "End date cannot be in the past"
+  });
+}
+
+if (start.getTime() === end.getTime()) {
+  return res.json({
+    success: false,
+    message: "End date must be greater than start date"
+  });
+}
+
+if (end < start) {
+  return res.json({
+    success: false,
+    message: "End date must be after start date"
+  });
+}
+
+const existingOffer = await Offers.findOne({
+  product,
+  language,
+  format: Array.isArray(format) ? format[0] : format,
+  type: "product",
+  _id: { $ne: id },
+  isListed: true,
+  $or: [
+    {
+      startDate: { $lte: end },
+      endDate: { $gte: start }
+    }
+  ]
+});
+
+if (existingOffer) {
+  return res.json({
+    success: false,
+    message: `Offer already exists for ${Array.isArray(format) ? format[0] : format}`
+  });
+}
+
     const offer = await Offers.findById(id);
 
     if (!offer) {
@@ -764,7 +1155,7 @@ const updateProductOffer = async (req, res) => {
    
     offer.format = Array.isArray(format) ? format[0] : format;
 
-    offer.offerName = offerName.toLowerCase().trim();
+    offer.offerName = offerNameTrimmed.toLowerCase();
     offer.discount = discount;
     offer.startDate = new Date(startDate);
     offer.endDate = new Date(endDate);

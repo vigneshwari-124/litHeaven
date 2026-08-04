@@ -20,8 +20,94 @@ const getSignup=(req,res)=>{
 
 const postSignup=async (req,res)=>{
   try{
-    const {name,email,phone,password,referralCode}=req.body;
-    console.log(req.body);
+    let {name,email,phone,password,confirmPassword,referralCode}=req.body;
+
+    name = name.trim();
+    email = email.trim();
+    phone = phone.trim();
+
+    if(!name){
+      return res.status(400).json({
+        success:false,
+        message:"name is required"
+      })
+    }
+
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    if (!nameRegex.test(name)) {
+    return res.status(400).json({
+        success: false,
+        message: "Only letters are allowed"
+    });
+    }
+
+    if(!email){
+      return res.status(400).json({
+        success:false,
+        message:"email is required"
+      })
+    }
+
+
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+   if (!emailRegex.test(email)) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+    });
+   }
+
+
+    if(!phone){
+      return res.status(400).json({
+        success:false,
+        message:"phone number is required"
+      })
+    }
+   
+
+    const phoneRegex = /^[0-9]{10}$/;
+
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({
+        success: false,
+        message: "Phone number must be exactly 10 digits"
+    });
+  }
+
+  if (!password || password.trim() === "") {
+    return res.status(400).json({
+        success: false,
+        message: "Password is required"
+    });
+}
+
+  const passwordRegex =/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[A-Za-z0-9!@#$%^&*]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+        success: false,
+        message: "Min 8 chars, 1 uppercase & 1 symbol required"
+    });
+  }
+
+
+  if (!confirmPassword || confirmPassword.trim() === "") {
+    return res.status(400).json({
+        success: false,
+        message: "Confirm password is required"
+    });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({
+        success: false,
+        message: "Passwords do not match"
+    });
+  }
+
     let user=await User.findOne({email})
     if(user && user.isVerified){
         return res.status(400).json({
@@ -182,6 +268,24 @@ const postOtp = async (req, res) => {
     const otp = req.body.otp
     const purpose = req.session.otpPurpose ;
     const userOtp = Array.isArray(otp) ? otp.join("") : otp
+
+
+    if (!userOtp || userOtp.trim() === "") {
+  return res.status(400).json({
+    success: false,
+    message: "OTP is required"
+  });
+}
+
+const otpRegex = /^[0-9]{6}$/;
+
+if (!otpRegex.test(userOtp)) {
+  return res.status(400).json({
+    success: false,
+    message: "Please enter a valid 6-digit OTP"
+  });
+}
+
     const user = await User.findById(req.session.otpUserId)
 
     if (!user) {
@@ -440,13 +544,42 @@ const getLogin=(req,res)=>{
 const postLogin=async(req,res)=>{
   try{
 
-    const {email,password}=req.body
-   console.log('old user',req.body)
+    let {email,password}=req.body
 
-    if(!email || !password){
+    email = email.trim();
+
+    if (!email) {
       return res.status(400).json({
-           message:"All fields are required"
-      })
+        success: false,
+        message: "Email is required"
+      });
+    }
+
+  
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+      });
+    }
+
+    if (!password || password.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required"
+      });
+    }
+
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[A-Za-z0-9!@#$%^&*]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is Min 8 chars, 1 uppercase & 1 symbol required"
+      });
     }
 
     const user=await User.findOne({email})
@@ -624,12 +757,6 @@ if(offerList.length > 0){
      match: { isDeleted: false }
     });
 
-    console.log("Featured Categories Count:", featuredCategories.length);
-
-    featuredCategories.forEach(cat => {
-  console.log(cat.name, cat.isFeatured);
-});
-
     const validFeaturedCategories = featuredCategories.filter(
        c => c.parentCategory
     );
@@ -657,6 +784,22 @@ const getForgot=(req,res)=>{
 const postForgot=async(req,res)=>{
   try{
     const {email}=req.body
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required"
+      });
+    }
+
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+      });
+    }
 
     const user=await User.findOne({email})
 

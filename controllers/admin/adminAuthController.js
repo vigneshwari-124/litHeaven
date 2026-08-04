@@ -127,7 +127,7 @@ const orders = await Order.aggregate([
     }
   }
 ])
-    console.log("Orders found:", orders) 
+    
   
     const { labels, values } = buildChartData(filter, orders, startDate, endDate, now)
 

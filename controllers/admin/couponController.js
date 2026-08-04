@@ -76,14 +76,55 @@ const postCoupon= async(req,res)=>{
 
        const { code,discountPct, minPurchase, maxDiscount, startDate,endDate, status } =req.body
 
-       if( !code || discountPct === undefined || minPurchase === undefined || maxDiscount === undefined || !startDate || !endDate  ){
-        return res.status(400).json({
-            success:false,
-            message:"All fileds are required"
-        })
-       }
+       const codeRegex = /^[A-Za-z0-9]+$/;
+       const numberRegex = /^[0-9]+$/;
 
-       const existing=await Coupon.findOne({code})
+       const codeTrimmed = code?.trim();
+       if (
+    !codeTrimmed ||
+    discountPct === undefined ||
+    minPurchase === undefined ||
+    maxDiscount === undefined ||
+    !startDate ||
+    !endDate
+) {
+    return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+    });
+}
+
+if (!codeRegex.test(codeTrimmed)) {
+    return res.status(400).json({
+        success: false,
+        message: "Coupon code should contain only letters and numbers."
+    });
+}
+
+if (!numberRegex.test(String(discountPct))) {
+    return res.status(400).json({
+        success: false,
+        message: "Discount percentage should contain only digits."
+    });
+}
+
+if (!numberRegex.test(String(minPurchase))) {
+    return res.status(400).json({
+        success: false,
+        message: "Minimum purchase should contain only digits."
+    });
+}
+
+if (!numberRegex.test(String(maxDiscount))) {
+    return res.status(400).json({
+        success: false,
+        message: "Maximum discount should contain only digits."
+    });
+}
+
+       const existing = await Coupon.findOne({
+    code: { $regex: `^${codeTrimmed}$`, $options: "i" }
+});
 
        if(existing){
         return res.status(400).json({
@@ -120,7 +161,7 @@ if(max >= min){
 
 
        const newCoupon=new Coupon({
-        code,
+         code: codeTrimmed.toUpperCase(),
         discountPct,
         minPurchase,
         maxDiscount,
@@ -156,12 +197,52 @@ const updateCoupon=async(req,res)=>{
     try{
         const {code,discountPct,minPurchase,maxDiscount,startDate,endDate,status}=req.body
 
-         if( !code || discountPct === undefined || minPurchase === undefined || maxDiscount === undefined || !startDate || !endDate  ){
-        return res.status(400).json({
-            success:false,
-            message:"All fileds are required"
-        })
-       }
+        const codeRegex = /^[A-Za-z0-9]+$/;
+        const numberRegex = /^[0-9]+$/;
+
+        const codeTrimmed = code?.trim();
+
+         if (
+    !codeTrimmed ||
+    discountPct === undefined ||
+    minPurchase === undefined ||
+    maxDiscount === undefined ||
+    !startDate ||
+    !endDate
+) {
+    return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+    });
+}
+
+if (!codeRegex.test(codeTrimmed)) {
+    return res.status(400).json({
+        success: false,
+        message: "Coupon code should contain only letters and numbers."
+    });
+}
+
+if (!numberRegex.test(String(discountPct))) {
+    return res.status(400).json({
+        success: false,
+        message: "Discount percentage should contain only digits."
+    });
+}
+
+if (!numberRegex.test(String(minPurchase))) {
+    return res.status(400).json({
+        success: false,
+        message: "Minimum purchase should contain only digits."
+    });
+}
+
+if (!numberRegex.test(String(maxDiscount))) {
+    return res.status(400).json({
+        success: false,
+        message: "Maximum discount should contain only digits."
+    });
+}
 
        
         const discount = Number(discountPct);
@@ -189,9 +270,21 @@ if(max >= min){
   });
 }
 
+const existingCoupon = await Coupon.findOne({
+    code: { $regex: `^${codeTrimmed}$`, $options: "i" },
+    _id: { $ne: req.params.id }
+});
+
+if (existingCoupon) {
+    return res.status(400).json({
+        success: false,
+        message: "Coupon already exists"
+    });
+}
+
 
         const updated=await Coupon.findByIdAndUpdate(req.params.id,{
-            code,
+            code: codeTrimmed.toUpperCase(),
             discountPct,
             minPurchase,
             maxDiscount,

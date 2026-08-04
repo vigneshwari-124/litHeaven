@@ -575,37 +575,61 @@ async function saveCoupon(){
    const endDate=document.getElementById('expiryDate').value
    const status= document.getElementById('couponStatus').value
 
-    if(!code){
-    document.getElementById('codeError').innerText = "coupon code is Required";
-    isValid = false;
-  }
+   const codeRegex = /^[A-Za-z0-9]+$/;
+   const numberRegex = /^[0-9]+$/;
 
-  if(!discountPct){
-    document.getElementById('discountError').innerText = "discount % is Required";
-    isValid = false;
-  }
+   const codeTrimmed = code.trim();
 
-  if(!minPurchase){
-    document.getElementById('minError').innerText = "discount % is Required";
+    if (!codeTrimmed) {
+    document.getElementById('codeError').innerText = "Coupon code is required";
     isValid = false;
-  }
-
-  if(!maxDiscount){
-    document.getElementById('maxError').innerText = "discount % is Required";
+} else if (!codeRegex.test(codeTrimmed)) {
+    document.getElementById('codeError').innerText =
+        "Coupon code should contain only letters and numbers.";
     isValid = false;
-  }
+}
 
-  if(!startDate){
-    document.getElementById('startError').innerText = "discount % is Required";
+ if (!discountPct) {
+    document.getElementById('discountError').innerText =
+        "Discount percentage is required";
     isValid = false;
-  }
-
-  if(!endDate){
-    document.getElementById('endError').innerText = "discount % is Required";
+} else if (!numberRegex.test(discountPct)) {
+    document.getElementById('discountError').innerText =
+        "Only digits are allowed";
     isValid = false;
-  }
+}
 
-  if(discountPct > 99){
+  if (!minPurchase) {
+    document.getElementById('minError').innerText =
+        "Minimum purchase is required";
+    isValid = false;
+} else if (!numberRegex.test(minPurchase)) {
+    document.getElementById('minError').innerText =
+        "Only digits are allowed";
+    isValid = false;
+}
+
+  if (!maxDiscount) {
+    document.getElementById('maxError').innerText =
+        "Maximum discount is required";
+    isValid = false;
+} else if (!numberRegex.test(maxDiscount)) {
+    document.getElementById('maxError').innerText =
+        "Only digits are allowed";
+    isValid = false;
+}
+
+if (!startDate) {
+    document.getElementById('startError').innerText = "Start date is required";
+    isValid = false;
+}
+
+if (!endDate) {
+    document.getElementById('endError').innerText = "Expiry date is required";
+    isValid = false;
+}
+
+  if (Number(discountPct) <= 0 || Number(discountPct) > 99){
   document.getElementById('discountError').innerText = "Discount must be between 1% and 99%";
   isValid = false;
   }

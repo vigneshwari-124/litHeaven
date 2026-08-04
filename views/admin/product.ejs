@@ -208,6 +208,18 @@ body{background:#f5f3ff;color:#333;font-family:'Segoe UI',sans-serif;overflow-x:
   .main-content{padding:10px}
   .language-selection{grid-template-columns:1fr}
 }
+
+/* Remove spinner from number inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
 </style>
 </head>
 <body>
@@ -616,14 +628,9 @@ const authorError = document.getElementById("authorError");
 const variantError = document.getElementById("variantError");
 const shortDescError = document.getElementById("shortDescError");
 
+const letterRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-   shortDescField.addEventListener("input", () => {
 
-      if (shortDescField.value.trim() !== "") {
-             shortDescError.textContent = "";
-      }
-
-    });
 
 function clearErrorOnInput(field, errorElement, isSelect = false) {
   field.addEventListener(isSelect ? "change" : "input", () => {
@@ -633,8 +640,52 @@ function clearErrorOnInput(field, errorElement, isSelect = false) {
   });
 }
 
-clearErrorOnInput(titleField, titleError);
-clearErrorOnInput(descriptionField, descriptionError);
+titleField.addEventListener("input", function () {
+
+    if (this.value === "") {
+        titleError.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(this.value)) {
+        titleError.textContent =
+            "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    } else {
+        titleError.textContent = "";
+    }
+});
+
+shortDescField.addEventListener("input", function () {
+
+    if (this.value === "") {
+        shortDescError.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(this.value)) {
+        shortDescError.textContent =
+            "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    } else {
+        shortDescError.textContent = "";
+    }
+});
+
+
+descriptionField.addEventListener("input", function () {
+
+    if (this.value === "") {
+        descriptionError.textContent = "";
+        return;
+    }
+
+    if (!letterRegex.test(this.value)) {
+        descriptionError.textContent =
+            "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    } else {
+        descriptionError.textContent = "";
+    }
+});
+
 clearErrorOnInput(categoryField, categoryError, true);
 clearErrorOnInput(subCategoryField, subCategoryError, true);
 clearErrorOnInput(authorField, authorError, true);
@@ -665,23 +716,64 @@ productForm.addEventListener("submit", async function (e) {
   const subCategory = subCategoryField.value;
   const author = authorField.value;
 
-  if (!title) { titleError.textContent = "Product name is required"; isValid = false; }
-  if (!shortDescription) {
-    shortDescError.textContent = "Short description is required"; isValid = false;
-  } else if (shortDescription.length < 10) {
-    shortDescError.textContent = "Minimum 10 characters required"; isValid = false;
-  }
-  if (!description) { descriptionError.textContent = "Description is required"; isValid = false; }
-  if (!category) { categoryError.textContent = "Category is required"; isValid = false; }
-  if (!subCategory) { subCategoryError.textContent = "Sub-category is required"; isValid = false; }
-  if (!author) { authorError.textContent = "Author is required"; isValid = false; }
-  if (productVariants.length === 0) { variantError.textContent = "At least one variant required"; isValid = false; }
+  // Product Name
+if (!title) {
+    titleError.textContent = "Product name is required";
+    isValid = false;
+}
+else if (!letterRegex.test(title)) {
+    titleError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
 
-  if (!isValid) {
+// Short Description
+if (!shortDescription) {
+    shortDescError.textContent = "Short description is required";
+    isValid = false;
+}
+else if (!letterRegex.test(shortDescription)) {
+    shortDescError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
+
+// Full Description
+if (!description) {
+    descriptionError.textContent = "Description is required";
+    isValid = false;
+}
+else if (!letterRegex.test(description)) {
+    descriptionError.textContent =
+        "Only letters are allowed. Numbers, symbols and multiple spaces are not allowed.";
+    isValid = false;
+}
+
+  if (!category) {
+    categoryError.textContent = "Category is required";
+    isValid = false;
+}
+
+if (!subCategory) {
+    subCategoryError.textContent = "Sub-category is required";
+    isValid = false;
+}
+
+if (!author) {
+    authorError.textContent = "Author is required";
+    isValid = false;
+}
+
+if (productVariants.length === 0) {
+    variantError.textContent = "At least one variant required";
+    isValid = false;
+}
+
+if (!isValid) {
     saveBtn.disabled = false;
     saveBtn.textContent = "Save Product";
     return;
-  }
+}
 
   try {
     const formData = new FormData();
@@ -707,6 +799,7 @@ productForm.addEventListener("submit", async function (e) {
           additionalCount: additional.length
         };
       });
+      console.log(productVariants);
       formData.append("variants", JSON.stringify(variantsForServer));
 
       // Images: fixed(thumb+sub1+sub2) then additional — per variant order
@@ -820,13 +913,17 @@ document.getElementById('variantForm').addEventListener('submit', function(e) {
   e.preventDefault();
   let isValid = true;
 
+  const numberRegex = /^[0-9]+$/;
+
   const selected = LANGS
     .filter(l => { const cb = document.getElementById(`lang_${l.languageCode}`); return cb && cb.checked; })
     .map(l => l.languageCode);
 
   const languageError = document.getElementById("languageError");
   languageError.textContent = "";
-  if (selected.length === 0) { languageError.textContent = "At least choose one language"; return; }
+  if (selected.length === 0) { 
+    languageError.textContent = "At least choose one language";
+     return; }
 
   const all = [];
 
@@ -840,13 +937,20 @@ document.getElementById('variantForm').addEventListener('submit', function(e) {
     const imgData = languageImageData[lang] || {};
     const fixed = imgData.fixed || [null, null, null];
 
-    // Thumbnail check
-    if (!fixed[0]) {
-      Toast.fire({ icon:'error', title:`${lang.toUpperCase()}: Thumbnail required` });
-      isValid = false;
-    }
+   
+    const thumbError = document.getElementById(`${lang}_thumb_error`);
 
-    // Sub images check (index 1 and 2)
+if (thumbError) {
+  thumbError.textContent = "";
+}
+
+if (!fixed[0]) {
+  if (thumbError) {
+    thumbError.textContent = "Thumbnail image is required";
+  }
+  isValid = false;
+}
+    
     if (!fixed[1] || !fixed[2]) {
       if (subErr) subErr.textContent = "Both sub images required";
       isValid = false;
@@ -993,6 +1097,7 @@ function buildLanguageUI() {
             <i class="fas fa-image" style="font-size:30px;color:#6f2b67"></i>
             <div style="font-size:10px;color:#6f2b67;margin-top:6px">Thumbnail</div>
           </div>
+          <small id="${lang}_thumb_error" style="color:red;font-size:12px"></small>
         </div>
 
         <div class="form-group">
@@ -1186,32 +1291,7 @@ document.getElementById('productCategory')
 
 });
 
-// Author:
 
-// async function loadAuthors() {
-//   try {
-//     const res = await fetch('/admin/authors/active', {
-//       credentials: 'same-origin'
-//     });
-
-//     const data = await res.json();
-
-//     const authorSelect = document.getElementById('authorSelect');
-//     authorSelect.innerHTML = '<option value="">Select Author</option>';
-
-//     if (!data.success || data.authors.length === 0) return;
-
-//     data.authors.forEach(author => {
-//       const option = document.createElement('option');
-//       option.value = author._id;
-//       option.textContent = author.name;
-//       authorSelect.appendChild(option);
-//     });
-
-//   } catch (err) {
-//     console.error('Failed to load authors', err);
-//   }
-// }
 
 async function loadAuthors(){
 
@@ -1382,35 +1462,6 @@ function toggleFormatFields(lang,fmt){
 
 // ── Image crop ────────────────────────────────────────────────────────────
 
-// function openImageCrop(language, type, index=null){
-//   currentCropTarget = {language, type, index};
-
-//   const fi = document.getElementById('cropFileInput');
-//   fi.value = '';
-//   fi.click();
-
-//   fi.onchange = function(e){
-//     const file = e.target.files[0];
-//     if(!file) return;
-//     if(!file.type.startsWith("image/")){
-//       Toast.fire({icon:'error', title:'Only images allowed'});
-//       return;
-//     }
-//     const reader = new FileReader();
-//     reader.onload = function(ev){
-//       const ci = document.getElementById('cropImage');
-//       ci.src = ev.target.result;
-//       document.getElementById('cropModal').classList.add('show');
-//       if(cropper){ cropper.destroy(); cropper = null; }
-//       cropper = new Cropper(ci, {
-//         aspectRatio: NaN,
-//         viewMode: 2,
-//         autoCropArea: 0.85
-//       });
-//     };
-//     reader.readAsDataURL(file);
-//   };
-// }
 
 function pickImage(language, index) {
   currentCropTarget = { language, index, type: 'fixed' };
@@ -1440,26 +1491,7 @@ function pickImage(language, index) {
   };
 }
 
-// function setRatio(ratio, label){
-//   currentRatio = ratio;
-//   currentRatioLabel = label;
 
-//   // active button highlight
-//   document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
-//   // clicked button-ஐ find பண்ணி active பண்ணு
-//   document.querySelectorAll('.ratio-btn').forEach(b => {
-//     if(b.textContent.trim() === label || b.textContent.trim() === '✂ Free' && isNaN(ratio)){
-//       b.classList.add('active');
-//     }
-//   });
-
-//   document.getElementById('cropInfoText').textContent =
-//     `Thumbnail → ${label}`;
-
-//   if(cropper){
-//     cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
-//   }
-// }
 //-------------------------------------------------------------------------------
 
 function closeCropModal(){
@@ -1468,33 +1500,7 @@ function closeCropModal(){
   currentCropTarget=null;
 }
 
-// function applyCrop(){
-//   if(!cropper || !currentCropTarget) return;
 
-//   const canvas = cropper.getCroppedCanvas();
-
-//   canvas.toBlob(function(blob){
-//     const file = new File([blob], Date.now()+".jpg", {type:"image/jpeg"});
-//     const {language, type, index} = currentCropTarget;
-
-//     if(!languageImageData[language]) languageImageData[language] = {};
-
-//     if(type === 'thumb'){
-//       languageImageData[language].thumbnailFile = file;
-//       document.getElementById(`${language}_thumb`).innerHTML =
-//         `<img src="${URL.createObjectURL(file)}">`;
-//     } else {
-//       if(!languageImageData[language].subImageFiles)
-//         languageImageData[language].subImageFiles = [];
-//       languageImageData[language].subImageFiles[index] = file;
-//       document.getElementById(`${language}_sub_${index}`).innerHTML =
-//         `<img src="${URL.createObjectURL(file)}">`;
-//     }
-
-//     closeCropModal();
-//     Toast.fire({icon:'success', title:'Image cropped successfully!'});
-//   }, "image/jpeg", 0.9);
-// }
 function applyCrop() {
   if (!cropper || !currentCropTarget) return;
   const canvas = cropper.getCroppedCanvas();
