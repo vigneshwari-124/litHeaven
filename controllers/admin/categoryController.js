@@ -465,7 +465,11 @@ if (req.file && req.file.path) {
       image: imageUrl
     });
 
+    console.log("Before save");
+
     await subCategory.save();
+
+    console.log("After save");
 
     res.status(201).json({
       success: true,
@@ -473,15 +477,21 @@ if (req.file && req.file.path) {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
+  if (err.code === 11000) {
+    return res.status(409).json({
       success: false,
-      message: 'Server error'
+      message: 'Sub-category name already exists'
     });
   }
+  console.error(err);
+  res.status(500).json({ success: false, message: 'Server error' });
+}
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 const updateSubCategory = async (req, res) => {
   try {
@@ -593,12 +603,24 @@ if (existingSubCategory) {
     })
 
   } catch (err) {
-    console.error(err)
-    res.status(500).json({
-      success:false,
-      message:'Server error'
-    })
+  if (req.file && fs.existsSync(req.file.path)) {
+    fs.unlinkSync(req.file.path);
   }
+
+  if (err.code === 11000) {
+    return res.status(409).json({
+      success: false,
+      message: "Sub-category name already exists under this parent category"
+    });
+  }
+
+  console.error(err);
+
+  return res.status(500).json({
+    success: false,
+    message: "Server error"
+  });
+}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
