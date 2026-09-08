@@ -9,126 +9,115 @@ const mongoose = require("mongoose")
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const getShopPage=(req,res)=>{
-  res.render('user/shop',{
-    isLoggedIn: req.session.isLoggedIn || false,
-  userId: req.session.userId || null
-  }
-  )
-  
-}
-
-const shopPage = async (req, res) => {
+const getShopPage = async (req, res) => {
   try {
 
+    
+ 
     const { category, subcategory, author, language, format, price, sort, chip, search } = req.query;
-
+ 
     let page = parseInt(req.query.page) || 1
-    if(page < 1) page = 1
-
+    if (page < 1) page = 1
+ 
     const limit = 12
  
     let filter = { isDeleted: false };
-
-
-
-if(search){
-
-const authors = await Author.find({
-name: { $regex: search, $options: "i" }
-}).select("_id")
-
-const categories = await Category.find({
-name: { $regex: search, $options: "i" }
-}).select("_id")
-
-filter.$or = [
-
-{ title: { $regex: search, $options: "i" } },
-
-{ author: { $in: authors.map(a => a._id) } },
-
-{ category: { $in: categories.map(c => c._id) } },
-
-{ subCategory: { $in: categories.map(c => c._id) } }
-
-]
-
-}
-
-if (category) {
-  const categories = category.split(",")
-  filter.category = { $in: categories };
-}
-    if (subcategory) {
-  const subcats = subcategory.split(",");
-  filter.subCategory = { $in: subcats };
-}
-
-    if (author) {
-       const authors = author.split(",")
-
-      filter.author = { $in: authors };
+ 
+    
+    const toArray = (val) => {
+      if (!val) return []
+      const arr = Array.isArray(val) ? val : val.split(",")
+      
+      return [...new Set(arr)]
     }
-
-    if (language) {
-      const languages = language.split(",")
-     filter["variants.language"] = { $in: languages }
+ 
+    const priceValue = Array.isArray(price) ? [...new Set(price)][0] : price
+ 
+    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+ 
+    if (search) {
+ 
+      
+      const exactSearch = new RegExp(`^${escapeRegex(search.trim())}$`, "i")
+ 
+      const authors = await Author.find({
+        name: exactSearch
+      }).select("_id")
+ 
+      const categories = await Category.find({
+        name: exactSearch
+      }).select("_id")
+ 
+      filter.$or = [
+        { title: exactSearch },
+        { author: { $in: authors.map(a => a._id) } },
+        { category: { $in: categories.map(c => c._id) } },
+        { subCategory: { $in: categories.map(c => c._id) } }
+      ]
     }
-
-   if (format) {
-
-  const formats = format.split(",")
-
-  filter["variants.formats.format"] = { $in: formats }
-
-  }
-
-if (price && !isNaN(price)) {
-
-filter["variants.formats.price"] = { $lte: Number(price) }
-
-}
-
-let sortOption = { createdAt: -1 }
-
-if (sort === "price-asc") {
-  sortOption = { "variants.0.formats.0.price": 1 }
-}
-
-if (sort === "price-desc") {
-  sortOption = { "variants.0.formats.0.price": -1 }
-}
-
-if (sort === "az") {
-  sortOption = { title: 1 }
-}
-
-if (sort === "za") {
-  sortOption = { title: -1 }
-}
-if(chip === "new"){ sortOption = { createdAt: -1 }}
-if(chip === "ratings"){sortOption = { rating: -1 }}
-
-
-const totalCount = await Product.countDocuments(filter);
-const totalPages = Math.ceil(totalCount / limit)
-
-if(page > totalPages && totalPages > 0){
-  page = totalPages
-}
-
-const skip = (page - 1) * limit
-
+ 
+    const categoryArr = toArray(category)
+    const subcategoryArr = toArray(subcategory)
+    const authorArr = toArray(author)
+    const languageArr = toArray(language)
+    const formatArr = toArray(format)
+ 
+   
+    req.query.category = categoryArr
+    req.query.subcategory = subcategoryArr
+    req.query.author = authorArr
+    req.query.language = languageArr
+    req.query.format = formatArr
+    req.query.price = priceValue
+ 
+    if (categoryArr.length) {
+      filter.category = { $in: categoryArr };
+    }
+ 
+    if (subcategoryArr.length) {
+      filter.subCategory = { $in: subcategoryArr };
+    }
+ 
+    if (authorArr.length) {
+      filter.author = { $in: authorArr };
+    }
+ 
+    if (languageArr.length) {
+      filter["variants.language"] = { $in: languageArr }
+    }
+ 
+    if (formatArr.length) {
+      filter["variants.formats.format"] = { $in: formatArr }
+    }
+ 
+    if (priceValue && !isNaN(priceValue)) {
+      filter["variants.formats.price"] = { $lte: Number(priceValue) }
+    }
+ 
+    let sortOption = { createdAt: -1 }
+ 
+   
+ 
+    if (sort === "az") {
+      sortOption = { title: 1 }
+    }
+ 
+    if (sort === "za") {
+      sortOption = { title: -1 }
+    }
+ 
+    if (chip === "new") { sortOption = { createdAt: -1 } }
+    
+    const isPriceSort = sort === "price-asc" || sort === "price-desc"
+ 
+    
     const products = await Product.find(filter)
       .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
       .populate({
-       path: "category",
-       match: { isDeleted: false }
-       })
-       .populate({
+        path: "category",
+        match: { isDeleted: false }
+      })
+      .populate({
         path: "subCategory",
         match: { isDeleted: false }
       })
@@ -137,212 +126,331 @@ const skip = (page - 1) * limit
         match: { isDeleted: false }
       })
       .populate("variants.language")
-
-
-      const productIds = products.map(p => p._id)
-
-const ratingData = await Review.aggregate([
-{
-$match:{ product:{ $in: productIds } }
-},
-{
-$group:{
-_id:"$product",
-avgRating:{ $avg:"$rating" },
-count:{ $sum:1 }
-}
-}
-])
-
-const ratingMap = {}
-
-ratingData.forEach(r=>{
-ratingMap[r._id.toString()] = {
-avg: Math.round(r.avgRating),
-count: r.count
-}
-})
-
-      const validProducts = products.filter(
+ 
+    const productIds = products.map(p => p._id)
+ 
+    const ratingData = await Review.aggregate([
+      {
+        $match: { product: { $in: productIds } }
+      },
+      {
+        $group: {
+          _id: "$product",
+          avgRating: { $avg: "$rating" },
+          count: { $sum: 1 }
+        }
+      }
+    ])
+ 
+    const ratingMap = {}
+ 
+    ratingData.forEach(r => {
+      ratingMap[r._id.toString()] = {
+        avg: Math.round(r.avgRating),
+        count: r.count
+      }
+    })
+ 
+    const validProducts = products.filter(
       p => p.category && p.subCategory && p.author
-      );
-
-      const now = new Date()
-
-const offers = await Offer.find({
-  isListed: true,
-  startDate: { $lte: now },
-  endDate: { $gte: now }
-})
-
-let wishlistItems = []
-
-if(req.session.userId){
-
-wishlistItems = await Wishlist.find({
-  userId: req.session.userId
-}).select("productId")
-
-}
-
-const productsWithStock = validProducts.map(p => {
-
-let totalStock = 0
-
-p.variants.forEach(v=>{
-  v.formats.forEach(f=>{
-    totalStock += f.stock
-  })
-})
-
-let minPrice = Infinity
-
-p.variants.forEach(v=>{
-  v.formats.forEach(f=>{
-    if(f.price < minPrice) minPrice = f.price
-  })
-})
-
-
-let discount = 0
-
-const productId = p._id.toString()
-const subCategoryId = p.subCategory?._id?.toString()
-const categoryId = p.category?._id?.toString()
-
-const productOffer = offers.find(o =>
-  o.type === "product" &&
-  o.product?.toString() === productId
-)
-
-const subOffer = offers.find(o =>
-  o.type === "subcategory" &&
-  o.subCategory?.toString() === subCategoryId
-)
-
-const catOffer = offers.find(o =>
-  o.type === "category" &&
-  o.category?.toString() === categoryId
-)
-
-const offerList = []
-
-if(productOffer){
-
-  offerList.push(productOffer.discount)
-
-}
-
-if(subOffer){
-
-  offerList.push(subOffer.discount)
-
-}
-
-if(catOffer){
-
-  offerList.push(catOffer.discount)
-
-}
-
-if(offerList.length > 0){
-
-  discount = Math.max(...offerList)
-
-}
-
-let finalPrice = minPrice
-
-if(discount > 0){
-  finalPrice = Math.round(minPrice - (minPrice * discount / 100))
-}
-
-const isWishlisted = wishlistItems.some(
-w => w.productId.toString() === p._id.toString()
-)
-
-const rating = ratingMap[p._id.toString()] || null
-
-return {
-  ...p.toObject(),
-  isWishlisted,
-  isOutOfStock: totalStock === 0,
-
-  rating: rating ? rating.avg : 0,
-  ratingCount: rating ? rating.count : 0,
-
-  
-  originalPrice: minPrice,
-  finalPrice,
-  discount
-}
-})
-
-const priceData = await Product.aggregate([
-  { $match: { isDeleted:false } },
-  { $unwind: "$variants" },
-  { $unwind: "$variants.formats" },
-  {
-    $group: {
-      _id:null,
-      maxPrice:{ $max:"$variants.formats.price" },
-      minPrice:{ $min:"$variants.formats.price" }
+    );
+ 
+    const now = new Date()
+ 
+    const offers = await Offer.find({
+      isListed: true,
+      startDate: { $lte: now },
+      endDate: { $gte: now }
+    })
+ 
+    let wishlistItems = []
+ 
+    if (req.session.userId) {
+      wishlistItems = await Wishlist.find({
+        userId: req.session.userId
+      }).select("productId")
     }
-  }
-])
-
-const maxPrice = priceData.length ? priceData[0].maxPrice : 3000
-const minPrice = priceData.length ? priceData[0].minPrice : 0
-
+ 
+    const productsWithStock = validProducts.map(p => {
+ 
+      let totalStock = 0
+ 
+      p.variants.forEach(v => {
+        v.formats.forEach(f => {
+          totalStock += f.stock
+        })
+      })
+ 
+      
+      let lowPrice = Infinity
+      let highPrice = -Infinity
+ 
+      p.variants.forEach(v => {
+        v.formats.forEach(f => {
+          if (f.price < lowPrice) lowPrice = f.price
+          if (f.price > highPrice) highPrice = f.price
+        })
+      })
+ 
+      let discount = 0
+ 
+      const productId = p._id.toString()
+      const subCategoryId = p.subCategory?._id?.toString()
+      const categoryId = p.category?._id?.toString()
+ 
+      const productOffer = offers.find(o =>
+        o.type === "product" &&
+        o.product?.toString() === productId
+      )
+ 
+      const subOffer = offers.find(o =>
+        o.type === "subcategory" &&
+        o.subCategory?.toString() === subCategoryId
+      )
+ 
+      const catOffer = offers.find(o =>
+        o.type === "category" &&
+        o.category?.toString() === categoryId
+      )
+ 
+      const offerList = []
+ 
+      if (productOffer) offerList.push(productOffer.discount)
+      if (subOffer) offerList.push(subOffer.discount)
+      if (catOffer) offerList.push(catOffer.discount)
+ 
+      if (offerList.length > 0) {
+        discount = Math.max(...offerList)
+      }
+ 
+      let finalLow = lowPrice
+      let finalHigh = highPrice
+ 
+      if (discount > 0) {
+        finalLow = Math.round(lowPrice - (lowPrice * discount / 100))
+        finalHigh = Math.round(highPrice - (highPrice * discount / 100))
+      }
+ 
+      const isWishlisted = wishlistItems.some(
+        w => w.productId.toString() === p._id.toString()
+      )
+ 
+      const rating = ratingMap[p._id.toString()] || null
+ 
+      
+      const thumbnail = p.variants?.[0]?.thumbnail?.url || '/images/no-image.png'
+ 
+      const hasStock = totalStock > 0
+ 
+      
+      const showHigh = sort === "price-desc"
+ 
+      const originalPrice = showHigh ? highPrice : lowPrice
+      const finalPrice = showHigh ? finalHigh : finalLow
+ 
+      return {
+        ...p.toObject(),
+        isWishlisted,
+        isOutOfStock: !hasStock,
+        hasStock,
+        thumbnail,
+        rating: rating ? rating.avg : 0,
+        ratingCount: rating ? rating.count : 0,
+        originalPrice,
+        finalPrice,
+        discount,
+      
+        _sortPrice: finalPrice
+      }
+    })
+ 
+    
+    if (sort === "price-asc") {
+      productsWithStock.sort((a, b) => a._sortPrice - b._sortPrice)
+    } else if (sort === "price-desc") {
+      productsWithStock.sort((a, b) => b._sortPrice - a._sortPrice)
+    }
+ 
+   
+    if (chip === "ratings") {
+      productsWithStock.sort((a, b) => b.rating - a.rating)
+    }
+ 
+    const totalCount = productsWithStock.length
+    const totalPages = Math.ceil(totalCount / limit)
+ 
+    if (page > totalPages && totalPages > 0) {
+      page = totalPages
+    }
+ 
+    const skip = (page - 1) * limit
+ 
+    const pageProducts = productsWithStock
+      .slice(skip, skip + limit)
+      .map(({ _sortPrice, ...rest }) => rest) 
+ 
+    const priceData = await Product.aggregate([
+      { $match: { isDeleted: false } },
+      { $unwind: "$variants" },
+      { $unwind: "$variants.formats" },
+      {
+        $group: {
+          _id: null,
+          maxPrice: { $max: "$variants.formats.price" },
+          minPrice: { $min: "$variants.formats.price" }
+        }
+      }
+    ])
+ 
+    const maxPrice = priceData.length ? priceData[0].maxPrice : 3000
+    const minPrice = priceData.length ? priceData[0].minPrice : 0
+ 
     const categories = await Category.find({
       parentCategory: null,
       isDeleted: false
     });
-
+ 
     const subCategories = await Category.find({
       parentCategory: { $ne: null },
       isDeleted: false
     });
-
-   const categoryMap = categories.map(cat => {
-
+ 
+    const categoryMap = categories.map(cat => {
       const subs = subCategories.filter(
         sub => sub.parentCategory.toString() === cat._id.toString()
       );
-
       return {
         ...cat._doc,
         subCategories: subs
       };
-
     });
-
-
+ 
     const authors = await Author.find({ isDeleted: false });
     const languages = await Language.find({ status: "active" });
+ 
+    const selected = {
+      category: categoryArr,
+      subcategory: subcategoryArr,
+      author: authorArr,
+      language: languageArr,
+      format: formatArr,
+    }
+ 
 
-     
-    
-
-    res.json({
-  products: productsWithStock,
-  totalCount,
-  totalPages,
-  currentPage: Number(page),
-  categories: categoryMap,
-  authors,
-  languages,
-  maxPrice,
-  minPrice,
-  selectedFilters: req.query
-  
-});
-
+    const buildLink = (overrides = {}) => {
+      const merged = { ...req.query, ...overrides }
+      const qs = new URLSearchParams()
+      Object.entries(merged).forEach(([key, val]) => {
+        if (val === undefined || val === null || val === "") return
+        if (key === "page" && String(val) === "1") return 
+        qs.set(key, Array.isArray(val) ? val.join(",") : val)
+      })
+      const qsString = qs.toString()
+      return qsString ? "/shop?" + qsString : "/shop"
+    }
+ 
+    const formatLabels = { paperback: "Paper Back", hardcover: "Hard Cover" }
+ 
+    const activeTags = []
+ 
+    subcategoryArr.forEach(id => {
+      const sub = subCategories.find(s => s._id.toString() === id)
+      if (sub) {
+        activeTags.push({
+          label: sub.name,
+          url: buildLink({ subcategory: subcategoryArr.filter(v => v !== id).join(","), page: 1 })
+        })
+      }
+    })
+ 
+    authorArr.forEach(id => {
+      const a = authors.find(x => x._id.toString() === id)
+      if (a) {
+        activeTags.push({
+          label: a.name,
+          url: buildLink({ author: authorArr.filter(v => v !== id).join(","), page: 1 })
+        })
+      }
+    })
+ 
+    languageArr.forEach(id => {
+      const l = languages.find(x => x._id.toString() === id)
+      if (l) {
+        activeTags.push({
+          label: l.languageName,
+          url: buildLink({ language: languageArr.filter(v => v !== id).join(","), page: 1 })
+        })
+      }
+    })
+ 
+    formatArr.forEach(val => {
+      activeTags.push({
+        label: formatLabels[val] || val,
+        url: buildLink({ format: formatArr.filter(v => v !== val).join(","), page: 1 })
+      })
+    })
+ 
+    res.render('user/shop', {
+      isLoggedIn: req.session.isLoggedIn || false,
+      userId: req.session.userId || null,
+      buildLink,
+      activeTags,
+ 
+      products: pageProducts,
+      totalCount,
+      totalPages,
+      currentPage: page,
+ 
+      categories: categoryMap,
+      authors,
+      languages,
+ 
+      maxPrice,
+      minPrice,
+ 
+      
+      query: req.query,
+      selected,
+ 
+      sort: sort || "",
+      chip: chip || "new",
+      search: search || "",
+      price: priceValue ? Number(priceValue) : maxPrice
+    });
+ 
   } catch (err) {
     console.log(err);
+    res.status(500).render('error', { message: "Something went wrong loading the shop." });
   }
-};
+}
+ 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+const toggleWishlist = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ success: false, message: "Login required" })
+    }
+ 
+    const { productId } = req.params
+    const userId = req.session.userId
+ 
+    const existing = await Wishlist.findOne({ userId, productId })
+ 
+    if (existing) {
+      await Wishlist.deleteOne({ _id: existing._id })
+      return res.json({ success: true, isWishlisted: false })
+    } else {
+      await Wishlist.create({ userId, productId })
+      return res.json({ success: true, isWishlisted: true })
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ success: false, message: "Something went wrong" })
+  }
+}
+ 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const productDetailPage = async (req, res) => {
@@ -635,6 +743,6 @@ wished = true
 
 module.exports={
   getShopPage,
-  shopPage,
+  toggleWishlist,
   productDetailPage
 }

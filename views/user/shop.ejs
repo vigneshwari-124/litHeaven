@@ -12,16 +12,14 @@
     *{box-sizing:border-box}
     body{font-family:"Inter","Segoe UI",Roboto,Arial;margin:0;background:linear-gradient(135deg,#f5f0f6 0%,#e8dff0 50%,#f0e5f5 100%);color:#222;overflow-x:hidden;max-width:100vw}
 
-   
-.bcard-stars i{margin-right:2px;font-size:.75rem;}
-.bcard-stars .fa-solid{color:#f59e0b;   }
-.bcard-stars .fa-regular{ color:#f59e0b;   -webkit-text-stroke: 1px #f59e0b; opacity:0.6;}
+    .bcard-stars i{margin-right:2px;font-size:.75rem;}
+    .bcard-stars .fa-solid{color:#f59e0b;}
+    .bcard-stars .fa-regular{color:#f59e0b;-webkit-text-stroke:1px #f59e0b;opacity:0.6;}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
     @keyframes fadeDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
     @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-    @keyframes droplet{0%{transform:scale(1);border-radius:50%}50%{transform:scale(1.1);border-radius:60% 40% 60% 40%}100%{transform:scale(1);border-radius:50%}}
 
     .top-offer{background:#000;color:#fff;text-align:center;font-weight:600;padding:8px;font-size:14px;animation:fadeDown .6s}
 
@@ -53,10 +51,10 @@
     .search-wrap{display:flex;justify-content:center;padding:18px 15px;background:#fff;animation:fadeUp 1s;width:100%;border-bottom:1px solid #f0e5f5}
     .search-box{width:100%;max-width:600px;background:#fff;border-radius:50px;padding:10px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px rgba(111,43,103,.10);border:1.5px solid #d8cfe0;transition:all .3s}
     .search-box:focus-within{border-color:#702767;box-shadow:0 5px 20px rgba(111,43,103,.18)}
-    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none}
+    .s-emoji{font-size:1.1rem;flex-shrink:0;line-height:1;user-select:none;background:none;border:none;padding:0;cursor:pointer}
     .search-box input{flex:1;border:0;background:0 0;outline:0;color:#333;font-size:14.5px;font-family:inherit;min-width:0}
     .search-box input::placeholder{color:#aaa;font-size:14px}
-    .s-cancel{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0;flex-shrink:0;display:none;transition:color .2s}
+    .s-cancel{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0;flex-shrink:0;text-decoration:none;display:none}
     .s-cancel:hover{color:#555}
     .s-cancel.show{display:block}
 
@@ -67,38 +65,22 @@
     .sidebar::-webkit-scrollbar-thumb{background:#d4b8d0;border-radius:4px}
     .filter-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
     .filter-hdr h5{font-weight:700;color:var(--purple);margin:0;font-size:.95rem}
-    .clear-all-btn{font-size:.73rem;color:var(--purple);background:none;border:1px solid var(--purple);border-radius:50px;cursor:pointer;font-weight:600;padding:3px 10px;transition:all .2s}
+    .clear-all-btn{font-size:.73rem;color:var(--purple);background:none;border:1px solid var(--purple);border-radius:50px;cursor:pointer;font-weight:600;padding:3px 10px;transition:all .2s;text-decoration:none;display:inline-block}
     .clear-all-btn:hover{background:var(--purple);color:#fff}
     .active-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:4px}
     .atag{display:inline-flex;align-items:center;gap:4px;background:#f3e8ff;color:var(--purple);padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
-    .atag button{background:none;border:none;cursor:pointer;color:var(--purple);font-size:.8rem;line-height:1;padding:0 0 0 3px}
+    .atag a{background:none;border:none;cursor:pointer;color:var(--purple);font-size:.8rem;line-height:1;padding:0 0 0 3px;text-decoration:none}
 
-    .bcard-prices{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.bcard-left{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.bcard-off{
-  color:#22c55e;
-  font-weight:700;
-  font-size:.75rem;
-}
+    .bcard-prices{display:flex;align-items:center;gap:6px;margin-top:5px}
     .fsec{border-top:1px solid #ebe3f0;padding:10px 0 2px}
     .fsec-title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;font-size:.82rem;color:#333;padding-bottom:6px;user-select:none}
-    .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa; pointer-events:none;  }
+    .fsec-title .farr{transition:transform .2s;font-size:.62rem;color:#aaa;pointer-events:none}
     .fsec-title.open .farr{transform:rotate(180deg)}
     .fsec-body{display:none;flex-direction:column;gap:1px;padding-bottom:4px}
     .fsec-body.open{display:flex}
     .cat-parent{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:.81rem;font-weight:600;color:#444;transition:background .15s;user-select:none;margin-bottom:2px}
     .cat-parent:hover{background:#f3e8ff;color:var(--purple)}
-    .cat-parent .cp-arr{font-size:.58rem;color:#bbb;transition:transform .2s; pointer-events:none; }
+    .cat-parent .cp-arr{font-size:.58rem;color:#bbb;transition:transform .2s;pointer-events:none}
     .cat-parent.open .cp-arr{transform:rotate(90deg);color:var(--purple)}
     .sub-opts{display:none;flex-direction:column;gap:1px;padding-left:8px;border-left:2px solid #ebe3f0;margin:2px 0 4px 8px}
     .sub-opts.open{display:flex}
@@ -110,7 +92,7 @@
     .price-range-labels{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:600;color:#555;margin-bottom:10px}
     .price-range-labels .money-emoji{font-size:1.1rem;letter-spacing:2px}
     .price-range-labels .range-val{color:var(--purple);font-weight:700;font-size:.85rem}
-    .price-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:50px;outline:none;cursor:pointer;background:linear-gradient(to right,#6f2b67 0%,#6f2b67 100%,#e2d6ef 100%,#e2d6ef 100%);transition:background .15s}
+    .price-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:50px;outline:none;cursor:pointer;background:linear-gradient(to right,#6f2b67 0%,#6f2b67 var(--pct,100%),#e2d6ef var(--pct,100%),#e2d6ef 100%);transition:background .15s}
     .price-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 2px 8px rgba(111,43,103,.4);transition:transform .2s}
     .price-slider::-webkit-slider-thumb:hover{transform:scale(1.15)}
     .price-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(111,43,103,.4)}
@@ -127,222 +109,56 @@
     .shop-h1{font-size:1.9rem;font-weight:800;color:#1a0a28;margin-bottom:14px}
 
     .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;padding:10px 14px;border-radius:14px;box-shadow:0 4px 16px rgba(111,43,103,.1);margin-bottom:18px;border:1px solid #ebe3f0}
-    .tb-chip{padding:6px 15px;border:1.5px solid #ddd;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all .2s;white-space:nowrap;font-family:inherit}
+    .tb-chip{padding:6px 15px;border:1.5px solid #ddd;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all .2s;white-space:nowrap;font-family:inherit;text-decoration:none;display:inline-block}
     .tb-chip:hover{border-color:var(--light);color:var(--purple);background:#f9f0f9}
     .tb-chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
     .tb-spacer{flex:1}
     .tb-count{font-size:.8rem;color:#999;white-space:nowrap}
     .tb-count strong{color:#222;font-weight:700}
 
-    /* ══ CUSTOM SORT DROPDOWN ══ */
     .sort-wrap{position:relative;min-width:190px}
-    .sort-btn{
-      width:100%;padding:7px 16px;
-      border:1.5px solid #ddd;border-radius:50px;
-      font-family:inherit;font-size:.8rem;font-weight:600;
-      cursor:pointer;background:#fff;color:#555;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      transition:all .22s;outline:none;
-      box-shadow:0 2px 8px rgba(111,43,103,.06);
-    }
-    .sort-btn:hover,.sort-btn.open{
-      border-color:var(--purple);color:var(--purple);
-      background:#faf5fb;
-      box-shadow:0 4px 14px rgba(111,43,103,.15);
-    }
+    .sort-btn{width:100%;padding:7px 16px;border:1.5px solid #ddd;border-radius:50px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#555;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all .22s;outline:none;box-shadow:0 2px 8px rgba(111,43,103,.06)}
+    .sort-btn:hover,.sort-btn.open{border-color:var(--purple);color:var(--purple);background:#faf5fb;box-shadow:0 4px 14px rgba(111,43,103,.15)}
     .sort-arr{font-size:.6rem;transition:transform .22s;color:#bbb;flex-shrink:0}
     .sort-btn.open .sort-arr{transform:rotate(180deg);color:var(--purple)}
-    .sort-menu{
-      display:none;
-      position:absolute;top:calc(100% + 8px);left:0;right:0;
-      background:#fff;
-      border-radius:16px;
-      box-shadow:0 12px 36px rgba(111,43,103,.2);
-      border:1.5px solid #ece3f5;
-      overflow:hidden;
-      z-index:500;
-      animation:fadeUp .15s ease;
-    }
+    .sort-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border-radius:16px;box-shadow:0 12px 36px rgba(111,43,103,.2);border:1.5px solid #ece3f5;overflow:hidden;z-index:500;animation:fadeUp .15s ease}
     .sort-menu.open{display:block}
-    .sort-opt{
-      padding:11px 16px;
-      font-size:.82rem;font-weight:600;
-      color:#555;cursor:pointer;
-      display:flex;align-items:center;gap:10px;
-      transition:all .18s;
-      border-bottom:1px solid #f7f0fb;
-    }
+    .sort-opt{padding:11px 16px;font-size:.82rem;font-weight:600;color:#555;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .18s;border-bottom:1px solid #f7f0fb;text-decoration:none}
     .sort-opt:last-child{border-bottom:none}
     .sort-opt:hover{background:linear-gradient(90deg,#f3e8ff,#fdf5ff);color:var(--purple);padding-left:22px}
     .sort-opt.selected{background:#f0e3f8;color:var(--purple);font-weight:700}
     .sort-opt .s-ico{font-size:.88rem;width:20px;text-align:center;flex-shrink:0}
 
-    /* .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px} */
+    .books-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 
-    .books-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-
-    .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s}
+    .bcard{background:#fff;border-radius:18px;overflow:hidden;border:2px solid #f0e5f5;box-shadow:0 5px 18px rgba(111,43,103,.08);transition:all .35s;cursor:pointer;position:relative;animation:fadeUp .5s;text-decoration:none;color:inherit;display:block}
     .bcard:hover{transform:translateY(-6px);box-shadow:0 16px 38px rgba(111,43,103,.2);border-color:var(--purple)}
-   .disc-badge{
-  position:absolute;
-  top:12px;
-  right:12px;
-  left:auto;          /* left remove பண்ணு */
-  background:linear-gradient(135deg,#ff416c,#ff4b2b);
-  color:#fff;
-  font-size:.75rem;
-  font-weight:900;
-  padding:6px 10px;
-  border-radius:50%;  /* circle shape */
-  width:42px;
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:4;
-  clip-path:none;     /* polygon remove பண்ணு */
-  box-shadow:0 3px 10px rgba(255,65,108,.5);
-  text-align:center;
-  line-height:1;
-}
-
-    .wish-btn{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
+    .disc-badge{position:absolute;top:12px;right:12px;left:auto;background:linear-gradient(135deg,#ff416c,#ff4b2b);color:#fff;font-size:.75rem;font-weight:900;padding:6px 10px;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;z-index:4;clip-path:none;box-shadow:0 3px 10px rgba(255,65,108,.5);text-align:center;line-height:1}
+    .wish-btn{position:absolute;top:auto;bottom:105px;right:12px;background:#fff;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);font-size:.88rem;z-index:2;transition:transform .2s}
     .wish-btn:hover{transform:scale(1.2)}
- .bcard-ph{
-width:100%;
-height:180px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:2.8rem;
-position:relative;
-overflow:hidden;
-background:
-  linear-gradient(rgba(111,43,103,0.06) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(111,43,103,0.06) 1px, transparent 1px),
-  linear-gradient(135deg, #f9f0ff 0%, #f0e4ff 40%, #ede0f7 100%);
-background-size: 22px 22px, 22px 22px, 100% 100%;
-}
-.bcard-ph::before{
-content:'📖';
-position:absolute;
-font-size:4.5rem;
-opacity:.13;
-bottom:-8px;
-right:-5px;
-transform:rotate(15deg);
-filter:grayscale(1);
-}
-.bcard-ph::after{
-content:'📚';
-position:absolute;
-font-size:3rem;
-opacity:.1;
-top:-5px;
-left:-5px;
-transform:rotate(-20deg);
-filter:grayscale(1);
-}
-
-.bcard-ph img{
-position:relative;
-z-index:2;
-filter:drop-shadow(0 0 10px rgba(168,85,247,0.6)) drop-shadow(0 0 25px rgba(236,72,153,0.3));
-}
-.bcard:hover .bcard-ph::before{
-animation-duration:1.5s;
-}
-.bcard:hover .bcard-ph img{
-filter:drop-shadow(0 0 16px rgba(168,85,247,0.9)) drop-shadow(0 0 35px rgba(236,72,153,0.5));
-transition:filter .3s;
-}
+    .bcard-ph{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;position:relative;overflow:hidden;background:linear-gradient(rgba(111,43,103,0.06) 1px, transparent 1px),linear-gradient(90deg, rgba(111,43,103,0.06) 1px, transparent 1px),linear-gradient(135deg, #f9f0ff 0%, #f0e4ff 40%, #ede0f7 100%);background-size:22px 22px, 22px 22px, 100% 100%}
+    .bcard-ph::before{content:'📖';position:absolute;font-size:4.5rem;opacity:.13;bottom:-8px;right:-5px;transform:rotate(15deg);filter:grayscale(1)}
+    .bcard-ph::after{content:'📚';position:absolute;font-size:3rem;opacity:.1;top:-5px;left:-5px;transform:rotate(-20deg);filter:grayscale(1)}
+    .bcard-ph img{position:relative;z-index:2;filter:drop-shadow(0 0 10px rgba(168,85,247,0.6)) drop-shadow(0 0 25px rgba(236,72,153,0.3))}
+    .bcard:hover .bcard-ph img{filter:drop-shadow(0 0 16px rgba(168,85,247,0.9)) drop-shadow(0 0 35px rgba(236,72,153,0.5));transition:filter .3s}
     .bcard-body{padding:12px 13px 13px}
     .bcard-title{font-size:.79rem;font-weight:700;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#222}
     .bcard-author{font-size:.71rem;color:#999;margin-bottom:4px}
     .bcard-stars{color:#f59e0b;font-size:.73rem}
-    .bcard-norev{font-size:.67rem;color:#bbb}
-    .bcard-prices{display:flex;align-items:center;gap:6px;margin-top:5px}
     .bcard-new{color:var(--purple);font-weight:800;font-size:.88rem}
     .bcard-old{color:#ccc;text-decoration:line-through;font-size:.72rem}
     .bcard-add{width:100%;margin-top:8px;padding:7px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
     .bcard-add:hover{background:var(--light)}
 
-.no-res{
-grid-column:1/-1;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-height:100%;
-color:#aaa;
-}
+    .no-res{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;color:#aaa;padding:60px 0}
+    .no-res .nr-ico{font-size:3rem;margin-bottom:1rem}
+    .no-res h4{font-size:1.1rem;color:#777;font-weight:700}
 
-.no-res .nr-ico{
-  font-size:3rem;
-  margin-bottom:1rem;
-}
-
-.no-res h4{
-  font-size:1.1rem;
-  color:#777;
-  font-weight:700;
-}
-
-    .pg-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:12px;
-margin-top:40px;
-flex-wrap:wrap;
-}
-
-.pg-btn{
-min-width:42px;
-height:42px;
-padding:0 14px;
-border-radius:30px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:700;
-text-decoration:none;
-font-size:14px;
-color:#6f2b67;
-background:#fff;
-border:2px solid #eee;
-transition:all .3s ease;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-
-.pg-btn:hover{
-background:linear-gradient(135deg,#6f2b67,#8e4a86);
-color:#fff;
-border-color:#6f2b67;
-transform:translateY(-2px);
-box-shadow:0 8px 20px rgba(111,43,103,.25);
-}
-
-.pg-btn.active{
-background:linear-gradient(135deg,#6f2b67,#8e4a86);
-color:#fff;
-border:none;
-box-shadow:0 6px 20px rgba(111,43,103,.4);
-transform:scale(1.05);
-}
-
-.pg-btn:disabled{
-opacity:.35;
-pointer-events:none;
-}
-    
-.pg-dots{
-font-weight:700;
-font-size:18px;
-color:#999;
-padding:0 6px;
-}
+    .pg-wrap{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:40px;flex-wrap:wrap}
+    .pg-btn{min-width:42px;height:42px;padding:0 14px;border-radius:30px;display:flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none;font-size:14px;color:#6f2b67;background:#fff;border:2px solid #eee;transition:all .3s ease;box-shadow:0 4px 10px rgba(0,0,0,0.08)}
+    .pg-btn:hover{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;border-color:#6f2b67;transform:translateY(-2px);box-shadow:0 8px 20px rgba(111,43,103,.25)}
+    .pg-btn.active{background:linear-gradient(135deg,#6f2b67,#8e4a86);color:#fff;border:none;box-shadow:0 6px 20px rgba(111,43,103,.4);transform:scale(1.05)}
+    .pg-btn.disabled{opacity:.35;pointer-events:none}
 
     .site-footer{background:var(--purple);color:#fff;padding:40px 15px;width:100%}
     .site-footer a{color:#fff;text-decoration:none;transition:all .3s}
@@ -371,27 +187,8 @@ padding:0 6px;
     .drawer-close:hover{background:rgba(255,255,255,.35)}
     .drawer-body{padding:16px}
 
-.out-badge{
-position:absolute;
-top:0;
-left:0;
-background:linear-gradient(135deg,#1a1a2e,#e53935);
-color:white;
-font-size:.7rem;
-padding:6px 16px 6px 10px;
-font-weight:900;
-z-index:4;
-letter-spacing:.8px;
-text-transform:uppercase;
-clip-path:polygon(0 0,100% 0,85% 50%,100% 100%,0 100%);
-box-shadow:2px 4px 14px rgba(229,57,53,.55);
-text-shadow:0 1px 3px rgba(0,0,0,.3);
-}
-
-.bcard.out{
-opacity:.65;
-pointer-events:none;
-}
+    .out-badge{position:absolute;top:0;left:0;background:linear-gradient(135deg,#1a1a2e,#e53935);color:white;font-size:.7rem;padding:6px 16px 6px 10px;font-weight:900;z-index:4;letter-spacing:.8px;text-transform:uppercase;clip-path:polygon(0 0,100% 0,85% 50%,100% 100%,0 100%);box-shadow:2px 4px 14px rgba(229,57,53,.55);text-shadow:0 1px 3px rgba(0,0,0,.3)}
+    .bcard.out .bcard-add{opacity:.5;cursor:not-allowed}
 
     @media(max-width:900px){.sidebar{width:220px}}
     @media(max-width:768px){
@@ -423,23 +220,22 @@ pointer-events:none;
         <nav class="main-nav d-none d-lg-flex">
           <a class="nav-link" href="/">Home</a>
           <a class="nav-link active-link" href="/shop">Shop</a>
-          
         </nav>
       </div>
       <div class="col-6 d-flex justify-content-end">
         <div class="header-icons">
-            <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
-              <i class="fa-solid fa-heart"></i>
-              <div class="icon-badge" id="wishlistBadge">0</div>
-            </a>
-             <a class="icon-btn position-relative" href="/cart" title="Cart">
-              <i class="fa-solid fa-cart-shopping"></i>
-              <div class="icon-badge" id="cartBadge">0</div>
-            </a>
-           
-          <%if(!isLoggedIn){%>
+          <a class="icon-btn position-relative" href="/wishlist" title="Wishlist">
+            <i class="fa-solid fa-heart"></i>
+            <div class="icon-badge" id="wishlistBadge">0</div>
+          </a>
+          <a class="icon-btn position-relative" href="/cart" title="Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <div class="icon-badge" id="cartBadge">0</div>
+          </a>
+
+          <% if(!isLoggedIn){ %>
             <a href="/login" class="icon-btn" title="Login"><i class="fa-regular fa-user"></i></a>
-          <%}else{%>
+          <% } else { %>
           <div class="dropdown">
             <div class="icon-btn dropdown-toggle" id="profileMenu" data-bs-toggle="dropdown">
               <i class="fa-regular fa-user"></i>
@@ -449,9 +245,8 @@ pointer-events:none;
               <li><a href="#" id="logoutBtn" class="dropdown-item d-flex align-items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
           </div>
-          <%}%>
+          <% } %>
 
-          <!-- menu bar -->
           <button class="hamburger-btn d-lg-none" id="menuToggle" aria-label="Toggle menu">
             <i class="fa-solid fa-bars"></i>
           </button>
@@ -461,32 +256,30 @@ pointer-events:none;
   </div>
 </header>
 
-<!-- mobile view -->
-
 <div id="mobileMenu" class="mobile-menu d-lg-none">
   <a class="mobile-nav-link" href="/"><i class="fa-solid fa-house"></i> Home</a>
   <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
-  
 </div>
 
-<!-- search -->
-
+<!-- SEARCH — plain GET form, no fetch. Submits to /shop keeping existing sort/chip -->
 <div class="search-wrap">
-  <div class="search-box">
-  <span class="s-emoji" onclick="doSearch()">🔍</span>
-   <input 
-type="text"
-id="searchInput"
-value=""
-placeholder="What are you looking for?"
-oninput="onSearchType(this)"
-autocomplete="off">
-    <button class="s-cancel" id="cancelBtn" onclick="cancelSearch()" title="Clear">✕</button>
-  </div>
+  <form class="search-box" method="GET" action="/shop">
+    <button type="submit" class="s-emoji">🔍</button>
+    <input
+      type="text"
+      name="search"
+      value="<%= search %>"
+      placeholder="What are you looking for?"
+      autocomplete="off">
+    <% if(search){ %>
+      <a class="s-cancel show" href="<%= buildLink({ search: '', page: 1 }) %>" title="Clear">✕</a>
+    <% } %>
+    <% if(sort){ %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+    <% if(chip && chip !== 'new'){ %><input type="hidden" name="chip" value="<%= chip %>"><% } %>
+  </form>
 </div>
 
 <!-- Mobile FILTER OVERLAY + DRAWER -->
-
 <div class="filter-overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
 
 <div class="filter-drawer" id="filterDrawer">
@@ -495,112 +288,109 @@ autocomplete="off">
     <button class="drawer-close" onclick="closeFilterDrawer()">✕</button>
   </div>
   <div class="drawer-body">
+    <!-- Everything below submits the SAME form as the desktop sidebar via form="shopFilterForm" -->
     <div class="filter-hdr">
       <h5 style="display:none">Filter By</h5>
-      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+      <a class="clear-all-btn" href="/shop">Clear all</a>
     </div>
-    <div class="active-tags" id="activeTagsDrawer"></div>
-<aside>
- <div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Categories</span>
-    <span class="farr">▼</span>
-  </div>
 
-  <div class="fsec-body open">
+    <div class="active-tags">
+      <% activeTags.forEach(tag => { %>
+        <span class="atag"><%= tag.label %><a href="<%= tag.url %>">✕</a></span>
+      <% }) %>
+    </div>
 
-<div id="categoryFiltersDrawer"></div>
-
-  </div>
-</div>
-
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Author</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-
-<div id="authorFiltersDrawer"></div>
-
-  </div>
-</div>
-
-  <div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Language</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-
-<div id="languageFiltersDrawer"></div>
-
-  </div>
-</div>
-
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Price (₹)</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-    <div class="price-slider-wrap">
-
-      <div class="price-range-labels">
-        <span class="money-emoji">💵💵</span>
-
-   <span id="priceLabelDrawer" class="range-val">₹0 – ₹3000</span>
+    <aside>
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Categories</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% categories.forEach(cat => { %>
+            <div class="cat-parent" onclick="toggleSub(this,'sub-drawer-<%= cat._id %>')">
+              <span><%= cat.name %></span><span class="cp-arr">▶</span>
+            </div>
+            <div class="sub-opts" id="sub-drawer-<%= cat._id %>">
+              <% cat.subCategories.forEach(sub => { %>
+                <label class="foption">
+                  <input type="checkbox" name="subcategory" value="<%= sub._id %>"
+                    form="shopFilterForm"
+                    <%= selected.subcategory.includes(String(sub._id)) ? 'checked' : '' %>>
+                  <%= sub.name %>
+                </label>
+              <% }) %>
+            </div>
+          <% }) %>
+        </div>
       </div>
 
-    <input
-type="range"
-id="priceSliderDrawer"
-class="price-slider"
-min="0"
-max="3000"
-step="1"
-value="3000"
-data-max="3000"
-oninput="onSliderDrawer(this)"
-onchange="syncSliderAndApply('priceSliderDrawer')">
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Author</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% authors.forEach(a => { %>
+            <label class="foption">
+              <input type="checkbox" name="author" value="<%= a._id %>"
+                form="shopFilterForm"
+                <%= selected.author.includes(String(a._id)) ? 'checked' : '' %>>
+              <%= a.name %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
 
-      <button class="price-apply-btn"onclick="syncSliderAndApply('priceSlider')">
-        Apply
-      </button>
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Language</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <% languages.forEach(l => { %>
+            <label class="foption">
+              <input type="checkbox" name="language" value="<%= l._id %>"
+                form="shopFilterForm"
+                <%= selected.language.includes(String(l._id)) ? 'checked' : '' %>>
+              <%= l.languageName %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
 
-    </div>
-  </div>
-</div>
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Price (₹)</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <div class="price-slider-wrap">
+            <div class="price-range-labels">
+              <span class="money-emoji">💵💵</span>
+              <span id="priceLabelDrawer" class="range-val">₹0 – ₹<%= price %></span>
+            </div>
+            <input
+              type="range"
+              id="priceSliderDrawer"
+              class="price-slider"
+              form="shopFilterForm"
+              name="price"
+              min="0"
+              max="<%= maxPrice %>"
+              step="1"
+              value="<%= price %>"
+              oninput="onSliderInput(this,'priceLabelDrawer')">
+          </div>
+        </div>
+      </div>
 
+      <div class="fsec">
+        <div class="fsec-title open" onclick="toggleFsec(this)"><span>Format</span><span class="farr">▼</span></div>
+        <div class="fsec-body open">
+          <label class="foption">
+            <input type="checkbox" name="format" value="paperback" form="shopFilterForm"
+              <%= selected.format.includes('paperback') ? 'checked' : '' %>>
+            Paper Back
+          </label>
+          <label class="foption">
+            <input type="checkbox" name="format" value="hardcover" form="shopFilterForm"
+              <%= selected.format.includes('hardcover') ? 'checked' : '' %>>
+            Hard Cover
+          </label>
+        </div>
+      </div>
 
-
-  <div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Format</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-
-    <label class="foption">
-      <input type="checkbox" data-f="format" value="paperback" onchange="renderTags()">
-      Paper Back
-    </label>
-
-    <label class="foption">
-      <input type="checkbox" data-f="format" value="hardcover" onchange="renderTags()">
-      Hard Cover
-    </label>
-
-  </div>
-</div>
-
-    <button class="apply-all-btn" onclick="applyFilters();closeFilterDrawer()">APPLY FILTERS</button>
-
-</aside>
+      <button class="apply-all-btn" type="submit" form="shopFilterForm">APPLY FILTERS</button>
+    </aside>
   </div>
 </div>
 
@@ -609,111 +399,116 @@ onchange="syncSliderAndApply('priceSliderDrawer')">
 </button>
 
 
-
-<!-- Normal View -->
+<form id="shopFilterForm" method="GET" action="/shop" style="display:none">
+  
+  <% if(sort){ %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+  <% if(chip && chip !== 'new'){ %><input type="hidden" name="chip" value="<%= chip %>"><% } %>
+  <% if(search){ %><input type="hidden" name="search" value="<%= search %>"><% } %>
+</form>
 
 <div class="shop-wrapper">
   <aside class="sidebar">
     <div class="filter-hdr">
       <h5>Filter By</h5>
-      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+      <a class="clear-all-btn" href="/shop">Clear all</a>
     </div>
-    <div class="active-tags" id="activeTags"></div>
 
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Categories</span>
-    <span class="farr">▼</span>
-  </div>
+    <div class="active-tags">
+      <% activeTags.forEach(tag => { %>
+        <span class="atag"><%= tag.label %><a href="<%= tag.url %>">✕</a></span>
+      <% }) %>
+    </div>
 
-  <div class="fsec-body open">
-<div id="categoryFilters"></div>
-
-  </div>
-</div>
-
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Author</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-
- <div id="authorFilters"></div>
-
-  </div>
-</div>
-
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Language</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-
-<div id="languageFilters"></div>
-
-  </div>
-</div>
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Price (₹)</span>
-    <span class="farr">▼</span>
-  </div>
-
-  <div class="fsec-body open">
-    <div class="price-slider-wrap">
-
-      <div class="price-range-labels">
-        <span class="money-emoji">💵💵</span>
-
-        <span id="priceLabel" class="range-val" data-min="0" data-max="3000">
-          ₹0 – ₹3000
-        </span>
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)"><span>Categories</span><span class="farr">▼</span></div>
+      <div class="fsec-body open">
+        <% categories.forEach(cat => { %>
+          <div class="cat-parent" onclick="toggleSub(this,'sub-side-<%= cat._id %>')">
+            <span><%= cat.name %></span><span class="cp-arr">▶</span>
+          </div>
+          <div class="sub-opts" id="sub-side-<%= cat._id %>">
+            <% cat.subCategories.forEach(sub => { %>
+              <label class="foption">
+                <input type="checkbox" name="subcategory" value="<%= sub._id %>"
+                  form="shopFilterForm"
+                  <%= selected.subcategory.includes(String(sub._id)) ? 'checked' : '' %>>
+                <%= sub.name %>
+              </label>
+            <% }) %>
+          </div>
+        <% }) %>
       </div>
-
-    <input
-type="range"
-id="priceSlider"
-class="price-slider"
-min="0"
-max="3000"
-step="1"
-value="3000"
-data-max="3000"
-oninput="onSlider(this)"
-onchange="renderTags()">
-
-      <button class="price-apply-btn" onclick="syncSliderAndApply('priceSlider')">
-        Apply
-      </button>
-
     </div>
-  </div>
-</div>
-<div class="fsec">
-  <div class="fsec-title open" onclick="toggleFsec(this)">
-    <span>Format</span>
-    <span class="farr">▼</span>
-  </div>
 
-  <div class="fsec-body open">
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)"><span>Author</span><span class="farr">▼</span></div>
+      <div class="fsec-body open">
+        <% authors.forEach(a => { %>
+          <label class="foption">
+            <input type="checkbox" name="author" value="<%= a._id %>"
+              form="shopFilterForm"
+              <%= selected.author.includes(String(a._id)) ? 'checked' : '' %>>
+            <%= a.name %>
+          </label>
+        <% }) %>
+      </div>
+    </div>
 
-    <label class="foption">
-      <input type="checkbox" data-f="format" value="paperback" onchange="renderTags()">
-      Paper Back
-    </label>
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)"><span>Language</span><span class="farr">▼</span></div>
+      <div class="fsec-body open">
+        <% languages.forEach(l => { %>
+          <label class="foption">
+            <input type="checkbox" name="language" value="<%= l._id %>"
+              form="shopFilterForm"
+              <%= selected.language.includes(String(l._id)) ? 'checked' : '' %>>
+            <%= l.languageName %>
+          </label>
+        <% }) %>
+      </div>
+    </div>
 
-    <label class="foption">
-      <input type="checkbox" data-f="format" value="hardcover" onchange="renderTags()">
-      Hard Cover
-    </label>
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)"><span>Price (₹)</span><span class="farr">▼</span></div>
+      <div class="fsec-body open">
+        <div class="price-slider-wrap">
+          <div class="price-range-labels">
+            <span class="money-emoji">💵💵</span>
+            <span id="priceLabel" class="range-val">₹0 – ₹<%= price %></span>
+          </div>
+          <input
+            type="range"
+            id="priceSlider"
+            class="price-slider"
+            form="shopFilterForm"
+            name="price"
+            min="0"
+            max="<%= maxPrice %>"
+            step="1"
+            value="<%= price %>"
+            oninput="onSliderInput(this,'priceLabel')">
+          <button class="price-apply-btn" type="submit" form="shopFilterForm">Apply</button>
+        </div>
+      </div>
+    </div>
 
-  </div>
-</div>
-    <button class="apply-all-btn" onclick="applyFilters()">APPLY FILTERS</button>
+    <div class="fsec">
+      <div class="fsec-title open" onclick="toggleFsec(this)"><span>Format</span><span class="farr">▼</span></div>
+      <div class="fsec-body open">
+        <label class="foption">
+          <input type="checkbox" name="format" value="paperback" form="shopFilterForm"
+            <%= selected.format.includes('paperback') ? 'checked' : '' %>>
+          Paper Back
+        </label>
+        <label class="foption">
+          <input type="checkbox" name="format" value="hardcover" form="shopFilterForm"
+            <%= selected.format.includes('hardcover') ? 'checked' : '' %>>
+          Hard Cover
+        </label>
+      </div>
+    </div>
+
+    <button class="apply-all-btn" type="submit" form="shopFilterForm">APPLY FILTERS</button>
   </aside>
 
   <main class="main-area">
@@ -722,51 +517,95 @@ onchange="renderTags()">
     </div>
     <div class="shop-h1">Shop</div>
 
-    <!-- toolbar -->
-     
     <div class="toolbar">
-      <button class="tb-chip" id="chip-ratings" onclick="toggleChip('ratings')">⭐ Ratings</button>
-      <button class="tb-chip active" id="chip-new" onclick="toggleChip('new')">🆕 New</button>
+      <a class="tb-chip <%= chip === 'ratings' ? 'active' : '' %>"
+         href="<%= buildLink({ chip: chip === 'ratings' ? '' : 'ratings', page: 1 }) %>">⭐ Ratings</a>
+      <a class="tb-chip <%= (!chip || chip === 'new') ? 'active' : '' %>"
+         href="<%= buildLink({ chip: 'new', page: 1 }) %>">🆕 New</a>
 
-      <!-- ══ CUSTOM SORT DROPDOWN ══ -->
+      <!-- Sort dropdown: still a small UI toggle in JS, but each option is a real link now -->
       <div class="sort-wrap" id="sortWrap">
-        <button class="sort-btn" id="sortBtn" onclick="toggleSortMenu(event)" type="button">
-          <span id="sortLabel">Sort by</span>
+        <button class="sort-btn" id="sortBtn" type="button" onclick="toggleSortMenu(event)">
+          <span id="sortLabel">
+            <% const sortLabels = {'':'Sort by','price-asc':'Price: Low → High','price-desc':'Price: High → Low','az':'Name: A → Z','za':'Name: Z → A'} %>
+            <%= sortLabels[sort] || 'Sort by' %>
+          </span>
           <span class="sort-arr">▼</span>
         </button>
         <div class="sort-menu" id="sortMenu">
-          <div class="sort-opt selected" data-val="" onclick="selectSort(this,'Sort by')">
-            <span class="s-ico">📋</span> Sort by
-          </div>
-          <div class="sort-opt" data-val="price-asc" onclick="selectSort(this,'Price: Low → High')">
-            <span class="s-ico">⬆️</span> Price: Low → High
-          </div>
-          <div class="sort-opt" data-val="price-desc" onclick="selectSort(this,'Price: High → Low')">
-            <span class="s-ico">⬇️</span> Price: High → Low
-          </div>
-          <div class="sort-opt" data-val="az" onclick="selectSort(this,'Name: A → Z')">
-            <span class="s-ico">🔤</span> Name: A → Z
-          </div>
-          <div class="sort-opt" data-val="za" onclick="selectSort(this,'Name: Z → A')">
-            <span class="s-ico">🔡</span> Name: Z → A
-          </div>
+          <a class="sort-opt <%= !sort ? 'selected' : '' %>" href="<%= buildLink({ sort: '', page: 1 }) %>"><span class="s-ico">📋</span> Sort by</a>
+          <a class="sort-opt <%= sort === 'price-asc' ? 'selected' : '' %>" href="<%= buildLink({ sort: 'price-asc', page: 1 }) %>"><span class="s-ico">⬆️</span> Price: Low → High</a>
+          <a class="sort-opt <%= sort === 'price-desc' ? 'selected' : '' %>" href="<%= buildLink({ sort: 'price-desc', page: 1 }) %>"><span class="s-ico">⬇️</span> Price: High → Low</a>
+          <a class="sort-opt <%= sort === 'az' ? 'selected' : '' %>" href="<%= buildLink({ sort: 'az', page: 1 }) %>"><span class="s-ico">🔤</span> Name: A → Z</a>
+          <a class="sort-opt <%= sort === 'za' ? 'selected' : '' %>" href="<%= buildLink({ sort: 'za', page: 1 }) %>"><span class="s-ico">🔡</span> Name: Z → A</a>
         </div>
       </div>
 
-      <span class="tb-count">
-      Found <strong id="totalCount">0</strong> items
-      </span>
+      <span class="tb-count">Found <strong><%= totalCount %></strong> items</span>
     </div>
 
-<div class="books-grid" id="booksGrid"></div>
+    <div class="books-grid" id="booksGrid">
+      <% if(!products.length){ %>
+        <div class="no-res">
+          <div class="nr-ico">📭</div>
+          <h4>No books found</h4>
+        </div>
+      <% } else { %>
+        <% products.forEach(p => { %>
+          <a class="bcard <%= !p.hasStock ? 'out' : '' %>" href="/product/<%= p._id %>">
+            <% if(p.discount > 0){ %>
+              <div class="disc-badge"><%= p.discount %>%</div>
+            <% } %>
+            <% if(!p.hasStock){ %>
+              <span class="out-badge">Out of Stock</span>
+            <% } %>
 
-<div id="pagination" class="pg-wrap"></div>
+            <button class="wish-btn" type="button"
+              onclick="event.preventDefault();event.stopPropagation();toggleWishlist(event,'<%= p._id %>',this)">
+              <i class="<%= p.isWishlisted ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+            </button>
 
+            <div class="bcard-ph">
+              <img src="<%= p.thumbnail %>" style="height:150px">
+            </div>
 
+            <div class="bcard-body">
+              <div class="bcard-title"><%= p.title %></div>
+              <div class="bcard-author"><%= p.author.name %></div>
+
+              <div class="bcard-stars">
+                <% for(let i=1;i<=5;i++){ %>
+                  <i class="<%= i <= p.rating ? 'fa-solid fa-star' : 'fa-regular fa-star' %>"></i>
+                <% } %>
+              </div>
+
+              <div class="bcard-prices">
+                <% if(p.discount > 0){ %>
+                  <span class="bcard-new">₹<%= p.finalPrice %></span>
+                  <span class="bcard-old">₹<%= p.originalPrice %></span>
+                <% } else { %>
+                  <span class="bcard-new">₹<%= p.originalPrice %></span>
+                <% } %>
+              </div>
+
+              <button class="bcard-add" <%= !p.hasStock ? 'disabled' : '' %>>
+                <i class="fa-solid fa-eye"></i> View Product
+              </button>
+            </div>
+          </a>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <div id="pagination" class="pg-wrap">
+      <a class="pg-btn <%= currentPage <= 1 ? 'disabled' : '' %>" href="<%= buildLink({ page: currentPage - 1 }) %>">‹</a>
+      <% for(let i=1;i<=totalPages;i++){ %>
+        <a class="pg-btn <%= currentPage === i ? 'active' : '' %>" href="<%= buildLink({ page: i }) %>"><%= i %></a>
+      <% } %>
+      <a class="pg-btn <%= currentPage >= totalPages ? 'disabled' : '' %>" href="<%= buildLink({ page: currentPage + 1 }) %>">›</a>
+    </div>
   </main>
 </div>
-
-<!-- Footer -->
 
 <footer class="site-footer">
   <div class="container-fluid">
@@ -782,7 +621,6 @@ onchange="renderTags()">
         <ul class="list-unstyled">
           <li><a href="/">Home</a></li>
           <li><a href="/shop">Shop Books</a></li>
-          
           <li><a href="/privacy">Privacy Policy</a></li>
         </ul>
       </div>
@@ -812,819 +650,127 @@ onchange="renderTags()">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/common.js"></script>
 <script>
-
-
-
-let cartCount = 0;
-let currentSort = '';
-
-// ══ PRICE SLIDER sidebar ══
-let sliderMax = document.getElementById("priceSlider")
-? parseInt(document.getElementById("priceSlider").value)
-: 0;
-
-function onSlider(el){
-
-sliderMax = parseInt(el.value)
-
-const label = document.getElementById("priceLabel")
-
-const min = parseInt(label.dataset.min)
-
-label.textContent = `₹${min} – ₹${sliderMax}`
-
-const max = parseInt(el.dataset.max)
-
-const pct = (sliderMax / max) * 100
-
-el.style.background =
-`linear-gradient(to right,
-#6f2b67 0%,
-#6f2b67 ${pct}%,
-#e2d6ef ${pct}%,
-#e2d6ef 100%)`
-
-}
-
-function syncSliderAndApply(sliderId){
-  const sl = document.getElementById(sliderId);
-  sliderMax = parseInt(sl.value);
-  applyFilters();
-}
-
-
-//////////////////////////////
-
-
-window.addEventListener("DOMContentLoaded", loadProducts)
-
-async function loadProducts(){
-
-const params = new URLSearchParams(window.location.search)
-
-const res = await fetch("/api/shop?" + params.toString())
-
-const data = await res.json()
-
-renderProducts(data.products)
-
-renderPagination(data)
-
-renderCategories(data.categories)
-
-renderAuthors(data.authors)
-
-renderLanguages(data.languages)
-
-updatePriceRange(data)   
-restoreFromURL()
-
-document.getElementById("totalCount").innerText = data.totalCount
-
-}
-
-
-function restoreFromURL(){
-
-const params = new URLSearchParams(window.location.search)
-
-const cats  = params.get("category")?.split(",") || []
-const subcats = params.get("subcategory")?.split(",") || []
-const auths = params.get("author")?.split(",") || []
-const langs = params.get("language")?.split(",") || []
-const fmts  = params.get("format")?.split(",") || []
-
-const all = [...cats,...subcats,...auths,...langs,...fmts]
-
-all.forEach(val=>{
-
-document.querySelectorAll(`[data-f][value="${val}"]`).forEach(el=>{
-
-el.checked = true
-
-})
-
-})
-
-const price = params.get("price")
-
-if(price){
-
-const slider = document.getElementById("priceSlider")
-
-slider.value = price
-
-sliderMax = parseInt(price)
-
-onSlider(slider)
-
-}
-
-const search = params.get("search") || ""
-
-document.getElementById("searchInput").value = search
-
-document.getElementById("cancelBtn")
-.classList.toggle("show", search.length > 0)
-
-const sort = params.get("sort") || ""
-
-currentSort = sort
-
-if(sort){
-
-const selected = document.querySelector(`.sort-opt[data-val="${sort}"]`)
-
-if(selected){
-
-document.querySelectorAll(".sort-opt")
-.forEach(o=>o.classList.remove("selected"))
-
-selected.classList.add("selected")
-
-document.getElementById("sortLabel").textContent =
-selected.textContent.trim()
-
-}
-
-}
-
-const chip = params.get("chip") || "new"
-
-chipFilter = chip
-
-;["ratings","new"].forEach(c=>{
-
-document.getElementById("chip-"+c)
-?.classList.remove("active")
-
-})
-
-document.getElementById("chip-"+chip)
-?.classList.add("active")
-
-
-renderTags()
-
-}
-
-
-function renderProducts(products){
-
-const grid = document.getElementById("booksGrid")
-
-if(!products.length){
-grid.innerHTML = `
-<div class="no-res">
-<div class="nr-ico">📭</div>
-<h4>No books found</h4>
-</div>
-`
-return
-}
-
-grid.innerHTML = products.map(p=>{
-
-const price = p.finalPrice || p.originalPrice
-const original = p.originalPrice || price
-const discount = p.discount || 0
-
-const hasStock = p.variants.some(v =>
-  v.formats.some(f => f.stock > 0)
-)
-
-return `
-<div class="bcard ${!hasStock ? 'out' : ''}" onclick="viewBook('${p._id}')">
-
-${discount > 0 
-  ? `<div class="disc-badge">${discount}% </div>` 
-  : ""}  
-
-${!hasStock 
-  ? `<span class="out-badge">Out of Stock</span>` 
-  : ""}
-
- <button class="wish-btn"
-style="top:auto;bottom:105px;right:12px"
-onclick="toggleWishlist(event,'${p._id}')">
-
-<i class="${p.isWishlisted
-? 'fa-solid fa-heart text-danger'
-: 'fa-regular fa-heart'}"></i>
-
-</button>
-
-<div class="bcard-ph">
-<img src="${p.variants?.[0]?.thumbnail?.url || '/images/no-image.png'}" style="height:150px">
-</div>
-
-<div class="bcard-body">
-
-<div class="bcard-title">${p.title}</div>
-
-<div class="bcard-author">${p.author.name}</div>
-
-<div class="bcard-stars">
-  ${p.rating > 0 
-    ? renderStars(p.rating)
-    : `<span class="empty-stars">${renderEmptyStars()}</span>`
+/*
+  IMPORTANT: this page is now server-rendered (SSR).
+  Every filter, sort, search and page change is a normal <a href> or
+  <form method="GET"> submit — the browser navigates and the server
+  sends back a fully-rendered page. No fetch(), no client-side product
+  rendering, no JSON round trip.
+
+  The JS below only handles things that must NOT reload the page:
+  - opening/closing the accordion sections and mobile drawer
+  - live-updating the price slider label as you drag (the actual
+    filtering only happens when you click Apply / submit the form)
+  - the wishlist heart (AJAX, so clicking it doesn't reload the grid)
+  - the hamburger menu and logout confirmation dialog
+*/
+
+// ══ PRICE SLIDER — visual label only, filtering happens on submit ══
+function onSliderInput(el, labelId){
+  const val = parseInt(el.value)
+  document.getElementById(labelId).textContent = `₹0 – ₹${val.toLocaleString('en-IN')}`
+  const pct = (val / parseInt(el.max)) * 100
+  el.style.setProperty('--pct', pct + '%')
+  // keep both sliders (desktop + drawer) in sync so Apply from either works
+  const other = el.id === 'priceSlider' ? document.getElementById('priceSliderDrawer') : document.getElementById('priceSlider')
+  if(other){
+    other.value = val
+    const otherLabel = el.id === 'priceSlider' ? 'priceLabelDrawer' : 'priceLabel'
+    document.getElementById(otherLabel).textContent = `₹0 – ₹${val.toLocaleString('en-IN')}`
+    other.style.setProperty('--pct', pct + '%')
   }
-</div>
-
-<div class="bcard-prices">
-
-${discount > 0 ? `
-  <span class="bcard-new">₹${price}</span>
-  <span class="bcard-old">₹${original}</span>
-  
-` : `
-  <span class="bcard-new">₹${original}</span>
-`}
-
-</div>
-
-<button class="bcard-add"
-  ${!hasStock ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-<i class="fa-solid fa-eye"></i> View Product
-</button>
-
-</div>
-</div>
-`
-
-}).join("")
 }
 
-function goPage(page){
-
-const params = new URLSearchParams(window.location.search)
-
-params.set("page",page)
-
-window.history.pushState({},'',"/shop?"+params.toString())
-
-loadProducts()
-
-}
-
-
-
-function renderCategories(categories){
-
-const sidebar = document.getElementById("categoryFilters")
-const drawer = document.getElementById("categoryFiltersDrawer")
-
-// SIDEBAR
-if(sidebar){
-sidebar.innerHTML = categories.map(cat=>`
-
-<div class="cat-parent" onclick="toggleSub(this,'sub-side-${cat._id}')">
-<span>${cat.name}</span>
-<span class="cp-arr">▶</span>
-</div>
-
-<div class="sub-opts" id="sub-side-${cat._id}">
-
-${cat.subCategories.map(sub=>`
-
-<label class="foption">
-<input type="checkbox"
-  data-f="subcategory"     
-  value="${sub._id}"
-  onchange="renderTags()">
-
-${sub.name}
-
-</label>
-
-`).join("")}
-
-</div>
-
-`).join("")
-}
-
-// DRAWER
-if(drawer){
-drawer.innerHTML = categories.map(cat=>`
-
-<div class="cat-parent" onclick="toggleSub(this,'sub-drawer-${cat._id}')">
-<span>${cat.name}</span>
-<span class="cp-arr">▶</span>
-</div>
-
-<div class="sub-opts" id="sub-drawer-${cat._id}">
-
-${cat.subCategories.map(sub=>`
-
-<label class="foption">
-<input type="checkbox"
-data-f="subcategory"
-value="${sub._id}"
-onchange="renderTags()">
-
-${sub.name}
-
-</label>
-
-`).join("")}
-
-</div>
-
-`).join("")
-}
-
-}
-
-function renderAuthors(authors){
-
-const sidebar = document.getElementById("authorFilters")
-const drawer = document.getElementById("authorFiltersDrawer")
-
-const html = authors.map(a=>`
-
-<label class="foption">
-<input type="checkbox"
-data-f="author"
-value="${a._id}"
-onchange="renderTags()">
-${a.name}
-</label>
-
-`).join("")
-
-if(sidebar) sidebar.innerHTML = html
-if(drawer) drawer.innerHTML = html
-
-}
-
-function renderLanguages(languages){
-
-const sidebar = document.getElementById("languageFilters")
-const drawer = document.getElementById("languageFiltersDrawer")
-
-const html = languages.map(l=>`
-
-<label class="foption">
-<input type="checkbox"
-data-f="language"
-value="${l._id}"
-onchange="renderTags()">
-${l.languageName}
-</label>
-
-`).join("")
-
-if(sidebar) sidebar.innerHTML = html
-if(drawer) drawer.innerHTML = html
-
-}
-
-function renderPagination(data){
-
-const div = document.getElementById("pagination")
-
-let html = ""
-
-// PREV button
-html += `
-<a class="pg-btn"
-onclick="goPage(${data.currentPage-1})"
-${data.currentPage == 1 ? 'style="pointer-events:none;opacity:.4"' : ''}>
-‹ 
-</a>
-`
-
-// PAGE numbers
-for(let i=1;i<=data.totalPages;i++){
-
-html += `
-<a class="pg-btn ${data.currentPage==i?'active':''}"
-onclick="goPage(${i})">
-${i}
-</a>
-`
-
-}
-
-// NEXT button
-html += `
-<a class="pg-btn"
-onclick="goPage(${data.currentPage+1})"
-${data.currentPage == data.totalPages ? 'style="pointer-events:none;opacity:.4"' : ''}>
- ›
-</a>
-`
-
-div.innerHTML = html
-
-}
-
-function updatePriceRange(data){
-
-const slider = document.getElementById("priceSlider")
-const label = document.getElementById("priceLabel")
-
-if(!slider || !label) return
-
-slider.min = 0
-slider.max = 3000
-slider.value = 3000
-slider.dataset.max = 3000
-
-label.dataset.min = 0
-label.dataset.max = 3000
-label.textContent = `₹0 – ₹3000`
-
-sliderMax = 3000
-
-onSlider(slider)
-
-// mobile slider
-const drawerSlider = document.getElementById("priceSliderDrawer")
-
-if(drawerSlider){
-
-drawerSlider.min = 0
-drawerSlider.max = 3000
-drawerSlider.value = 3000
-drawerSlider.dataset.max = 3000
-
-document.getElementById("priceLabelDrawer").textContent = `₹0 – ₹3000`
-
-}
-
-}
-
-// ══ PRICE SLIDER drawer ══
-function onSliderDrawer(el){
-
-sliderMax = parseInt(el.value)
-
-document.getElementById('priceLabelDrawer').textContent =
-`₹0 – ₹${sliderMax.toLocaleString('en-IN')}`
-
-const max = parseInt(el.dataset.max)
-
-const pct = (sliderMax/max)*100
-
-el.style.background =
-`linear-gradient(to right,#6f2b67 0%,#6f2b67 ${pct}%,#e2d6ef ${pct}%,#e2d6ef 100%)`
-
-}
-
-(function initSlider(){
-
-const slider = document.getElementById("priceSlider")
-
-if(slider){
-
-sliderMax = parseInt(slider.value)
-
-onSlider(slider)
-
-}
-
-})();
-
-// ══ CUSTOM SORT DROPDOWN ══
+// ══ CUSTOM SORT DROPDOWN (open/close only — links do the navigation) ══
 function toggleSortMenu(e){
-  e.stopPropagation();
-  document.getElementById('sortBtn').classList.toggle('open');
-  document.getElementById('sortMenu').classList.toggle('open');
-}
-function selectSort(el, label){
-  currentSort = el.dataset.val;
-  document.getElementById('sortLabel').textContent = label;
-  document.getElementById('sortBtn').classList.remove('open');
-  document.getElementById('sortMenu').classList.remove('open');
-  document.querySelectorAll('.sort-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  applyFilters();
+  e.stopPropagation()
+  document.getElementById('sortBtn').classList.toggle('open')
+  document.getElementById('sortMenu').classList.toggle('open')
 }
 document.addEventListener('click', function(e){
-  const wrap = document.getElementById('sortWrap');
+  const wrap = document.getElementById('sortWrap')
   if(wrap && !wrap.contains(e.target)){
-    document.getElementById('sortBtn')?.classList.remove('open');
-    document.getElementById('sortMenu')?.classList.remove('open');
+    document.getElementById('sortBtn')?.classList.remove('open')
+    document.getElementById('sortMenu')?.classList.remove('open')
   }
-});
-
-// ══ FILTER DRAWER ══
-function openFilterDrawer(){
-  document.getElementById('filterDrawer').classList.add('open');
-  document.getElementById('filterOverlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-function closeFilterDrawer(){
-  document.getElementById('filterDrawer').classList.remove('open');
-  document.getElementById('filterOverlay').classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-// ══ SEARCH ══
-function onSearchType(inp){
-  document.getElementById('cancelBtn').classList.toggle('show', inp.value.length > 0);
-}
-
-function cancelSearch(){
-
-  const params = new URLSearchParams(window.location.search)
-
-  params.delete("search")
-  params.set("page",1)
-
-  window.location.href = "/shop?" + params.toString()
-
-}
-
-
-// search backend
-
-function doSearch(){
-
-const search = document.getElementById("searchInput").value.trim()
-
-const params = new URLSearchParams(window.location.search)
-
-if(search){
-params.set("search",search)
-}else{
-params.delete("search")
-}
-
-params.set("page",1)
-
-window.location.href = "/shop?" + params.toString()
-
-}
-
-document.getElementById("searchInput").addEventListener("keypress",function(e){
-
-if(e.key === "Enter"){
-doSearch()
-}
-
 })
 
-// ══ TAGS ══
-function renderTags(){
-  
-  const all = [...document.querySelectorAll('[data-f]:checked')].map(el=>{
-    const label = el.closest('label');
-    const name  = label ? label.textContent.trim() : el.value;
-    return {val: el.value, name};
-  });
-
-  // deduplicate by value
-  const seen = new Set();
-  const unique = all.filter(o=>{ if(seen.has(o.val)) return false; seen.add(o.val); return true; });
-  const html = unique.map(o=>`<span class="atag">${o.name}<button onclick="removeTag('${o.val}')">✕</button></span>`).join('');
-  document.getElementById('activeTags').innerHTML = html;
-  document.getElementById('activeTagsDrawer').innerHTML = html;
+// ══ FILTER DRAWER (mobile) ══
+function openFilterDrawer(){
+  document.getElementById('filterDrawer').classList.add('open')
+  document.getElementById('filterOverlay').classList.add('show')
+  document.body.style.overflow = 'hidden'
 }
-function removeTag(val){
-  document.querySelectorAll(`[data-f][value="${val}"]`).forEach(el=>el.checked=false);
-  renderTags();
-  applyFilters();
-  
+function closeFilterDrawer(){
+  document.getElementById('filterDrawer').classList.remove('open')
+  document.getElementById('filterOverlay').classList.remove('show')
+  document.body.style.overflow = ''
 }
-
-
-// ══ CLEAR ALL ══
-
-function clearAll(){
-  document.querySelectorAll('[data-f]').forEach(e=>e.checked=false);
-  document.getElementById('activeTags').innerHTML='';
-  document.getElementById('activeTagsDrawer').innerHTML='';
-  currentSort='';
-  document.getElementById('sortLabel').textContent='Sort by';
-  document.querySelectorAll('.sort-opt').forEach(o=>o.classList.remove('selected'));
-  document.querySelector('.sort-opt[data-val=""]')?.classList.add('selected');
-  cancelSearch();
-  window.location.href = '/shop';
-}
-
 
 // ══ ACCORDION ══
-function toggleFsec(el){ el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
-function toggleSub(el,id){ el.classList.toggle('open'); document.getElementById(id).classList.toggle('open'); }
+function toggleFsec(el){ el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open') }
+function toggleSub(el,id){ el.classList.toggle('open'); document.getElementById(id).classList.toggle('open') }
 
-// ══ CHIP ══
-let chipFilter = "new";
+// ══ WISHLIST (only thing that stays AJAX — toggling it shouldn't reload the whole grid) ══
+async function toggleWishlist(event, productId, btn){
+  try{
+    const res = await fetch('/api/wishlist/' + productId, { method: 'POST' })
+    const data = await res.json()
+    if(data.success){
+      const icon = btn.querySelector('i')
+      if(data.isWishlisted){
+        icon.classList.remove('fa-regular')
+        icon.classList.add('fa-solid','text-danger')
+      } else {
+        icon.classList.remove('fa-solid','text-danger')
+        icon.classList.add('fa-regular')
+      }
+    } else if(data.message === 'Login required'){
+      window.location.href = '/login'
+    }
+  }catch(err){
+    console.log(err)
+  }
+}
 
-function toggleChip(name){
-
-  ['popular','ratings','new'].forEach(c=>{
-    document.getElementById('chip-'+c)?.classList.remove('active')
+// ══ HAMBURGER ══
+const menuToggle = document.getElementById('menuToggle')
+const mobileMenu = document.getElementById('mobileMenu')
+menuToggle?.addEventListener('click', function(){
+  mobileMenu.classList.toggle('open')
+  const icon = this.querySelector('i')
+  icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-xmark')
+})
+document.querySelectorAll('.mobile-nav-link').forEach(link=>{
+  link.addEventListener('click', ()=>{
+    mobileMenu.classList.remove('open')
+    const icon = menuToggle?.querySelector('i')
+    if(icon){ icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark') }
   })
-
-  document.getElementById('chip-'+name)?.classList.add('active')
-
-  chipFilter = name
-
-  applyFilters()
-
-}
-// ══ WISH / CART ══
-function toggleWish(btn){ btn.classList.toggle('wishlisted'); btn.textContent=btn.classList.contains('wishlisted')?'❤️':'🤍'; }
-function addToCart(id){
-  cartCount++;
-  document.getElementById('cartBadge').textContent=cartCount;
-  const b=ALL_BOOKS.find(x=>x.id===id);
-  Swal.fire({toast:true,position:'top-end',icon:'success',title:'Added to cart! 🛒',
-    html:`<small style="color:#555">${b.title.substring(0,40)}…</small>`,
-    showConfirmButton:false,timer:2200,timerProgressBar:true,background:'#fff'});
-}
-function viewBook(id){ window.location.href='/product/'+id; }
+})
+document.addEventListener('click', function(e){
+  if(mobileMenu && menuToggle && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)){
+    mobileMenu.classList.remove('open')
+    const icon = menuToggle.querySelector('i')
+    if(icon){ icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark') }
+  }
+})
 
 // ══ LOGOUT ══
 function doLogout(e){
-  e.preventDefault();
+  e.preventDefault()
   Swal.fire({
-    title:"<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
-    html:`<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
-    imageUrl:"/images/go-out-thro-removebg-preview.png",imageWidth:130,imageHeight:130,imageAlt:"Logout illustration",
-    showCancelButton:true,confirmButtonText:"🚪 Logout",cancelButtonText:"Stay Here",
-    confirmButtonColor:"#6f2b67",cancelButtonColor:"#d6c3d3",reverseButtons:true,
-    background:"linear-gradient(135deg,#f6eef6,#efe3f0)",backdrop:"rgba(0,0,0,0.6)",
-    showClass:{popup:'animate__animated animate__fadeInUp'},hideClass:{popup:'animate__animated animate__fadeOutDown'}
-  }).then(r=>{ if(r.isConfirmed) window.location.href="/logout"; });
+    title: "<span style='color:#6f2b67;font-weight:700'>Logout?</span>",
+    html: `<p style="font-size:14px;color:#555;margin-bottom:8px">Are you sure you want to logout? 💜</p><p style="font-size:13px;color:#888">You can login again anytime.</p>`,
+    imageUrl: "/images/go-out-thro-removebg-preview.png", imageWidth: 130, imageHeight: 130, imageAlt: "Logout illustration",
+    showCancelButton: true, confirmButtonText: "🚪 Logout", cancelButtonText: "Stay Here",
+    confirmButtonColor: "#6f2b67", cancelButtonColor: "#d6c3d3", reverseButtons: true,
+    background: "linear-gradient(135deg,#f6eef6,#efe3f0)", backdrop: "rgba(0,0,0,0.6)",
+    showClass: { popup: 'animate__animated animate__fadeInUp' }, hideClass: { popup: 'animate__animated animate__fadeOutDown' }
+  }).then(r=>{ if(r.isConfirmed) window.location.href = "/logout" })
 }
-document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
-document.getElementById('footerLogout')?.addEventListener('click', doLogout);
-
-// ══ HAMBURGER ══
-const menuToggle = document.getElementById('menuToggle');
-const mobileMenu = document.getElementById('mobileMenu');
-menuToggle?.addEventListener('click', function(){
-  mobileMenu.classList.toggle('open');
-  const icon=this.querySelector('i');
-  icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-xmark');
-});
-document.querySelectorAll('.mobile-nav-link').forEach(link=>{
-  link.addEventListener('click',()=>{
-    mobileMenu.classList.remove('open');
-    const icon=menuToggle?.querySelector('i');
-    if(icon){icon.classList.add('fa-bars');icon.classList.remove('fa-xmark');}
-  });
-});
-document.addEventListener('click',function(e){
-  if(mobileMenu&&menuToggle&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target)){
-    mobileMenu.classList.remove('open');
-    const icon=menuToggle.querySelector('i');
-    if(icon){icon.classList.add('fa-bars');icon.classList.remove('fa-xmark');}
-  }
-});
-
-// ══ SCROLL OBSERVER ══
-const observer=new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){entry.target.style.opacity='1';entry.target.style.transform='translateY(0)';}
-  });
-},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.product-card,.promo,.feature-item').forEach(el=>observer.observe(el));
-
-
-// function applyFilters(){
-
-//   const subcategories =
-//   [...document.querySelectorAll('[data-f="subcategory"]:checked')]
-//   .map(el=>el.value)
-
-// if(subcategories.length)
-//   params.append("subcategory", subcategories.join(","))
-
-//   const authors =
-//   [...document.querySelectorAll('[data-f="author"]:checked')]
-//   .map(el=>el.value)
-
-//   const languages =
-//   [...document.querySelectorAll('[data-f="language"]:checked')]
-//   .map(el=>el.value)
-
-//   const formats =
-//   [...document.querySelectorAll('[data-f="format"]:checked')]
-//   .map(el=>el.value)
-
-//   const params = new URLSearchParams()
-
- 
-
-//   if(authors.length)
-//   params.append("author", authors.join(","))
-
-//   if(languages.length)
-//   params.append("language", languages.join(","))
-
-//   if(formats.length)
-//   params.append("format", formats.join(","))
-
-//  const max = parseInt(document.getElementById("priceSlider").dataset.max)
-
-// if(sliderMax && sliderMax < max){
-// params.append("price", sliderMax)
-// }
-
-
-//   if(currentSort)
-//   params.append("sort", currentSort)
-
-//   if(chipFilter && chipFilter !== "new")
-//   params.append("chip", chipFilter)
-
-//   params.append("page",1)
-
-//  window.history.pushState({},'',"/shop?"+params.toString())
-//  loadProducts()
-// }
-
-
-
-function applyFilters(){
-
-  const subcategories =
-  [...document.querySelectorAll('[data-f="subcategory"]:checked')]
-  .map(el=>el.value)
-
-  const authors =
-  [...document.querySelectorAll('[data-f="author"]:checked')]
-  .map(el=>el.value)
-
-  const languages =
-  [...document.querySelectorAll('[data-f="language"]:checked')]
-  .map(el=>el.value)
-
-  const formats =
-  [...document.querySelectorAll('[data-f="format"]:checked')]
-  .map(el=>el.value)
-
-  const params = new URLSearchParams(window.location.search)
-
-  params.delete("subcategory")
-  params.delete("author")
-  params.delete("language")
-  params.delete("format")
-  params.delete("price")
-  params.delete("sort")
-  params.delete("chip")
-
-  if(subcategories.length)
-    params.set("subcategory", subcategories.join(","))
-
-  if(authors.length)
-    params.set("author", authors.join(","))
-
-  if(languages.length)
-    params.set("language", languages.join(","))
-
-  if(formats.length)
-    params.set("format", formats.join(","))
-
-  const max = parseInt(document.getElementById("priceSlider").dataset.max)
-
-  if(sliderMax && sliderMax < max){
-    params.set("price", sliderMax)
-  }
-
-  if(currentSort)
-    params.set("sort", currentSort)
-
-  if(chipFilter && chipFilter !== "new")
-    params.set("chip", chipFilter)
-
-  params.set("page",1)
-
-  window.history.pushState({},'',"/shop?"+params.toString())
-
-  loadProducts()
-}
-
-function renderStars(rating){
-  let stars = '';
-  for(let i=1; i<=5; i++){
-    if(i <= rating){
-      stars += `<i class="fa-solid fa-star"></i>`;
-    }else{
-      stars += `<i class="fa-regular fa-star"></i>`;
-    }
-  }
-  return stars;
-}
-
-function renderEmptyStars(){
-  let stars = '';
-  for(let i=1; i<=5; i++){
-    stars += `<i class="fa-regular fa-star"></i>`;
-  }
-  return stars;
-}
-
-async function toggleWishlist(event,productId){
-
-event.stopPropagation()
-
-}
+document.getElementById('logoutBtn')?.addEventListener('click', doLogout)
+document.getElementById('footerLogout')?.addEventListener('click', doLogout)
 </script>
 </body>
 </html>
