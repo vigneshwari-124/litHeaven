@@ -539,7 +539,6 @@ isDeleted: false
 const defaultStock = defaultFormat.stock;
 const defaultPrice = defaultFormat.price;
 
-// ← இங்க போடு
 const now = new Date()
 
 const offers = await Offer.find({

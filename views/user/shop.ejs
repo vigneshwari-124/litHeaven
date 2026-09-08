@@ -650,28 +650,13 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/common.js"></script>
 <script>
-/*
-  IMPORTANT: this page is now server-rendered (SSR).
-  Every filter, sort, search and page change is a normal <a href> or
-  <form method="GET"> submit — the browser navigates and the server
-  sends back a fully-rendered page. No fetch(), no client-side product
-  rendering, no JSON round trip.
 
-  The JS below only handles things that must NOT reload the page:
-  - opening/closing the accordion sections and mobile drawer
-  - live-updating the price slider label as you drag (the actual
-    filtering only happens when you click Apply / submit the form)
-  - the wishlist heart (AJAX, so clicking it doesn't reload the grid)
-  - the hamburger menu and logout confirmation dialog
-*/
-
-// ══ PRICE SLIDER — visual label only, filtering happens on submit ══
 function onSliderInput(el, labelId){
   const val = parseInt(el.value)
   document.getElementById(labelId).textContent = `₹0 – ₹${val.toLocaleString('en-IN')}`
   const pct = (val / parseInt(el.max)) * 100
   el.style.setProperty('--pct', pct + '%')
-  // keep both sliders (desktop + drawer) in sync so Apply from either works
+  
   const other = el.id === 'priceSlider' ? document.getElementById('priceSliderDrawer') : document.getElementById('priceSlider')
   if(other){
     other.value = val
@@ -681,7 +666,6 @@ function onSliderInput(el, labelId){
   }
 }
 
-// ══ CUSTOM SORT DROPDOWN (open/close only — links do the navigation) ══
 function toggleSortMenu(e){
   e.stopPropagation()
   document.getElementById('sortBtn').classList.toggle('open')
@@ -695,7 +679,6 @@ document.addEventListener('click', function(e){
   }
 })
 
-// ══ FILTER DRAWER (mobile) ══
 function openFilterDrawer(){
   document.getElementById('filterDrawer').classList.add('open')
   document.getElementById('filterOverlay').classList.add('show')
@@ -711,7 +694,7 @@ function closeFilterDrawer(){
 function toggleFsec(el){ el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open') }
 function toggleSub(el,id){ el.classList.toggle('open'); document.getElementById(id).classList.toggle('open') }
 
-// ══ WISHLIST (only thing that stays AJAX — toggling it shouldn't reload the whole grid) ══
+
 async function toggleWishlist(event, productId, btn){
   try{
     const res = await fetch('/api/wishlist/' + productId, { method: 'POST' })
