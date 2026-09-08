@@ -261,22 +261,21 @@
   <a class="mobile-nav-link" href="/shop"><i class="fa-solid fa-store"></i> Shop</a>
 </div>
 
-<!-- SEARCH — plain GET form, no fetch. Submits to /shop keeping existing sort/chip -->
 <div class="search-wrap">
   <form class="search-box" method="GET" action="/shop">
-    <button type="submit" class="s-emoji">🔍</button>
-    <input
-      type="text"
-      name="search"
-      value="<%= search %>"
-      placeholder="What are you looking for?"
-      autocomplete="off">
-    <% if(search){ %>
-      <a class="s-cancel show" href="<%= buildLink({ search: '', page: 1 }) %>" title="Clear">✕</a>
-    <% } %>
-    <% if(sort){ %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
-    <% if(chip && chip !== 'new'){ %><input type="hidden" name="chip" value="<%= chip %>"><% } %>
-  </form>
+  <button type="submit" class="s-emoji">🔍</button>
+  <input type="text" name="search" value="<%= search %>" placeholder="What are you looking for?" autocomplete="off">
+  <% if(search){ %><a class="s-cancel show" href="<%= buildLink({ search: '', page: 1 }) %>" title="Clear">✕</a><% } %>
+  <% if(sort){ %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+  <% if(chip && chip !== 'new'){ %><input type="hidden" name="chip" value="<%= chip %>"><% } %>
+
+  <% selected.category.forEach(v => { %><input type="hidden" name="category" value="<%= v %>"><% }) %>
+  <% selected.subcategory.forEach(v => { %><input type="hidden" name="subcategory" value="<%= v %>"><% }) %>
+  <% selected.author.forEach(v => { %><input type="hidden" name="author" value="<%= v %>"><% }) %>
+  <% selected.language.forEach(v => { %><input type="hidden" name="language" value="<%= v %>"><% }) %>
+  <% selected.format.forEach(v => { %><input type="hidden" name="format" value="<%= v %>"><% }) %>
+  <% if(query.price){ %><input type="hidden" name="price" value="<%= query.price %>"><% } %>
+</form>
 </div>
 
 <!-- Mobile FILTER OVERLAY + DRAWER -->
@@ -288,7 +287,7 @@
     <button class="drawer-close" onclick="closeFilterDrawer()">✕</button>
   </div>
   <div class="drawer-body">
-    <!-- Everything below submits the SAME form as the desktop sidebar via form="shopFilterForm" -->
+  
     <div class="filter-hdr">
       <h5 style="display:none">Filter By</h5>
       <a class="clear-all-btn" href="/shop">Clear all</a>
@@ -523,7 +522,7 @@
       <a class="tb-chip <%= (!chip || chip === 'new') ? 'active' : '' %>"
          href="<%= buildLink({ chip: 'new', page: 1 }) %>">🆕 New</a>
 
-      <!-- Sort dropdown: still a small UI toggle in JS, but each option is a real link now -->
+     
       <div class="sort-wrap" id="sortWrap">
         <button class="sort-btn" id="sortBtn" type="button" onclick="toggleSortMenu(event)">
           <span id="sortLabel">

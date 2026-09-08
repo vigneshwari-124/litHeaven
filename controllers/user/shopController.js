@@ -23,16 +23,18 @@ const getShopPage = async (req, res) => {
  
     let filter = { isDeleted: false };
  
-    
+   
     const toArray = (val) => {
       if (!val) return []
       const arr = Array.isArray(val) ? val : val.split(",")
-      
+     
       return [...new Set(arr)]
     }
  
+
     const priceValue = Array.isArray(price) ? [...new Set(price)][0] : price
  
+  
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
  
     if (search) {
@@ -62,7 +64,6 @@ const getShopPage = async (req, res) => {
     const languageArr = toArray(language)
     const formatArr = toArray(format)
  
-   
     req.query.category = categoryArr
     req.query.subcategory = subcategoryArr
     req.query.author = authorArr
@@ -96,7 +97,6 @@ const getShopPage = async (req, res) => {
  
     let sortOption = { createdAt: -1 }
  
-   
  
     if (sort === "az") {
       sortOption = { title: 1 }
@@ -107,10 +107,10 @@ const getShopPage = async (req, res) => {
     }
  
     if (chip === "new") { sortOption = { createdAt: -1 } }
-    
+ 
+ 
     const isPriceSort = sort === "price-asc" || sort === "price-desc"
  
-    
     const products = await Product.find(filter)
       .sort(sortOption)
       .populate({
@@ -181,7 +181,6 @@ const getShopPage = async (req, res) => {
         })
       })
  
-      
       let lowPrice = Infinity
       let highPrice = -Infinity
  
@@ -237,7 +236,7 @@ const getShopPage = async (req, res) => {
  
       const rating = ratingMap[p._id.toString()] || null
  
-      
+
       const thumbnail = p.variants?.[0]?.thumbnail?.url || '/images/no-image.png'
  
       const hasStock = totalStock > 0
@@ -259,19 +258,17 @@ const getShopPage = async (req, res) => {
         originalPrice,
         finalPrice,
         discount,
-      
+     
         _sortPrice: finalPrice
       }
     })
  
-    
     if (sort === "price-asc") {
       productsWithStock.sort((a, b) => a._sortPrice - b._sortPrice)
     } else if (sort === "price-desc") {
       productsWithStock.sort((a, b) => b._sortPrice - a._sortPrice)
     }
  
-   
     if (chip === "ratings") {
       productsWithStock.sort((a, b) => b.rating - a.rating)
     }
@@ -328,6 +325,7 @@ const getShopPage = async (req, res) => {
     const authors = await Author.find({ isDeleted: false });
     const languages = await Language.find({ status: "active" });
  
+    
     const selected = {
       category: categoryArr,
       subcategory: subcategoryArr,
@@ -336,7 +334,6 @@ const getShopPage = async (req, res) => {
       format: formatArr,
     }
  
-
     const buildLink = (overrides = {}) => {
       const merged = { ...req.query, ...overrides }
       const qs = new URLSearchParams()
@@ -408,7 +405,6 @@ const getShopPage = async (req, res) => {
       maxPrice,
       minPrice,
  
-      
       query: req.query,
       selected,
  
@@ -424,7 +420,6 @@ const getShopPage = async (req, res) => {
   }
 }
  
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
 const toggleWishlist = async (req, res) => {
@@ -539,6 +534,7 @@ isDeleted: false
 const defaultStock = defaultFormat.stock;
 const defaultPrice = defaultFormat.price;
 
+// ← இங்க போடு
 const now = new Date()
 
 const offers = await Offer.find({
