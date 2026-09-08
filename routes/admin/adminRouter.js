@@ -29,12 +29,14 @@ router.get('/dashboard/stats',adminAuth,adminController.getDashboardStats)
 router.get('/dashboard/top-data',adminAuth,adminController.getTopProducts)
 router.get('/dashboard/card-data',adminAuth, adminController.getDashboardCards)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// =
+// ==
+
 router.get('/customer', noCache, adminAuth, adminController.getCustomer)
 router.get('/customers/:id', noCache, adminAuth, adminController.getCustomerById)
 router.patch('/users/:id/block',adminAuth, adminController.toggleBlockUser)
 router.get('/customer/search', noCache, adminAuth, adminController.searchCustomers)
 
+  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/category', noCache, adminAuth, categoryController.categoryPage)

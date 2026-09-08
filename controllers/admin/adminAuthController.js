@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/User');
 const Address=require('../../models/Address')
-const Order=require('../../models/Order')
+const Order=require('../../models/Order');
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getLogin=(req,res)=>{
@@ -410,39 +411,16 @@ const totalSales = salesResult[0]?.total || 0
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const getCustomer= async(req,res)=>{
-    try{
-       const page=Number(req.query.page)||1
-       const limit=7
-       const skip=(page-1)*limit
+const getCustomer = async (req, res) => {
+  try {
 
-       const totalUsers=await User.countDocuments()
-      const users=await User.find({})
-      .sort({createdAt:-1})
-      .skip(skip)
-      .limit(limit)
-
-
-        res.render('admin/customer',{
-            users,
-            warning:null,
-            currentPage:page,
-            totalPages:Math.ceil(totalUsers/limit)
-           
-        })
-
-    }catch(err){
+   
+    res.render('admin/customer')
+  } catch (err) {
     console.log(err)
-    res.render('admin/customer', {
-      users: [],
-      warning: "Data temporarily unavailable",
-      currentPage: 1,
-      totalPages: 1
-    })
-    }
-
+    res.status(500).send('Something went wrong')
+  }
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const toggleBlockUser=async(req,res)=>{
@@ -479,7 +457,9 @@ const toggleBlockUser=async(req,res)=>{
 
 const searchCustomers = async (req, res) => {
   try {
-   const { query = '', status = 'all' } = req.query
+
+    
+   const { query = '', status = 'all', sort='' } = req.query
     let page=Number(req.query.page)||1
     const LIMIT = Number(req.query.limit) || 7
     let skip=(page-1)*LIMIT
@@ -487,9 +467,9 @@ const searchCustomers = async (req, res) => {
     let filter = {}
 
 if (query) {
-if (!isNaN(query)) {
+  if (!isNaN(query)) {
     filter = { phone: Number(query) }
-}else {
+  }else {
     filter = {
       $or: [
         { name: { $regex: query, $options: 'i' } },
@@ -506,10 +486,18 @@ if (!isNaN(query)) {
 
    const total = await User.countDocuments(filter)
   
+   let sortValue={createdAt:-1}
+
+   if(sort==="name"){
+    sortValue={name:1}
+   }
     const users = await User.find(filter)
-      .sort({ createdAt: -1 })
+      .sort(sortValue)
+      .collation({locale:'en', strength:2})
       .skip(skip)
       .limit(LIMIT)
+
+    
 
 
     
@@ -604,4 +592,5 @@ module.exports={
     searchCustomers,
     getCustomerById,
     logout
+   
 }

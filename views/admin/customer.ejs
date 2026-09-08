@@ -244,6 +244,9 @@
       </select>
     </div>
     
+
+
+    
     <div class="table-card">
       <div class="table-header">
         <div class="table-title">Customer List</div>
@@ -253,6 +256,7 @@
         </div>
       </div>
       
+
       <div class="table-wrapper">
         <table class="customers-table">
           <thead>
@@ -306,9 +310,7 @@
           <button class="tab-btn active" onclick="switchTab('info',this)">
             <i class="fas fa-info-circle"></i> User Info
           </button>
-          <button class="tab-btn" onclick="switchTab('orders',this)">
-            <i class="fas fa-shopping-cart"></i> Orders
-          </button>
+          
         </div>
 
         <!-- TAB 1: User Info -->
@@ -345,33 +347,7 @@
           </div>
         </div>
 
-        <!-- TAB 2: Orders -->
-        <div class="tab-content" id="ordersTab">
-          <div class="info-card" style="margin-top:0;">
-            <h3 class="card-title">Order History</h3>
-            <div style="overflow-x:auto;">
-              <table class="customers-table">
-                <thead>
-                  <tr>
-                    <th>ORDER ID</th>
-                    <th>DATE</th>
-                    <th>ITEMS</th>
-                    <th>STATUS</th>
-                    <th>AMOUNT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="5" style="text-align:center; padding:30px 10px;color:#8e4a86;font-size:14px;font-weight:600;">
-                      <i class="fas fa-box-open" style="font-size:26px;margin-bottom:10px;display:block;"></i>
-                      <div>No orders placed yet</div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+       
 
       </div>
     </div>
@@ -385,18 +361,23 @@ const pagination = document.getElementById('pagination')
 const statusFilter = document.getElementById('statusFilter')
 const limitSelect = document.getElementById('limitSelect')
 
+
 let timer
 let currentPage=1
 let LIMIT=7
 
-async function loadUsers(page=1) {
+
+
+
+async function loadUsers(page=1,sort="") {
     currentPage = page
   const query=searchInput.value.trim()
   const status = statusFilter.value
 
   try {
-      const res = await fetch(`/admin/customer/search?query=${query}&status=${status}&page=${page}&limit=${LIMIT}`)
+      const res = await fetch(`/admin/customer/search?query=${query}&status=${status}&page=${page}&limit=${LIMIT}&sort=${sort}`)
       const data = await res.json()
+      
 
       tbody.innerHTML = ''
 
@@ -444,13 +425,15 @@ async function loadUsers(page=1) {
       })
 
      
-    renderPagination(data.totalPages, page)
+    renderPagination(data.totalPages, page,sort)
     
 
     } catch (err) {
       console.log(err)
   }
 }
+
+
 
 //////////////////////
 
@@ -474,9 +457,10 @@ limitSelect.addEventListener('change', () => {
   loadUsers(1)
 })
 
+
 /////////////////////
 
-function renderPagination(totalPages,page){
+function renderPagination(totalPages,page,sort){
 
   pagination.innerHTML=''
 
@@ -486,6 +470,7 @@ function renderPagination(totalPages,page){
 
   
   if (end > totalPages) {
+    
     end = totalPages
     start = Math.max(1, end - MAX_VISIBLE + 1)
   }
@@ -493,20 +478,20 @@ function renderPagination(totalPages,page){
   
 pagination.innerHTML += `
 <button class="page-btn"  ${page === 1 ? 'disabled' : ''} 
-onclick="loadUsers(${page - 1})">‹</button>
+onclick="loadUsers(${page - 1},'${sort}')">‹</button>
 `
   
   for(let i=start; i<=end; i++){
     pagination.innerHTML+=`
       <button class="page-btn ${i === page ? 'active' : ''}"
-      onclick="loadUsers(${i})">${i}</button>
+      onclick="loadUsers(${i},'${sort}')">${i}</button>
     `
   }
 
  
     pagination.innerHTML+=`
       <button class="page-btn"  ${page === totalPages ? 'disabled' : ''} 
-      onclick="loadUsers(${page + 1})">›</button>
+      onclick="loadUsers(${page + 1},'${sort}')">›</button>
     `
   
 }
@@ -530,7 +515,7 @@ function toggleMenu(id) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 async function viewCustomer(userId){
-  console.log('Clicked ID:', userId)
+ 
   try{
     const res=await fetch(`/admin/customers/${userId}`)
     const data=await res.json()
@@ -576,10 +561,7 @@ async function viewCustomer(userId){
         <span class="info-label">State:</span>
         <span class="info-value">${addr.state}</span>
       </div>
-      <div class="info-row">
-        <span class="info-label">Pincode:</span>
-        <span class="info-value">${addr.pincode}</span>
-      </div>
+
       <div class="info-row">
         <span class="info-label">Country:</span>
         <span class="info-value">${addr.country}</span>
