@@ -193,10 +193,6 @@ item.finalAmount ||
 
       }
 
-      // =====================================================
-      // REJECT RETURN
-      // =====================================================
-
       if (orderStatus === "Delivered") {
 
         item.status = "Delivered";
@@ -218,10 +214,6 @@ item.finalAmount ||
       }
 
     }
-
-    // =========================================================
-    // NORMAL ORDER STATUS FLOW
-    // =========================================================
 
     if (["Delivered", "Cancelled", "Returned"].includes(currentStatus)) {
 

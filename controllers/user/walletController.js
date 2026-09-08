@@ -48,10 +48,7 @@ const addMoneySuccess = async (req, res) => {
       .update(body.toString())
       .digest("hex");
 
-console.log("ORDER ID:", orderId);
-console.log("PAYMENT ID:", paymentId);
-console.log("SIGNATURE:", signature);
-console.log("EXPECTED:", expectedSignature);
+
 
     if (expectedSignature !== signature) {
       return res.json({ success: false, message: "Invalid signature" });

@@ -646,8 +646,6 @@ if (shouldRefund) {
 
   if (allCancelled) {
 
-console.log("ITEM FINAL AMOUNT:", order.items[0].finalAmount);
-  console.log("DELIVERY CHARGE:", order.deliveryCharge);
 
 const refundAmount = order.items.reduce((sum, item) => {
   const itemAmt = item.finalAmount || ((item.price * item.quantity) - (item.couponDiscount || 0));
@@ -655,7 +653,7 @@ const refundAmount = order.items.reduce((sum, item) => {
 }, 0);
 
 
-  console.log("REFUND AMOUNT:", refundAmount);
+  
 
     await addRefundToWallet(
       order.userId,
