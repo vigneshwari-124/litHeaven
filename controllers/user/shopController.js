@@ -424,27 +424,69 @@ const getShopPage = async (req, res) => {
  
 const toggleWishlist = async (req, res) => {
   try {
+
     if (!req.session.userId) {
-      return res.status(401).json({ success: false, message: "Login required" })
+      return res.status(401).json({
+        success: false,
+        message: "Login required"
+      });
     }
- 
-    const { productId } = req.params
-    const userId = req.session.userId
- 
-    const existing = await Wishlist.findOne({ userId, productId })
- 
+
+    const userId = req.session.userId;
+    const { productId } = req.params;
+
+    const { languageId, format } = req.body;
+
+    if (!languageId || !format) {
+      return res.status(400).json({
+        success: false,
+        message: "Language and format are required"
+      });
+    }
+
+    const existing = await Wishlist.findOne({
+      userId,
+      productId,
+      languageId,
+      format
+    });
+
     if (existing) {
-      await Wishlist.deleteOne({ _id: existing._id })
-      return res.json({ success: true, isWishlisted: false })
+
+      await Wishlist.deleteOne({
+        _id: existing._id
+      });
+
+      return res.json({
+        success: true,
+        isWishlisted: false
+      });
+
     } else {
-      await Wishlist.create({ userId, productId })
-      return res.json({ success: true, isWishlisted: true })
+
+      await Wishlist.create({
+        userId,
+        productId,
+        languageId,
+        format
+      });
+
+      return res.json({
+        success: true,
+        isWishlisted: true
+      });
     }
+
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ success: false, message: "Something went wrong" })
+
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong"
+    });
   }
-}
+};
  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

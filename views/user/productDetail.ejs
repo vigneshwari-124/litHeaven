@@ -1460,65 +1460,99 @@ function changeQty(d) { const i = document.getElementById('qtyInput'); i.value =
 /* ══ WISHLIST ══ */
 async function toggleWish() {
 
-if(!STATE.isLoggedIn){
-Swal.fire({
-icon:"warning",
-title:"Login Required",
-text:"Please login to add product to cart"
-}).then(()=>{
-window.location.href="/login"
-})
-return
-}
+  if (!STATE.isLoggedIn) {
 
-const btn = document.getElementById('wishBtn');
+    Swal.fire({
+      icon: "warning",
+      title: "Login Required",
+      text: "Please login to add product to wishlist"
+    }).then(() => {
+      window.location.href = "/login";
+    });
 
-const productId = btn.dataset.product;
+    return;
+  }
 
-const languageEl = document.querySelector('.tag-group[data-type="language"] .selected');
-const formatEl = document.querySelector('#formatGroup .selected');
+  const btn = document.getElementById("wishBtn");
 
-const languageId = languageEl ? languageEl.dataset.language : "<%= defaultVariant.language._id %>";
-const format = formatEl ? formatEl.dataset.format : "<%= defaultFormat.format %>";
+  const productId = btn.dataset.product;
 
-try{
+  const languageEl =
+    document.querySelector(
+      '.tag-group[data-type="language"] .selected'
+    );
 
-const res = await fetch("/wishlist/toggle",{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body:JSON.stringify({
-    productId,
-    languageId,
-    format
-  })
-})
+  const formatEl =
+    document.querySelector(
+      '#formatGroup .selected'
+    );
 
-const data = await res.json()
+  const languageId =
+    languageEl
+      ? languageEl.dataset.language
+      : "<%= defaultVariant.language._id %>";
 
-STATE.wished = data.status === "added";
+  const format =
+    formatEl
+      ? formatEl.dataset.format
+      : "<%= defaultFormat.format %>";
 
-btn.classList.toggle("wished", STATE.wished);
+  try {
 
-btn.innerHTML = STATE.wished
-  ? '<i class="fa-solid fa-heart"></i>'
-  : '<i class="fa-regular fa-heart"></i>';
-  
+    const res = await fetch(`/api/wishlist/${productId}`, {
 
-Swal.fire({
-  toast:true,
-  position:'top-end',
-  icon: STATE.wished ? 'success' : 'info',
-  title: STATE.wished ? '❤️ Added to wishlist' : '💔 Removed',
-  showConfirmButton:false,
-  timer:1600
-})
+      method: "POST",
 
-}catch(err){
-console.log(err)
-}
+      headers: {
+        "Content-Type": "application/json"
+      },
 
+      body: JSON.stringify({
+        languageId,
+        format
+      })
+
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    STATE.wished = data.isWishlisted;
+
+    btn.classList.toggle(
+      "wished",
+      STATE.wished
+    );
+
+    btn.innerHTML = STATE.wished
+      ? '<i class="fa-solid fa-heart"></i>'
+      : '<i class="fa-regular fa-heart"></i>';
+
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: STATE.wished ? "success" : "info",
+      title: STATE.wished
+        ? "❤️ Added to wishlist"
+        : "💔 Removed",
+      showConfirmButton: false,
+      timer: 1600
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Unable to update wishlist"
+    });
+
+  }
 }
 
 /* ══ SHARE ══ */

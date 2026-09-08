@@ -465,11 +465,11 @@ if (req.file && req.file.path) {
       image: imageUrl
     });
 
-    console.log("Before save");
+   
 
     await subCategory.save();
 
-    console.log("After save");
+   
 
     res.status(201).json({
       success: true,
