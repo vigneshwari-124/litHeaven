@@ -19,6 +19,8 @@ const getSignup=(req,res)=>{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const postSignup=async (req,res)=>{
+
+
   try{
     let {name,email,phone,password,confirmPassword,referralCode}=req.body;
 
@@ -50,7 +52,7 @@ const postSignup=async (req,res)=>{
     }
 
 
-    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+    const emailRegex = /^[a-z0-9]+@[a-z0-9]+\.[a-z]{2,}$/;
 
    if (!emailRegex.test(email)) {
     return res.status(400).json({
@@ -84,7 +86,7 @@ const postSignup=async (req,res)=>{
     });
 }
 
-  const passwordRegex =/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[A-Za-z0-9!@#$%^&*]{8,}$/;
+  const passwordRegex =/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])(?=.*[0-9])[A-Za-z0-9!@#$%^&*]{8,}$/;
 
   if (!passwordRegex.test(password)) {
     return res.status(400).json({
@@ -109,6 +111,8 @@ const postSignup=async (req,res)=>{
   }
 
     let user=await User.findOne({email})
+
+    
     if(user && user.isVerified){
         return res.status(400).json({
           success:false,
@@ -133,11 +137,13 @@ const postSignup=async (req,res)=>{
 
 do {
   myReferralCode = generateReferralCode(name);
+  
 
   exists = await User.findOne({
     referralCode: myReferralCode
   });
 
+  
 } while (exists);
     user=await User.create({
       name,
@@ -178,6 +184,7 @@ do {
    req.session.referralCode = referralCode || null;
 
     req.session.otpUserId=user._id
+    
     req.session.otpPurpose = 'signup';  
 
     res.status(200).json({
@@ -207,6 +214,9 @@ const getOtp=async(req,res)=>{
   });
 
   const purpose=req.session.otpPurpose || "signup" ;
+
+ 
+
 
   let user=await User.findById(req.session.otpUserId).select('email').lean()
 
@@ -320,7 +330,7 @@ if (!otpRegex.test(userOtp)) {
  if (otpDoc.purpose === "signup") {
 
   const referralCode = req.session.referralCode;
-  console.log("Referral Code:", referralCode);
+
 
   if (referralCode) {
 
@@ -329,8 +339,7 @@ if (!otpRegex.test(userOtp)) {
     });
 
     
-    console.log("User:", user._id);
-    console.log("Referrer:", referrer?._id);
+  
 
     if (!referrer) {
       return res.status(400).json({

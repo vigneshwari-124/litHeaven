@@ -207,7 +207,7 @@ nameField.addEventListener("input", () => {
 });
 
 emailField.addEventListener("input",()=>{
-  let emailRegex=/^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+  let emailRegex=/^[a-z0-9]+@[a-z0-9]+\.[a-z]{2,}$/;
   if(emailField.value.trim()===""){
     emailErr.innerHTML="Email is required";
   }else if(!emailRegex.test(emailField.value)){
@@ -236,7 +236,7 @@ phoneField.addEventListener("input",()=>{
 });
 
 passwordField.addEventListener("input",()=>{
-  let passwordRegex=/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+  let passwordRegex=/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{8,}$/;
   if(passwordField.value.trim()===""){
     passwordErr.innerHTML="Password is required";
     return;
@@ -285,7 +285,7 @@ if (nameField.value.trim() === "") {
     isValid = false;
 }
 
-  const emailRegex=/^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+  const emailRegex=/^[a-z0-9]+@[a-z0-9]+\.[a-z]{2,}$/;
   if(emailField.value.trim()===""){
     emailErr.textContent="Email is required";
     isValid=false;
@@ -302,7 +302,7 @@ if (nameField.value.trim() === "") {
     isValid=false;
   }
 
-  const passRegex=/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+  const passRegex=/^(?=.*[A-Z])(?=.*[@%*_\-$#^!])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{8,}$/;
   if(passwordField.value.trim()===""){
     passwordErr.textContent="Password is required";
     isValid=false;
@@ -346,6 +346,8 @@ if (nameField.value.trim() === "") {
     body:JSON.stringify(data)
   })
   const result=await res.json()
+  console.log(result)
+  
   if (!res.ok) {
   Swal.fire({
     toast: true,
