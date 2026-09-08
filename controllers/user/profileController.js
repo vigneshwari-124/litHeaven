@@ -166,7 +166,7 @@ if (!emailRegex.test(email)) {
       userId,
       purpose: "profile-email",
       isUsed: false,
-      expiresAt: { $gt: new Date() }
+      expiresAt: new Date(Date.now() + 60 * 1000)
     });
 
      if (existingOtp) {

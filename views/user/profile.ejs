@@ -719,7 +719,7 @@ editName.addEventListener("input", () => {
 });
 
 editEmail.addEventListener("input", () => {
-  const emailRegex = /^[a-z0-9._%*+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+  const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
   if (editEmail.value.trim() === "") {
     editEmailErr.textContent = "Email is required";
