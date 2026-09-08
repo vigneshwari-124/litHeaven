@@ -349,19 +349,15 @@ if(offerList.length > 0){
     const delivery    = 40;
     const discount    = couponDiscount;
 
-    if (couponDiscount > 0) {
 
-  orderItems.forEach(item => {
-
-    item.couponDiscount = Math.round(
-      (item.total / subtotal) * couponDiscount
-    );
-
-    item.finalAmount = item.total - item.couponDiscount;
-
-  });
-
-}
+orderItems.forEach(item => {
+  if (couponDiscount > 0) {
+    item.couponDiscount = Math.round((item.total / subtotal) * couponDiscount);
+  } else {
+    item.couponDiscount = 0;
+  }
+  item.finalAmount = item.total - item.couponDiscount;
+});
 
     const totalAmount = subtotal + delivery - discount;
 
@@ -592,7 +588,7 @@ const getUserOrders = async (req, res) => {
 
     const orders = await Order.find(query)
       .sort({ createdAt: -1 });
-      console.log(orders)
+     
 
      
 
@@ -646,12 +642,20 @@ const cancelSingleItem = async (req, res) => {
   
     const allCancelled = order.items.every(i => i.status === "Cancelled");
 if (shouldRefund) {
+;
 
   if (allCancelled) {
 
-    const refundAmount = order.items.reduce((sum,item)=>{
-   return sum + item.finalAmount
-},0)
+console.log("ITEM FINAL AMOUNT:", order.items[0].finalAmount);
+  console.log("DELIVERY CHARGE:", order.deliveryCharge);
+
+const refundAmount = order.items.reduce((sum, item) => {
+  const itemAmt = item.finalAmount || ((item.price * item.quantity) - (item.couponDiscount || 0));
+  return sum + itemAmt;
+}, 0);
+
+
+  console.log("REFUND AMOUNT:", refundAmount);
 
     await addRefundToWallet(
       order.userId,
@@ -719,6 +723,7 @@ const cancelFullOrder = async (req, res) => {
     const { reason } = req.body;
 
     const order = await Order.findById(orderId);
+
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     if (order.orderStatus === "Cancelled") {
@@ -862,7 +867,7 @@ const addRefundToWallet = async (userId, amount) => {
 
   await wallet.save();
 
-  console.log("REFUND ADDED:", amount); 
+  
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -923,6 +928,14 @@ const retryPayment = async (req, res) => {
         message: "Order not found"
       });
     }
+
+      if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "This order is cancelled. Retry not allowed."
+      });
+    }
+
 
     if (order.paymentStatus !== "Failed") {
       return res.status(400).json({

@@ -521,7 +521,7 @@ function buildRow(o){
   ${payBadge(o.paymentStatus)}
 
   ${
-    o.paymentStatus === "Failed"
+      o.paymentStatus === "Failed" && o.orderStatus !== "Cancelled" 
       ? `<br>
          <button class="btn-details mt-1" onclick="retryPayment('${o._id}')">
            🔁 Retry
@@ -673,7 +673,7 @@ else if (canReturn) {
   /* ── footer buttons ── */
   let footerHtml='';
 
-  if (o.paymentStatus === "Failed") {
+ if (o.paymentStatus === "Failed" && o.orderStatus !== "Cancelled") {  
   footerHtml += `
     <button class="btn-dm-cancel-order" onclick="retryPayment('${o._id}')">
       🔁 Retry Payment
@@ -692,6 +692,8 @@ else if (canReturn) {
   document.body.style.overflow='hidden';
 }
 
+
+//===============================================================
 function closeDetail(){
   document.getElementById('detailOverlay').classList.remove('open');
   document.body.style.overflow='';

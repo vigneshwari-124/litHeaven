@@ -35,9 +35,7 @@ const getOrders = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(Number(limit))
 
-       console.log("START")
-      const one=await Order.countDocuments()
-      console.log("One:",one)
+      
 
     const total = await Order.countDocuments(query)
 
@@ -136,7 +134,6 @@ item.finalAmount ||
           refundAmount
         );
 
-        // STOCK RETURN
         const product = await Product.findById(item.productId);
 
         if (product) {
@@ -240,8 +237,7 @@ item.finalAmount ||
   Shipped: ["Delivered"],
 };
 
-    console.log("Current Status:", currentStatus);
-    console.log("New Status:", orderStatus);
+   
 
     if (!allowedTransitions[currentStatus]?.includes(orderStatus)) {
 
